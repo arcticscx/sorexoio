@@ -4,6 +4,7 @@ import { WebSocketServer, WebSocket } from "ws";
 import { storage } from "./storage";
 import { insertTransactionSchema, insertCryptoSchema, insertCurrencySchema, insertPaymentMethodSchema } from "@shared/schema";
 import { z } from "zod";
+import { registerObjectStorageRoutes } from "./replit_integrations/object_storage";
 
 const clients = new Set<WebSocket>();
 
@@ -33,6 +34,9 @@ export async function registerRoutes(
       clients.delete(ws);
     });
   });
+
+  // Register object storage routes for file uploads
+  registerObjectStorageRoutes(app);
 
   app.get("/api/transactions", async (_req, res) => {
     try {

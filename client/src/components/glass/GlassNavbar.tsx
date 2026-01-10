@@ -52,7 +52,7 @@ export function GlassNavbar() {
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-glow">
                 <Sparkles className="w-4 h-4 text-white" />
               </div>
-              <span className="text-base font-semibold prismatic-text hidden sm:block">
+              <span className="text-base font-semibold prismatic-text hidden sm:block" style={{ fontFamily: "'Questrial', sans-serif" }}>
                 Prismatic
               </span>
             </Link>

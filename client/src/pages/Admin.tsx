@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { 
@@ -17,11 +17,13 @@ import {
   Eye,
   EyeOff,
   RefreshCw,
-  Lock
+  Lock,
+  Upload
 } from "lucide-react";
 import { GlassCard, GlassButton, GlassInput, GlassPill, GlassModal, PrismaticBackground, GlassNavbar } from "@/components/glass";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { useUpload } from "@/hooks/use-upload";
 import { cn } from "@/lib/utils";
 import type { Transaction, Crypto, Setting, PaymentMethod } from "@shared/schema";
 import { CreditCard } from "lucide-react";
@@ -64,6 +66,36 @@ export default function Admin() {
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [editingPayment, setEditingPayment] = useState<PaymentMethod | null>(null);
   const [newPayment, setNewPayment] = useState({ name: "", key: "", icon: "", description: "" });
+  const paymentIconInputRef = useRef<HTMLInputElement>(null);
+
+  const { uploadFile, isUploading: isUploadingPaymentIcon } = useUpload({
+    onSuccess: (response) => {
+      setNewPayment(prev => ({ ...prev, icon: response.objectPath }));
+      toast({ title: "Icon uploaded successfully" });
+    },
+    onError: (error) => {
+      toast({ title: "Upload failed", description: error.message, variant: "destructive" });
+    },
+  });
+
+  const handlePaymentIconUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (!file.type.startsWith('image/')) {
+        toast({ title: "Invalid file", description: "Please select an image file", variant: "destructive" });
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        toast({ title: "File too large", description: "Maximum file size is 5MB", variant: "destructive" });
+        return;
+      }
+      await uploadFile(file);
+      // Reset file input to allow re-uploading the same file
+      if (paymentIconInputRef.current) {
+        paymentIconInputRef.current.value = "";
+      }
+    }
+  };
 
   const { data: transactions = [], isLoading: transactionsLoading } = useQuery<Transaction[]>({
     queryKey: ["/api/transactions"],
@@ -996,21 +1028,46 @@ export default function Admin() {
             onChange={(e) => setNewPayment({ ...newPayment, description: e.target.value })}
             data-testid="input-payment-description"
           />
-          <GlassInput
-            label="Icon URL"
-            placeholder="https://example.com/paypal-icon.png"
-            value={newPayment.icon}
-            onChange={(e) => setNewPayment({ ...newPayment, icon: e.target.value })}
-            data-testid="input-payment-icon"
-          />
-          {newPayment.icon && (
-            <div className="flex items-center gap-3 p-3 rounded-lg bg-white/5">
-              <div className="w-10 h-10 rounded-lg overflow-hidden bg-white/10">
-                <img src={newPayment.icon} alt="Icon preview" className="w-full h-full object-cover" />
-              </div>
-              <span className="text-white/50 text-sm">Icon preview</span>
+          <div>
+            <label className="block text-xs font-medium text-white/60 uppercase tracking-wider mb-2">
+              Icon Image
+            </label>
+            <input
+              type="file"
+              ref={paymentIconInputRef}
+              onChange={handlePaymentIconUpload}
+              accept="image/*"
+              className="hidden"
+              data-testid="input-payment-icon-file"
+            />
+            <div className="flex items-center gap-3">
+              <GlassButton
+                type="button"
+                variant="ghost"
+                onClick={() => paymentIconInputRef.current?.click()}
+                disabled={isUploadingPaymentIcon}
+                data-testid="button-upload-payment-icon"
+              >
+                <Upload className="w-4 h-4 mr-2" />
+                {isUploadingPaymentIcon ? "Uploading..." : "Upload Icon"}
+              </GlassButton>
+              {newPayment.icon && (
+                <div className="flex items-center gap-2">
+                  <div className="w-10 h-10 rounded-lg overflow-hidden bg-white/10">
+                    <img src={newPayment.icon} alt="Icon preview" className="w-full h-full object-cover" />
+                  </div>
+                  <GlassButton
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setNewPayment({ ...newPayment, icon: "" })}
+                  >
+                    <X className="w-4 h-4" />
+                  </GlassButton>
+                </div>
+              )}
             </div>
-          )}
+          </div>
 
           <div className="flex gap-3 pt-4">
             <GlassButton
