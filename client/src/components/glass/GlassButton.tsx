@@ -14,7 +14,7 @@ export const GlassButton = forwardRef<HTMLButtonElement, GlassButtonProps>(
     
     const variants = {
       default: "glass-button text-white",
-      primary: "bg-gradient-to-r from-emerald-500 to-teal-500 text-white border border-emerald-400/30 shadow-glow",
+      primary: "liquid-glass-cta text-white",
       ghost: "bg-transparent hover:bg-white/10 text-white",
       outline: "bg-transparent border border-white/20 text-white hover:bg-white/10",
     };

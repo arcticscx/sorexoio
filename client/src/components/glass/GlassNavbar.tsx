@@ -133,16 +133,16 @@ export function GlassNavbar() {
           }}
           transition={{ duration: 0.2 }}
         >
-          <div className="p-4 space-y-2">
+          <div className="p-5 space-y-1">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  "block px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200",
+                  "block px-5 py-4 rounded-xl text-base font-medium transition-all duration-200",
                   location === link.href
-                    ? "text-white bg-white/15 shadow-inner"
-                    : "text-white/70 hover:text-white hover:bg-white/10"
+                    ? "text-white bg-white/15"
+                    : "text-white/80 hover:text-white hover:bg-white/10"
                 )}
                 onClick={() => setIsMobileMenuOpen(false)}
                 data-testid={`link-mobile-${link.label.toLowerCase().replace(' ', '-')}`}
@@ -153,20 +153,20 @@ export function GlassNavbar() {
             <Link
               href="/admin"
               className={cn(
-                "block px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200",
+                "block px-5 py-4 rounded-xl text-base font-medium transition-all duration-200",
                 location === "/admin"
-                  ? "text-white bg-white/15 shadow-inner"
-                  : "text-white/70 hover:text-white hover:bg-white/10"
+                  ? "text-white bg-white/15"
+                  : "text-white/80 hover:text-white hover:bg-white/10"
               )}
               onClick={() => setIsMobileMenuOpen(false)}
               data-testid="link-mobile-admin"
             >
               Admin
             </Link>
-            <div className="pt-2">
+            <div className="pt-3">
               <Link
                 href="/exchange"
-                className="block w-full text-center get-started-glass py-3"
+                className="block w-full text-center liquid-glass-cta py-4 text-base font-semibold"
                 onClick={() => setIsMobileMenuOpen(false)}
                 data-testid="button-mobile-get-started"
               >

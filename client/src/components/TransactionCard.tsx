@@ -73,7 +73,7 @@ export const TransactionCard = forwardRef<HTMLDivElement, TransactionCardProps>(
         }}
         whileHover={{ 
           y: -2, 
-          boxShadow: "0 12px 40px rgba(0, 0, 0, 0.25)" 
+          boxShadow: "0 8px 24px rgba(0, 0, 0, 0.12)" 
         }}
         layout
         data-testid={`transaction-card-${transaction.id}`}
