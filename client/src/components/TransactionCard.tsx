@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { CreditCard, Wallet, Bitcoin, DollarSign, Clock } from "lucide-react";
 import { SiPaypal, SiBitcoin, SiEthereum } from "react-icons/si";
 import { cn } from "@/lib/utils";
+import { CryptoIcon } from "./CryptoIcon";
 import type { Transaction, PaymentMethod } from "@shared/schema";
 
 interface TransactionCardProps {
@@ -96,8 +97,10 @@ export const TransactionCard = forwardRef<HTMLDivElement, TransactionCardProps>(
               {formatAmount(transaction.amount, transaction.currency)}
             </span>
             {transaction.cryptoAmount && transaction.cryptoType && (
-              <span className="text-white/50 text-sm">
-                → {transaction.cryptoAmount.toFixed(6)} {transaction.cryptoType}
+              <span className="text-white/50 text-sm flex items-center gap-1">
+                →
+                <CryptoIcon symbol={transaction.cryptoType} size="sm" />
+                {transaction.cryptoAmount.toFixed(6)} {transaction.cryptoType}
               </span>
             )}
           </div>
