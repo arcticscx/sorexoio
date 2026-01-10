@@ -206,14 +206,18 @@ export async function registerRoutes(
         // Most people exchange in even numbers (ending in 0 or 5)
         let amount;
         const randomType = Math.random();
-        if (randomType > 0.4) {
-          // 60% chance for "even" looking numbers (multiples of 10, 50, 100)
-          const bases = [10, 50, 100, 250, 500];
+        
+        if (randomType > 0.1) {
+          // 90% chance for smaller amounts ($100 - $1000)
+          const bases = [10, 50, 100];
           const base = bases[Math.floor(Math.random() * bases.length)];
-          amount = (Math.floor(Math.random() * (5000 / base)) + 1) * base;
+          // Generate between 100 and 1000
+          amount = (Math.floor(Math.random() * (900 / base)) + Math.ceil(100 / base)) * base;
         } else {
-          // 40% chance for more random looking numbers
-          amount = Math.floor(Math.random() * 5000) + 50;
+          // 10% chance for larger amounts ($1000 - $3000)
+          const bases = [100, 250, 500];
+          const base = bases[Math.floor(Math.random() * bases.length)];
+          amount = (Math.floor(Math.random() * (2000 / base)) + Math.ceil(1000 / base)) * base;
         }
 
         const cryptoType = cryptoTypes[Math.floor(Math.random() * cryptoTypes.length)];
