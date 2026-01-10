@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { RefreshCw, Activity, Wifi, WifiOff } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import { GlassPill } from "./glass/GlassPill";
 import { GlassCard } from "./glass/GlassCard";
 import { TransactionCard } from "./TransactionCard";
 import { useWebSocket } from "@/hooks/useWebSocket";
-import type { Transaction } from "@shared/schema";
+import type { Transaction, PaymentMethod } from "@shared/schema";
 
 interface TransactionFeedProps {
   transactions: Transaction[];
@@ -25,6 +26,10 @@ export function TransactionFeed({ transactions: initialTransactions, isLoading =
   const [isConnected, setIsConnected] = useState(false);
   const [liveTransactions, setLiveTransactions] = useState<Transaction[]>(initialTransactions);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const { data: paymentMethods = [] } = useQuery<PaymentMethod[]>({
+    queryKey: ["/api/payment-methods"],
+  });
 
   useEffect(() => {
     setLiveTransactions(initialTransactions);
@@ -151,6 +156,7 @@ export function TransactionFeed({ transactions: initialTransactions, isLoading =
                 key={transaction.id} 
                 transaction={transaction}
                 index={index}
+                paymentMethods={paymentMethods}
               />
             ))
           ) : (

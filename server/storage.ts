@@ -3,7 +3,8 @@ import {
   transactions, type Transaction, type InsertTransaction,
   cryptos, type Crypto, type InsertCrypto,
   currencies, type Currency, type InsertCurrency,
-  settings, type Setting, type InsertSetting
+  settings, type Setting, type InsertSetting,
+  paymentMethods, type PaymentMethod, type InsertPaymentMethod
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc } from "drizzle-orm";
@@ -35,6 +36,13 @@ export interface IStorage {
   getSetting(key: string): Promise<Setting | undefined>;
   upsertSetting(key: string, value: string): Promise<Setting>;
   deleteSetting(key: string): Promise<boolean>;
+  
+  getPaymentMethods(): Promise<PaymentMethod[]>;
+  getPaymentMethod(id: string): Promise<PaymentMethod | undefined>;
+  getPaymentMethodByKey(key: string): Promise<PaymentMethod | undefined>;
+  createPaymentMethod(paymentMethod: InsertPaymentMethod): Promise<PaymentMethod>;
+  updatePaymentMethod(id: string, data: Partial<InsertPaymentMethod>): Promise<PaymentMethod | undefined>;
+  deletePaymentMethod(id: string): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -146,6 +154,35 @@ export class DatabaseStorage implements IStorage {
 
   async deleteSetting(key: string): Promise<boolean> {
     const result = await db.delete(settings).where(eq(settings.key, key)).returning();
+    return result.length > 0;
+  }
+
+  async getPaymentMethods(): Promise<PaymentMethod[]> {
+    return db.select().from(paymentMethods).orderBy(paymentMethods.sortOrder);
+  }
+
+  async getPaymentMethod(id: string): Promise<PaymentMethod | undefined> {
+    const [method] = await db.select().from(paymentMethods).where(eq(paymentMethods.id, id));
+    return method || undefined;
+  }
+
+  async getPaymentMethodByKey(key: string): Promise<PaymentMethod | undefined> {
+    const [method] = await db.select().from(paymentMethods).where(eq(paymentMethods.key, key));
+    return method || undefined;
+  }
+
+  async createPaymentMethod(paymentMethod: InsertPaymentMethod): Promise<PaymentMethod> {
+    const [created] = await db.insert(paymentMethods).values(paymentMethod).returning();
+    return created;
+  }
+
+  async updatePaymentMethod(id: string, data: Partial<InsertPaymentMethod>): Promise<PaymentMethod | undefined> {
+    const [updated] = await db.update(paymentMethods).set(data).where(eq(paymentMethods.id, id)).returning();
+    return updated || undefined;
+  }
+
+  async deletePaymentMethod(id: string): Promise<boolean> {
+    const result = await db.delete(paymentMethods).where(eq(paymentMethods.id, id)).returning();
     return result.length > 0;
   }
 }

@@ -51,11 +51,22 @@ export const settings = pgTable("settings", {
   value: text("value").notNull(),
 });
 
+export const paymentMethods = pgTable("payment_methods", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: text("name").notNull(),
+  key: text("key").notNull().unique(),
+  icon: text("icon"),
+  description: text("description"),
+  isActive: boolean("is_active").default(true),
+  sortOrder: integer("sort_order").default(0),
+});
+
 export const transactionsRelations = relations(transactions, ({ }) => ({}));
 export const cryptosRelations = relations(cryptos, ({ }) => ({}));
 export const currenciesRelations = relations(currencies, ({ }) => ({}));
 export const settingsRelations = relations(settings, ({ }) => ({}));
 export const usersRelations = relations(users, ({ }) => ({}));
+export const paymentMethodsRelations = relations(paymentMethods, ({ }) => ({}));
 
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
@@ -79,6 +90,10 @@ export const insertSettingSchema = createInsertSchema(settings).omit({
   id: true,
 });
 
+export const insertPaymentMethodSchema = createInsertSchema(paymentMethods).omit({
+  id: true,
+});
+
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 
@@ -93,3 +108,6 @@ export type Currency = typeof currencies.$inferSelect;
 
 export type InsertSetting = z.infer<typeof insertSettingSchema>;
 export type Setting = typeof settings.$inferSelect;
+
+export type InsertPaymentMethod = z.infer<typeof insertPaymentMethodSchema>;
+export type PaymentMethod = typeof paymentMethods.$inferSelect;

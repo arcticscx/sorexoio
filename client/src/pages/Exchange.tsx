@@ -3,17 +3,24 @@ import { Link, useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { ArrowRight, ArrowLeft, Check, Wallet, CreditCard, Mail, ArrowDownUp, Sparkles } from "lucide-react";
-import { SiPaypal } from "react-icons/si";
+import { SiPaypal, SiBitcoin, SiEthereum } from "react-icons/si";
 import { GlassCard, GlassButton, GlassInput, PrismaticBackground, GlassNavbar } from "@/components/glass";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import type { Crypto } from "@shared/schema";
+import type { Crypto, PaymentMethod } from "@shared/schema";
 
 type Step = "amount" | "payment" | "details" | "confirm" | "success";
 
-const paymentMethods = [
-  { id: "card", name: "Card (0 KYC)", icon: CreditCard, color: "text-purple-400", description: "No verification required" },
-  { id: "paypal", name: "PayPal", icon: SiPaypal, color: "text-blue-400", description: "Fast & secure checkout" },
+const defaultPaymentIcons: Record<string, { icon: React.ComponentType<{ className?: string }>, color: string }> = {
+  card: { icon: CreditCard, color: "text-purple-400" },
+  paypal: { icon: SiPaypal, color: "text-blue-400" },
+  bitcoin: { icon: SiBitcoin, color: "text-orange-400" },
+  ethereum: { icon: SiEthereum, color: "text-indigo-400" },
+};
+
+const fallbackPaymentMethods = [
+  { id: "card", name: "Card", key: "card", description: "0 KYC", icon: null as string | null },
+  { id: "paypal", name: "PayPal", key: "paypal", description: "Fast & secure", icon: null as string | null },
 ];
 
 const defaultCryptos = [
@@ -40,6 +47,20 @@ export default function Exchange() {
   const { data: cryptos } = useQuery<Crypto[]>({
     queryKey: ["/api/cryptos"],
   });
+
+  const { data: dbPaymentMethods } = useQuery<PaymentMethod[]>({
+    queryKey: ["/api/payment-methods"],
+  });
+
+  const paymentMethods = (dbPaymentMethods && dbPaymentMethods.length > 0) 
+    ? dbPaymentMethods.filter(pm => pm.isActive).map(pm => ({
+        id: pm.key,
+        name: pm.name,
+        key: pm.key,
+        icon: pm.icon,
+        description: pm.description || ""
+      }))
+    : fallbackPaymentMethods;
 
   const createTransaction = useMutation({
     mutationFn: async () => {
@@ -301,33 +322,43 @@ export default function Exchange() {
                     </h2>
 
                     <div className="space-y-3">
-                      {paymentMethods.map((method) => (
-                        <button
-                          key={method.id}
-                          onClick={() =>
-                            setFormData({ ...formData, paymentMethod: method.id })
-                          }
-                          className={`w-full p-5 rounded-xl border flex items-center gap-4 transition-all duration-200 ${
-                            formData.paymentMethod === method.id
-                              ? "bg-emerald-500/20 border-emerald-500/50"
-                              : "bg-white/5 border-white/10 hover:bg-white/10"
-                          }`}
-                          data-testid={`button-payment-${method.id}`}
-                        >
-                          <div className="w-14 h-14 rounded-xl bg-white/10 flex items-center justify-center">
-                            <method.icon className={`w-7 h-7 ${method.color}`} />
-                          </div>
-                          <div className="text-left flex-1">
-                            <span className="text-white font-semibold block">{method.name}</span>
-                            <span className="text-white/50 text-sm">{method.description}</span>
-                          </div>
-                          {formData.paymentMethod === method.id && (
-                            <div className="ml-auto">
-                              <Check className="w-5 h-5 text-emerald-400" />
+                      {paymentMethods.map((method) => {
+                        const defaultIcon = defaultPaymentIcons[method.key];
+                        const IconComponent = defaultIcon?.icon || CreditCard;
+                        const iconColor = defaultIcon?.color || "text-purple-400";
+                        
+                        return (
+                          <button
+                            key={method.id}
+                            onClick={() =>
+                              setFormData({ ...formData, paymentMethod: method.id })
+                            }
+                            className={`w-full p-5 rounded-xl border flex items-center gap-4 transition-all duration-200 ${
+                              formData.paymentMethod === method.id
+                                ? "bg-emerald-500/20 border-emerald-500/50"
+                                : "bg-white/5 border-white/10 hover:bg-white/10"
+                            }`}
+                            data-testid={`button-payment-${method.id}`}
+                          >
+                            <div className="w-14 h-14 rounded-xl bg-white/10 flex items-center justify-center overflow-hidden">
+                              {method.icon ? (
+                                <img src={method.icon} alt={method.name} className="w-full h-full object-cover" />
+                              ) : (
+                                <IconComponent className={`w-7 h-7 ${iconColor}`} />
+                              )}
                             </div>
-                          )}
-                        </button>
-                      ))}
+                            <div className="text-left flex-1">
+                              <span className="text-white font-semibold block">{method.name}</span>
+                              <span className="text-white/50 text-sm">{method.description}</span>
+                            </div>
+                            {formData.paymentMethod === method.id && (
+                              <div className="ml-auto">
+                                <Check className="w-5 h-5 text-emerald-400" />
+                              </div>
+                            )}
+                          </button>
+                        );
+                      })}
                     </div>
 
                     {errors.paymentMethod && (

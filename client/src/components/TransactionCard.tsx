@@ -3,14 +3,15 @@ import { motion } from "framer-motion";
 import { CreditCard, Wallet, Bitcoin, DollarSign, Clock } from "lucide-react";
 import { SiPaypal, SiBitcoin, SiEthereum } from "react-icons/si";
 import { cn } from "@/lib/utils";
-import type { Transaction } from "@shared/schema";
+import type { Transaction, PaymentMethod } from "@shared/schema";
 
 interface TransactionCardProps {
   transaction: Transaction;
   index?: number;
+  paymentMethods?: PaymentMethod[];
 }
 
-const paymentIcons: Record<string, React.ReactNode> = {
+const defaultPaymentIcons: Record<string, React.ReactNode> = {
   paypal: <SiPaypal className="w-5 h-5 text-blue-400" />,
   card: <CreditCard className="w-5 h-5 text-purple-400" />,
   bitcoin: <SiBitcoin className="w-5 h-5 text-orange-400" />,
@@ -52,10 +53,17 @@ function formatTimeAgo(date: Date | string | null): string {
 }
 
 export const TransactionCard = forwardRef<HTMLDivElement, TransactionCardProps>(
-  function TransactionCard({ transaction, index = 0 }, ref) {
-    const icon = paymentIcons[transaction.paymentMethod.toLowerCase()] || 
-                 paymentIcons.crypto || 
-                 <DollarSign className="w-5 h-5 text-emerald-400" />;
+  function TransactionCard({ transaction, index = 0, paymentMethods = [] }, ref) {
+    const paymentKey = transaction.paymentMethod.toLowerCase();
+    const customPaymentMethod = paymentMethods.find(pm => pm.key === paymentKey);
+    
+    const icon = customPaymentMethod?.icon ? (
+      <img src={customPaymentMethod.icon} alt={customPaymentMethod.name} className="w-5 h-5 object-cover rounded" />
+    ) : (
+      defaultPaymentIcons[paymentKey] || 
+      defaultPaymentIcons.crypto || 
+      <DollarSign className="w-5 h-5 text-emerald-400" />
+    );
 
     return (
       <motion.div

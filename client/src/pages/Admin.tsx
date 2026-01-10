@@ -23,14 +23,16 @@ import { GlassCard, GlassButton, GlassInput, GlassPill, GlassModal, PrismaticBac
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
-import type { Transaction, Crypto, Setting } from "@shared/schema";
+import type { Transaction, Crypto, Setting, PaymentMethod } from "@shared/schema";
+import { CreditCard } from "lucide-react";
 
-type Tab = "dashboard" | "transactions" | "cryptos" | "settings";
+type Tab = "dashboard" | "transactions" | "cryptos" | "payments" | "settings";
 
 const tabs = [
   { id: "dashboard" as Tab, label: "Dashboard", icon: LayoutDashboard },
   { id: "transactions" as Tab, label: "Transactions", icon: Activity },
   { id: "cryptos" as Tab, label: "Cryptos", icon: Coins },
+  { id: "payments" as Tab, label: "Payments", icon: CreditCard },
   { id: "settings" as Tab, label: "Settings", icon: Settings },
 ];
 
@@ -59,6 +61,9 @@ export default function Admin() {
   const [isCryptoModalOpen, setIsCryptoModalOpen] = useState(false);
   const [editingCrypto, setEditingCrypto] = useState<Crypto | null>(null);
   const [newCrypto, setNewCrypto] = useState({ name: "", symbol: "", walletAddress: "", icon: "" });
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [editingPayment, setEditingPayment] = useState<PaymentMethod | null>(null);
+  const [newPayment, setNewPayment] = useState({ name: "", key: "", icon: "", description: "" });
 
   const { data: transactions = [], isLoading: transactionsLoading } = useQuery<Transaction[]>({
     queryKey: ["/api/transactions"],
@@ -72,6 +77,11 @@ export default function Admin() {
 
   const { data: settings = [] } = useQuery<Setting[]>({
     queryKey: ["/api/settings"],
+    enabled: isAuthenticated,
+  });
+
+  const { data: paymentMethods = [], isLoading: paymentsLoading } = useQuery<PaymentMethod[]>({
+    queryKey: ["/api/payment-methods"],
     enabled: isAuthenticated,
   });
 
@@ -131,6 +141,44 @@ export default function Admin() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/cryptos"] });
       toast({ title: "Crypto deleted successfully" });
+    },
+  });
+
+  const createPaymentMethod = useMutation({
+    mutationFn: async (data: typeof newPayment) => {
+      const res = await apiRequest("POST", "/api/payment-methods", data);
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/payment-methods"] });
+      setIsPaymentModalOpen(false);
+      setEditingPayment(null);
+      setNewPayment({ name: "", key: "", icon: "", description: "" });
+      toast({ title: "Payment method added successfully" });
+    },
+  });
+
+  const updatePaymentMethod = useMutation({
+    mutationFn: async (data: Partial<PaymentMethod> & { id: string }) => {
+      const res = await apiRequest("PATCH", `/api/payment-methods/${data.id}`, data);
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/payment-methods"] });
+      setIsPaymentModalOpen(false);
+      setEditingPayment(null);
+      setNewPayment({ name: "", key: "", icon: "", description: "" });
+      toast({ title: "Payment method updated successfully" });
+    },
+  });
+
+  const deletePaymentMethod = useMutation({
+    mutationFn: async (id: string) => {
+      await apiRequest("DELETE", `/api/payment-methods/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/payment-methods"] });
+      toast({ title: "Payment method deleted successfully" });
     },
   });
 
@@ -564,6 +612,106 @@ export default function Admin() {
                 </motion.div>
               )}
 
+              {activeTab === "payments" && (
+                <motion.div
+                  key="payments"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <GlassCard className="p-6" hover={false}>
+                    <div className="flex items-center justify-between mb-6">
+                      <h3 className="text-lg font-semibold text-white">Payment Methods</h3>
+                      <GlassButton
+                        variant="primary"
+                        size="sm"
+                        onClick={() => {
+                          setEditingPayment(null);
+                          setNewPayment({ name: "", key: "", icon: "", description: "" });
+                          setIsPaymentModalOpen(true);
+                        }}
+                        data-testid="button-add-payment"
+                      >
+                        <Plus className="w-4 h-4" />
+                        Add Payment
+                      </GlassButton>
+                    </div>
+
+                    {paymentsLoading ? (
+                      <div className="space-y-3">
+                        {[1, 2, 3].map((i) => (
+                          <div key={i} className="h-20 rounded-lg bg-white/5 animate-pulse" />
+                        ))}
+                      </div>
+                    ) : paymentMethods.length === 0 ? (
+                      <div className="text-center py-12">
+                        <CreditCard className="w-12 h-12 text-white/20 mx-auto mb-3" />
+                        <p className="text-white/50">No payment methods yet</p>
+                        <p className="text-white/30 text-sm mt-1">Add your first payment method above</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        {paymentMethods.map((pm) => (
+                          <div
+                            key={pm.id}
+                            className="flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/10"
+                          >
+                            <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                              {pm.icon ? (
+                                <img src={pm.icon} alt={pm.name} className="w-full h-full object-cover" />
+                              ) : (
+                                <CreditCard className="w-6 h-6 text-white/50" />
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2">
+                                <span className="font-semibold text-white">{pm.name}</span>
+                                <span className="text-white/40 text-xs">({pm.key})</span>
+                              </div>
+                              {pm.description && (
+                                <p className="text-white/50 text-sm">{pm.description}</p>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <GlassButton
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => {
+                                  setEditingPayment(pm);
+                                  setNewPayment({
+                                    name: pm.name,
+                                    key: pm.key,
+                                    icon: pm.icon || "",
+                                    description: pm.description || ""
+                                  });
+                                  setIsPaymentModalOpen(true);
+                                }}
+                                data-testid={`button-edit-payment-${pm.id}`}
+                              >
+                                <Edit3 className="w-4 h-4" />
+                              </GlassButton>
+                              <GlassButton
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => {
+                                  if (confirm("Delete this payment method?")) {
+                                    deletePaymentMethod.mutate(pm.id);
+                                  }
+                                }}
+                                data-testid={`button-delete-payment-${pm.id}`}
+                              >
+                                <Trash2 className="w-4 h-4 text-red-400" />
+                              </GlassButton>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </GlassCard>
+                </motion.div>
+              )}
+
               {activeTab === "settings" && (
                 <motion.div
                   key="settings"
@@ -810,6 +958,94 @@ export default function Admin() {
               {editingCrypto 
                 ? (updateCrypto.isPending ? "Saving..." : "Save Changes")
                 : (createCrypto.isPending ? "Adding..." : "Add Crypto")
+              }
+            </GlassButton>
+          </div>
+        </div>
+      </GlassModal>
+
+      <GlassModal
+        isOpen={isPaymentModalOpen}
+        onClose={() => {
+          setIsPaymentModalOpen(false);
+          setEditingPayment(null);
+          setNewPayment({ name: "", key: "", icon: "", description: "" });
+        }}
+        title={editingPayment ? "Edit Payment Method" : "Add Payment Method"}
+        size="md"
+      >
+        <div className="space-y-4">
+          <GlassInput
+            label="Name"
+            placeholder="PayPal"
+            value={newPayment.name}
+            onChange={(e) => setNewPayment({ ...newPayment, name: e.target.value })}
+            data-testid="input-payment-name"
+          />
+          <GlassInput
+            label="Key"
+            placeholder="paypal"
+            value={newPayment.key}
+            onChange={(e) => setNewPayment({ ...newPayment, key: e.target.value.toLowerCase() })}
+            data-testid="input-payment-key"
+          />
+          <GlassInput
+            label="Description (optional)"
+            placeholder="Fast & secure"
+            value={newPayment.description}
+            onChange={(e) => setNewPayment({ ...newPayment, description: e.target.value })}
+            data-testid="input-payment-description"
+          />
+          <GlassInput
+            label="Icon URL"
+            placeholder="https://example.com/paypal-icon.png"
+            value={newPayment.icon}
+            onChange={(e) => setNewPayment({ ...newPayment, icon: e.target.value })}
+            data-testid="input-payment-icon"
+          />
+          {newPayment.icon && (
+            <div className="flex items-center gap-3 p-3 rounded-lg bg-white/5">
+              <div className="w-10 h-10 rounded-lg overflow-hidden bg-white/10">
+                <img src={newPayment.icon} alt="Icon preview" className="w-full h-full object-cover" />
+              </div>
+              <span className="text-white/50 text-sm">Icon preview</span>
+            </div>
+          )}
+
+          <div className="flex gap-3 pt-4">
+            <GlassButton
+              variant="ghost"
+              className="flex-1"
+              onClick={() => {
+                setIsPaymentModalOpen(false);
+                setEditingPayment(null);
+                setNewPayment({ name: "", key: "", icon: "", description: "" });
+              }}
+            >
+              Cancel
+            </GlassButton>
+            <GlassButton
+              variant="primary"
+              className="flex-1"
+              onClick={() => {
+                if (editingPayment) {
+                  updatePaymentMethod.mutate({
+                    id: editingPayment.id,
+                    name: newPayment.name,
+                    key: newPayment.key,
+                    icon: newPayment.icon || null,
+                    description: newPayment.description || null,
+                  });
+                } else {
+                  createPaymentMethod.mutate(newPayment);
+                }
+              }}
+              disabled={(editingPayment ? updatePaymentMethod.isPending : createPaymentMethod.isPending) || !newPayment.name || !newPayment.key}
+              data-testid="button-save-payment"
+            >
+              {editingPayment 
+                ? (updatePaymentMethod.isPending ? "Saving..." : "Save Changes")
+                : (createPaymentMethod.isPending ? "Adding..." : "Add Payment")
               }
             </GlassButton>
           </div>

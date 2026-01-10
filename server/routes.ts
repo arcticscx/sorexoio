@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { WebSocketServer, WebSocket } from "ws";
 import { storage } from "./storage";
-import { insertTransactionSchema, insertCryptoSchema, insertCurrencySchema } from "@shared/schema";
+import { insertTransactionSchema, insertCryptoSchema, insertCurrencySchema, insertPaymentMethodSchema } from "@shared/schema";
 import { z } from "zod";
 
 const clients = new Set<WebSocket>();
@@ -196,6 +196,52 @@ export async function registerRoutes(
     }
   });
 
+  app.get("/api/payment-methods", async (_req, res) => {
+    try {
+      const methods = await storage.getPaymentMethods();
+      res.json(methods);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch payment methods" });
+    }
+  });
+
+  app.post("/api/payment-methods", async (req, res) => {
+    try {
+      const data = insertPaymentMethodSchema.parse(req.body);
+      const method = await storage.createPaymentMethod(data);
+      res.status(201).json(method);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: "Invalid payment method data", details: error.errors });
+      }
+      res.status(500).json({ error: "Failed to create payment method" });
+    }
+  });
+
+  app.patch("/api/payment-methods/:id", async (req, res) => {
+    try {
+      const method = await storage.updatePaymentMethod(req.params.id, req.body);
+      if (!method) {
+        return res.status(404).json({ error: "Payment method not found" });
+      }
+      res.json(method);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update payment method" });
+    }
+  });
+
+  app.delete("/api/payment-methods/:id", async (req, res) => {
+    try {
+      const deleted = await storage.deletePaymentMethod(req.params.id);
+      if (!deleted) {
+        return res.status(404).json({ error: "Payment method not found" });
+      }
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete payment method" });
+    }
+  });
+
   app.post("/api/seed", async (_req, res) => {
     try {
       const paymentMethods = ["paypal", "card", "bitcoin", "ethereum"];
@@ -242,6 +288,14 @@ export async function registerRoutes(
         await storage.createCrypto({ name: "Ethereum", symbol: "ETH", isActive: true, sortOrder: 2 });
         await storage.createCrypto({ name: "Tether", symbol: "USDT", isActive: true, sortOrder: 3 });
         await storage.createCrypto({ name: "Solana", symbol: "SOL", isActive: true, sortOrder: 4 });
+      }
+
+      const existingPaymentMethods = await storage.getPaymentMethods();
+      if (existingPaymentMethods.length === 0) {
+        await storage.createPaymentMethod({ name: "Card", key: "card", description: "0 KYC", isActive: true, sortOrder: 1 });
+        await storage.createPaymentMethod({ name: "PayPal", key: "paypal", description: "Fast & secure", isActive: true, sortOrder: 2 });
+        await storage.createPaymentMethod({ name: "Bitcoin", key: "bitcoin", description: "Crypto payment", isActive: true, sortOrder: 3 });
+        await storage.createPaymentMethod({ name: "Ethereum", key: "ethereum", description: "ETH payment", isActive: true, sortOrder: 4 });
       }
 
       res.json({ message: "Seed data created successfully" });
