@@ -203,7 +203,19 @@ export async function registerRoutes(
       const cryptoTypes = ["BTC", "ETH", "USDT", "SOL"];
       
       for (let i = 0; i < 15; i++) {
-        const amount = Math.floor(Math.random() * 5000) + 50;
+        // Most people exchange in even numbers (ending in 0 or 5)
+        let amount;
+        const randomType = Math.random();
+        if (randomType > 0.4) {
+          // 60% chance for "even" looking numbers (multiples of 10, 50, 100)
+          const bases = [10, 50, 100, 250, 500];
+          const base = bases[Math.floor(Math.random() * bases.length)];
+          amount = (Math.floor(Math.random() * (5000 / base)) + 1) * base;
+        } else {
+          // 40% chance for more random looking numbers
+          amount = Math.floor(Math.random() * 5000) + 50;
+        }
+
         const cryptoType = cryptoTypes[Math.floor(Math.random() * cryptoTypes.length)];
         const rate = cryptoType === "BTC" ? 50000 : cryptoType === "ETH" ? 3000 : 1;
         
