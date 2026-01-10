@@ -49,6 +49,80 @@ export function PrismaticBackground({
     >
       <div className="absolute inset-0 prismatic-gradient" />
       
+      {/* Ultra-soft depth layers (Apple-style) - 6-10% opacity with slow drift */}
+      <motion.div
+        className="absolute rounded-full blur-3xl"
+        style={{
+          width: "80vw",
+          height: "80vw",
+          maxWidth: "1200px",
+          maxHeight: "1200px",
+          background: "radial-gradient(circle, hsl(162 85% 40%), transparent 60%)",
+          top: "-20%",
+          left: "-15%",
+          opacity: 0.08,
+        }}
+        animate={{
+          x: [0, 40, -20, 0],
+          y: [0, -30, 20, 0],
+          scale: [1, 1.05, 0.98, 1],
+        }}
+        transition={{
+          duration: 25,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+      />
+
+      <motion.div
+        className="absolute rounded-full blur-3xl"
+        style={{
+          width: "70vw",
+          height: "70vw",
+          maxWidth: "1000px",
+          maxHeight: "1000px",
+          background: "radial-gradient(circle, hsl(174 72% 45%), transparent 55%)",
+          top: "30%",
+          left: "25%",
+          opacity: 0.07,
+        }}
+        animate={{
+          x: [-30, 50, -20, -30],
+          y: [20, -40, 30, 20],
+          scale: [1, 0.95, 1.03, 1],
+        }}
+        transition={{
+          duration: 30,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+      />
+
+      <motion.div
+        className="absolute rounded-full blur-3xl"
+        style={{
+          width: "60vw",
+          height: "60vw",
+          maxWidth: "900px",
+          maxHeight: "900px",
+          background: "radial-gradient(circle, hsl(84 65% 50%), transparent 55%)",
+          bottom: "-10%",
+          right: "-10%",
+          opacity: 0.06,
+        }}
+        animate={{
+          x: [20, -40, 30, 20],
+          y: [-20, 40, -30, -20],
+          scale: [1, 1.04, 0.97, 1],
+        }}
+        transition={{
+          duration: 35,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+      />
+
+      {/* Primary gradient blobs with parallax */}
       <motion.div
         className="gradient-blob animate-blob-drift"
         style={{
