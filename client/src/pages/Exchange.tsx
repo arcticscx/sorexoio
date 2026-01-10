@@ -3,7 +3,7 @@ import { Link, useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { ArrowRight, ArrowLeft, Check, Wallet, CreditCard, Mail, ArrowDownUp, Sparkles } from "lucide-react";
-import { SiPaypal, SiBitcoin, SiEthereum } from "react-icons/si";
+import { SiPaypal } from "react-icons/si";
 import { GlassCard, GlassButton, GlassInput, PrismaticBackground, GlassNavbar } from "@/components/glass";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -12,10 +12,8 @@ import type { Crypto } from "@shared/schema";
 type Step = "amount" | "payment" | "details" | "confirm" | "success";
 
 const paymentMethods = [
-  { id: "paypal", name: "PayPal", icon: SiPaypal, color: "text-blue-400" },
-  { id: "card", name: "Card", icon: CreditCard, color: "text-purple-400" },
-  { id: "bitcoin", name: "Bitcoin", icon: SiBitcoin, color: "text-orange-400" },
-  { id: "ethereum", name: "Ethereum", icon: SiEthereum, color: "text-indigo-400" },
+  { id: "card", name: "Card (0 KYC)", icon: CreditCard, color: "text-purple-400", description: "No verification required" },
+  { id: "paypal", name: "PayPal", icon: SiPaypal, color: "text-blue-400", description: "Fast & secure checkout" },
 ];
 
 const defaultCryptos = [
@@ -309,17 +307,20 @@ export default function Exchange() {
                           onClick={() =>
                             setFormData({ ...formData, paymentMethod: method.id })
                           }
-                          className={`w-full p-4 rounded-xl border flex items-center gap-4 transition-all duration-200 ${
+                          className={`w-full p-5 rounded-xl border flex items-center gap-4 transition-all duration-200 ${
                             formData.paymentMethod === method.id
                               ? "bg-emerald-500/20 border-emerald-500/50"
                               : "bg-white/5 border-white/10 hover:bg-white/10"
                           }`}
                           data-testid={`button-payment-${method.id}`}
                         >
-                          <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center">
-                            <method.icon className={`w-6 h-6 ${method.color}`} />
+                          <div className="w-14 h-14 rounded-xl bg-white/10 flex items-center justify-center">
+                            <method.icon className={`w-7 h-7 ${method.color}`} />
                           </div>
-                          <span className="text-white font-medium">{method.name}</span>
+                          <div className="text-left flex-1">
+                            <span className="text-white font-semibold block">{method.name}</span>
+                            <span className="text-white/50 text-sm">{method.description}</span>
+                          </div>
                           {formData.paymentMethod === method.id && (
                             <div className="ml-auto">
                               <Check className="w-5 h-5 text-emerald-400" />

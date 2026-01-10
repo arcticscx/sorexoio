@@ -58,7 +58,7 @@ export default function Admin() {
   const [isTransactionModalOpen, setIsTransactionModalOpen] = useState(false);
   const [isCryptoModalOpen, setIsCryptoModalOpen] = useState(false);
   const [editingCrypto, setEditingCrypto] = useState<Crypto | null>(null);
-  const [newCrypto, setNewCrypto] = useState({ name: "", symbol: "", walletAddress: "" });
+  const [newCrypto, setNewCrypto] = useState({ name: "", symbol: "", walletAddress: "", icon: "" });
 
   const { data: transactions = [], isLoading: transactionsLoading } = useQuery<Transaction[]>({
     queryKey: ["/api/transactions"],
@@ -105,8 +105,22 @@ export default function Admin() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/cryptos"] });
       setIsCryptoModalOpen(false);
-      setNewCrypto({ name: "", symbol: "", walletAddress: "" });
+      setEditingCrypto(null);
+      setNewCrypto({ name: "", symbol: "", walletAddress: "", icon: "" });
       toast({ title: "Crypto added successfully" });
+    },
+  });
+
+  const updateCrypto = useMutation({
+    mutationFn: async (data: Partial<Crypto> & { id: string }) => {
+      const res = await apiRequest("PATCH", `/api/cryptos/${data.id}`, data);
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/cryptos"] });
+      setIsCryptoModalOpen(false);
+      setEditingCrypto(null);
+      toast({ title: "Crypto updated successfully" });
     },
   });
 
@@ -461,7 +475,11 @@ export default function Admin() {
                       <GlassButton
                         variant="primary"
                         size="sm"
-                        onClick={() => setIsCryptoModalOpen(true)}
+                        onClick={() => {
+                          setEditingCrypto(null);
+                          setNewCrypto({ name: "", symbol: "", walletAddress: "", icon: "" });
+                          setIsCryptoModalOpen(true);
+                        }}
                         data-testid="button-add-crypto"
                       >
                         <Plus className="w-4 h-4" />
@@ -485,11 +503,15 @@ export default function Admin() {
                         {cryptos.map((c) => (
                           <div
                             key={c.id}
-                            className="flex items-center justify-between p-4 rounded-xl bg-white/5"
+                            className="flex items-center justify-between p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-colors"
                           >
                             <div className="flex items-center gap-4">
-                              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500/30 to-teal-500/30 flex items-center justify-center">
-                                <span className="font-bold text-white text-sm">{c.symbol.slice(0, 2)}</span>
+                              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-emerald-500/30 to-teal-500/30 flex items-center justify-center overflow-hidden">
+                                {c.icon ? (
+                                  <img src={c.icon} alt={c.name} className="w-full h-full object-cover" />
+                                ) : (
+                                  <span className="font-bold text-white text-sm">{c.symbol.slice(0, 2)}</span>
+                                )}
                               </div>
                               <div>
                                 <div className="text-white font-medium">{c.name}</div>
@@ -504,6 +526,23 @@ export default function Admin() {
                               )}>
                                 {c.isActive ? "Active" : "Inactive"}
                               </div>
+                              <GlassButton
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => {
+                                  setEditingCrypto(c);
+                                  setNewCrypto({
+                                    name: c.name,
+                                    symbol: c.symbol,
+                                    walletAddress: c.walletAddress || "",
+                                    icon: c.icon || ""
+                                  });
+                                  setIsCryptoModalOpen(true);
+                                }}
+                                data-testid={`button-edit-crypto-${c.id}`}
+                              >
+                                <Edit3 className="w-4 h-4" />
+                              </GlassButton>
                               <GlassButton
                                 variant="ghost"
                                 size="sm"
@@ -691,8 +730,12 @@ export default function Admin() {
 
       <GlassModal
         isOpen={isCryptoModalOpen}
-        onClose={() => setIsCryptoModalOpen(false)}
-        title="Add Cryptocurrency"
+        onClose={() => {
+          setIsCryptoModalOpen(false);
+          setEditingCrypto(null);
+          setNewCrypto({ name: "", symbol: "", walletAddress: "", icon: "" });
+        }}
+        title={editingCrypto ? "Edit Cryptocurrency" : "Add Cryptocurrency"}
         size="md"
       >
         <div className="space-y-4">
@@ -711,6 +754,21 @@ export default function Admin() {
             data-testid="input-crypto-symbol"
           />
           <GlassInput
+            label="Icon URL"
+            placeholder="https://example.com/bitcoin-icon.png"
+            value={newCrypto.icon}
+            onChange={(e) => setNewCrypto({ ...newCrypto, icon: e.target.value })}
+            data-testid="input-crypto-icon"
+          />
+          {newCrypto.icon && (
+            <div className="flex items-center gap-3 p-3 rounded-lg bg-white/5">
+              <div className="w-10 h-10 rounded-full overflow-hidden bg-white/10">
+                <img src={newCrypto.icon} alt="Icon preview" className="w-full h-full object-cover" />
+              </div>
+              <span className="text-white/50 text-sm">Icon preview</span>
+            </div>
+          )}
+          <GlassInput
             label="Wallet Address (for receiving)"
             placeholder="Enter wallet address"
             value={newCrypto.walletAddress}
@@ -722,18 +780,37 @@ export default function Admin() {
             <GlassButton
               variant="ghost"
               className="flex-1"
-              onClick={() => setIsCryptoModalOpen(false)}
+              onClick={() => {
+                setIsCryptoModalOpen(false);
+                setEditingCrypto(null);
+                setNewCrypto({ name: "", symbol: "", walletAddress: "", icon: "" });
+              }}
             >
               Cancel
             </GlassButton>
             <GlassButton
               variant="primary"
               className="flex-1"
-              onClick={() => createCrypto.mutate(newCrypto)}
-              disabled={createCrypto.isPending || !newCrypto.name || !newCrypto.symbol}
+              onClick={() => {
+                if (editingCrypto) {
+                  updateCrypto.mutate({
+                    id: editingCrypto.id,
+                    name: newCrypto.name,
+                    symbol: newCrypto.symbol,
+                    walletAddress: newCrypto.walletAddress || null,
+                    icon: newCrypto.icon || null,
+                  });
+                } else {
+                  createCrypto.mutate(newCrypto);
+                }
+              }}
+              disabled={(editingCrypto ? updateCrypto.isPending : createCrypto.isPending) || !newCrypto.name || !newCrypto.symbol}
               data-testid="button-save-crypto"
             >
-              {createCrypto.isPending ? "Adding..." : "Add Crypto"}
+              {editingCrypto 
+                ? (updateCrypto.isPending ? "Saving..." : "Save Changes")
+                : (createCrypto.isPending ? "Adding..." : "Add Crypto")
+              }
             </GlassButton>
           </div>
         </div>

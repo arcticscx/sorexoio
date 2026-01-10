@@ -11,137 +11,171 @@ interface NavLink {
 
 const navLinks: NavLink[] = [
   { href: "/", label: "Home" },
-  { href: "/exchange", label: "Exchange" },
+  { href: "/exchange", label: "Buy Crypto" },
 ];
 
 export function GlassNavbar() {
   const [location] = useLocation();
-  const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
     };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [isMobileMenuOpen]);
 
   return (
-    <nav
-      className={cn(
-        "glass-navbar transition-all duration-300",
-        isScrolled && "shadow-lg"
-      )}
-      data-testid="navbar"
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          <Link
-            href="/"
-            className="flex items-center gap-2"
-            data-testid="link-logo"
-          >
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-glow">
-              <Sparkles className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-xl font-bold prismatic-text">Prismatic</span>
-          </Link>
+    <>
+      <motion.nav
+        className="fixed top-4 left-1/2 z-50"
+        initial={{ opacity: 0, y: -20, x: "-50%" }}
+        animate={{ opacity: 1, y: 0, x: "-50%" }}
+        transition={{ 
+          duration: 0.6, 
+          ease: [0.23, 1, 0.32, 1],
+          delay: 0.1 
+        }}
+        data-testid="navbar"
+      >
+        <div className="apple-glass-hotbar">
+          <div className="apple-glass-inner">
+            <Link
+              href="/"
+              className="flex items-center gap-2 pr-4 border-r border-white/10"
+              data-testid="link-logo"
+            >
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-glow">
+                <Sparkles className="w-4 h-4 text-white" />
+              </div>
+              <span className="text-base font-semibold prismatic-text hidden sm:block">
+                Prismatic
+              </span>
+            </Link>
 
-          <div className="hidden md:flex items-center gap-1">
+            <div className="hidden md:flex items-center gap-1 px-2">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={cn(
+                    "nav-item-glass",
+                    location === link.href && "nav-item-glass-active"
+                  )}
+                  data-testid={`link-nav-${link.label.toLowerCase().replace(' ', '-')}`}
+                >
+                  {link.label}
+                </Link>
+              ))}
+              <Link
+                href="/admin"
+                className={cn(
+                  "nav-item-glass",
+                  location === "/admin" && "nav-item-glass-active"
+                )}
+                data-testid="link-nav-admin"
+              >
+                Admin
+              </Link>
+            </div>
+
+            <div className="hidden md:block pl-2 border-l border-white/10">
+              <Link
+                href="/exchange"
+                className="get-started-glass"
+                data-testid="button-get-started"
+              >
+                Get Started
+              </Link>
+            </div>
+
+            <button
+              className="md:hidden p-2 rounded-lg text-white/70 hover:text-white hover:bg-white/10 transition-all duration-200"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              data-testid="button-mobile-menu"
+            >
+              {isMobileMenuOpen ? (
+                <X className="w-5 h-5" />
+              ) : (
+                <Menu className="w-5 h-5" />
+              )}
+            </button>
+          </div>
+        </div>
+      </motion.nav>
+
+      <motion.div
+        className={cn(
+          "fixed inset-0 z-40 md:hidden",
+          !isMobileMenuOpen && "pointer-events-none"
+        )}
+        initial={false}
+        animate={{
+          opacity: isMobileMenuOpen ? 1 : 0,
+        }}
+        transition={{ duration: 0.2 }}
+      >
+        <div 
+          className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+        
+        <motion.div
+          className="absolute top-20 left-4 right-4 apple-glass-hotbar"
+          initial={false}
+          animate={{
+            opacity: isMobileMenuOpen ? 1 : 0,
+            y: isMobileMenuOpen ? 0 : -10,
+          }}
+          transition={{ duration: 0.2 }}
+        >
+          <div className="p-4 space-y-2">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  "px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200",
+                  "block px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200",
                   location === link.href
-                    ? "text-white bg-white/10"
-                    : "text-white/60 hover:text-white hover:bg-white/5"
+                    ? "text-white bg-white/15 shadow-inner"
+                    : "text-white/70 hover:text-white hover:bg-white/10"
                 )}
-                data-testid={`link-nav-${link.label.toLowerCase()}`}
+                onClick={() => setIsMobileMenuOpen(false)}
+                data-testid={`link-mobile-${link.label.toLowerCase().replace(' ', '-')}`}
               >
                 {link.label}
               </Link>
             ))}
-          </div>
-
-          <div className="hidden md:flex items-center gap-3">
             <Link
               href="/admin"
-              className="relative inline-flex items-center justify-center font-medium transition-all duration-200 rounded-lg overflow-hidden glass-button text-white px-3 py-1.5 text-sm gap-1.5"
-              data-testid="button-admin"
-            >
-              Admin
-            </Link>
-            <Link
-              href="/exchange"
-              className="relative inline-flex items-center justify-center font-medium transition-all duration-200 rounded-lg overflow-hidden bg-gradient-to-r from-emerald-500 to-teal-500 text-white border border-emerald-400/30 shadow-glow px-3 py-1.5 text-sm gap-1.5"
-              data-testid="button-start-exchange"
-            >
-              Start Exchange
-            </Link>
-          </div>
-
-          <button
-            className="md:hidden p-2 rounded-lg text-white/70 hover:text-white hover:bg-white/10 transition-colors"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            data-testid="button-mobile-menu"
-          >
-            {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
-        </div>
-      </div>
-
-      <motion.div
-        className={cn(
-          "md:hidden overflow-hidden",
-          !isMobileMenuOpen && "pointer-events-none"
-        )}
-        initial={false}
-        animate={{
-          height: isMobileMenuOpen ? "auto" : 0,
-          opacity: isMobileMenuOpen ? 1 : 0,
-        }}
-        transition={{ duration: 0.2 }}
-      >
-        <div className="px-4 pb-4 space-y-2">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
               className={cn(
-                "block px-4 py-3 rounded-lg text-sm font-medium transition-all",
-                location === link.href
-                  ? "text-white bg-white/10"
-                  : "text-white/60 hover:text-white hover:bg-white/5"
+                "block px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200",
+                location === "/admin"
+                  ? "text-white bg-white/15 shadow-inner"
+                  : "text-white/70 hover:text-white hover:bg-white/10"
               )}
               onClick={() => setIsMobileMenuOpen(false)}
-              data-testid={`link-mobile-${link.label.toLowerCase()}`}
-            >
-              {link.label}
-            </Link>
-          ))}
-          <div className="pt-2 space-y-2">
-            <Link
-              href="/admin"
-              className="block w-full text-center glass-button text-white px-4 py-2.5 text-sm rounded-lg"
-              onClick={() => setIsMobileMenuOpen(false)}
-              data-testid="button-mobile-admin"
+              data-testid="link-mobile-admin"
             >
               Admin
             </Link>
-            <Link
-              href="/exchange"
-              className="block w-full text-center bg-gradient-to-r from-emerald-500 to-teal-500 text-white border border-emerald-400/30 shadow-glow px-4 py-2.5 text-sm rounded-lg"
-              onClick={() => setIsMobileMenuOpen(false)}
-              data-testid="button-mobile-exchange"
-            >
-              Start Exchange
-            </Link>
+            <div className="pt-2">
+              <Link
+                href="/exchange"
+                className="block w-full text-center get-started-glass py-3"
+                onClick={() => setIsMobileMenuOpen(false)}
+                data-testid="button-mobile-get-started"
+              >
+                Get Started
+              </Link>
+            </div>
           </div>
-        </div>
+        </motion.div>
       </motion.div>
-    </nav>
+    </>
   );
 }
