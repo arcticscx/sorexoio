@@ -1,10 +1,12 @@
 import { forwardRef } from "react";
 import { motion } from "framer-motion";
-import { CreditCard, Wallet, Bitcoin, DollarSign, Clock } from "lucide-react";
-import { SiPaypal, SiBitcoin, SiEthereum } from "react-icons/si";
+import { Wallet, DollarSign, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CryptoIcon } from "./CryptoIcon";
 import type { Transaction, PaymentMethod } from "@shared/schema";
+
+import cardIcon from "@assets/ARCTIC_1768071339190.png";
+import paypalIcon from "@assets/ARCTIC_1768071353413.png";
 
 interface TransactionCardProps {
   transaction: Transaction;
@@ -12,14 +14,32 @@ interface TransactionCardProps {
   paymentMethods?: PaymentMethod[];
 }
 
-const defaultPaymentIcons: Record<string, React.ReactNode> = {
-  paypal: <SiPaypal className="w-5 h-5 text-blue-400" />,
-  card: <CreditCard className="w-5 h-5 text-purple-400" />,
-  bitcoin: <SiBitcoin className="w-5 h-5 text-orange-400" />,
-  ethereum: <SiEthereum className="w-5 h-5 text-indigo-400" />,
-  crypto: <Bitcoin className="w-5 h-5 text-amber-400" />,
-  bank: <Wallet className="w-5 h-5 text-emerald-400" />,
-};
+function PaymentIcon({ type }: { type: string }) {
+  const key = type.toLowerCase();
+  
+  if (key === "card") {
+    return <img src={cardIcon} alt="Card" className="w-5 h-5 object-contain rounded" />;
+  }
+  if (key === "paypal") {
+    return <img src={paypalIcon} alt="PayPal" className="w-5 h-5 object-contain rounded" />;
+  }
+  
+  const cryptoMap: Record<string, string> = {
+    bitcoin: "BTC",
+    btc: "BTC",
+    ethereum: "ETH",
+    eth: "ETH",
+    crypto: "BTC",
+  };
+  
+  if (cryptoMap[key]) {
+    return <CryptoIcon symbol={cryptoMap[key]} size="md" />;
+  }
+  if (key === "bank") {
+    return <Wallet className="w-5 h-5 text-emerald-400" />;
+  }
+  return <DollarSign className="w-5 h-5 text-emerald-400" />;
+}
 
 const statusStyles: Record<string, string> = {
   pending: "status-pending",
@@ -61,9 +81,7 @@ export const TransactionCard = forwardRef<HTMLDivElement, TransactionCardProps>(
     const icon = customPaymentMethod?.icon ? (
       <img src={customPaymentMethod.icon} alt={customPaymentMethod.name} className="w-5 h-5 object-cover rounded" />
     ) : (
-      defaultPaymentIcons[paymentKey] || 
-      defaultPaymentIcons.crypto || 
-      <DollarSign className="w-5 h-5 text-emerald-400" />
+      <PaymentIcon type={paymentKey} />
     );
 
     return (
