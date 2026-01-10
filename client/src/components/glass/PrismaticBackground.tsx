@@ -6,14 +6,30 @@ interface PrismaticBackgroundProps {
   intensity?: "low" | "medium" | "high";
 }
 
-interface Particle {
-  id: number;
-  x: number;
-  y: number;
-  size: number;
-  duration: number;
-  delay: number;
-  color: string;
+function useDeviceCapabilities() {
+  const [isMobile, setIsMobile] = useState(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  useEffect(() => {
+    const mobileQuery = window.matchMedia("(max-width: 768px), (pointer: coarse)");
+    const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    
+    setIsMobile(mobileQuery.matches);
+    setPrefersReducedMotion(motionQuery.matches);
+
+    const handleMobileChange = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    const handleMotionChange = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
+
+    mobileQuery.addEventListener("change", handleMobileChange);
+    motionQuery.addEventListener("change", handleMotionChange);
+
+    return () => {
+      mobileQuery.removeEventListener("change", handleMobileChange);
+      motionQuery.removeEventListener("change", handleMotionChange);
+    };
+  }, []);
+
+  return { isMobile, prefersReducedMotion };
 }
 
 export function PrismaticBackground({ 
@@ -22,6 +38,9 @@ export function PrismaticBackground({
 }: PrismaticBackgroundProps) {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
+  const { isMobile, prefersReducedMotion } = useDeviceCapabilities();
+
+  const shouldUseSimpleMode = isMobile || prefersReducedMotion;
 
   const parallaxMultiplier = {
     low: 10,
@@ -35,7 +54,7 @@ export function PrismaticBackground({
     high: 0.55,
   }[intensity];
 
-  const particles = useMemo(() => {
+  const allParticles = useMemo(() => {
     const colors = [
       "hsl(162 85% 50%)",
       "hsl(174 72% 55%)",
@@ -55,8 +74,10 @@ export function PrismaticBackground({
     }));
   }, []);
 
+  const particles = shouldUseSimpleMode ? allParticles.slice(0, 5) : allParticles;
+
   useEffect(() => {
-    if (!enableParallax) return;
+    if (!enableParallax || shouldUseSimpleMode) return;
 
     const handleMouseMove = (e: MouseEvent) => {
       if (!containerRef.current) return;
@@ -68,7 +89,9 @@ export function PrismaticBackground({
 
     window.addEventListener("mousemove", handleMouseMove);
     return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, [enableParallax]);
+  }, [enableParallax, shouldUseSimpleMode]);
+
+  const effectiveParallax = enableParallax && !shouldUseSimpleMode;
 
   return (
     <div 
@@ -79,20 +102,22 @@ export function PrismaticBackground({
     >
       <div className="absolute inset-0 prismatic-gradient" />
       
-      {/* Ultra-soft depth layers (Apple-style) - 6-10% opacity with slow drift */}
+      {/* Ultra-soft depth layers - static on mobile/reduced-motion, animated on desktop */}
       <motion.div
-        className="absolute rounded-full blur-3xl"
+        className="absolute rounded-full"
         style={{
-          width: "80vw",
-          height: "80vw",
-          maxWidth: "1200px",
-          maxHeight: "1200px",
+          width: shouldUseSimpleMode ? "60vw" : "80vw",
+          height: shouldUseSimpleMode ? "60vw" : "80vw",
+          maxWidth: shouldUseSimpleMode ? "600px" : "1200px",
+          maxHeight: shouldUseSimpleMode ? "600px" : "1200px",
           background: "radial-gradient(circle, hsl(162 85% 40%), transparent 60%)",
           top: "-20%",
           left: "-15%",
           opacity: 0.08,
+          filter: shouldUseSimpleMode ? "blur(40px)" : "blur(64px)",
+          willChange: shouldUseSimpleMode ? "auto" : "transform",
         }}
-        animate={{
+        animate={shouldUseSimpleMode ? {} : {
           x: [0, 40, -20, 0],
           y: [0, -30, 20, 0],
           scale: [1, 1.05, 0.98, 1],
@@ -105,18 +130,20 @@ export function PrismaticBackground({
       />
 
       <motion.div
-        className="absolute rounded-full blur-3xl"
+        className="absolute rounded-full"
         style={{
-          width: "70vw",
-          height: "70vw",
-          maxWidth: "1000px",
-          maxHeight: "1000px",
+          width: shouldUseSimpleMode ? "50vw" : "70vw",
+          height: shouldUseSimpleMode ? "50vw" : "70vw",
+          maxWidth: shouldUseSimpleMode ? "500px" : "1000px",
+          maxHeight: shouldUseSimpleMode ? "500px" : "1000px",
           background: "radial-gradient(circle, hsl(174 72% 45%), transparent 55%)",
           top: "30%",
           left: "25%",
           opacity: 0.07,
+          filter: shouldUseSimpleMode ? "blur(30px)" : "blur(64px)",
+          willChange: shouldUseSimpleMode ? "auto" : "transform",
         }}
-        animate={{
+        animate={shouldUseSimpleMode ? {} : {
           x: [-30, 50, -20, -30],
           y: [20, -40, 30, 20],
           scale: [1, 0.95, 1.03, 1],
@@ -129,18 +156,20 @@ export function PrismaticBackground({
       />
 
       <motion.div
-        className="absolute rounded-full blur-3xl"
+        className="absolute rounded-full"
         style={{
-          width: "60vw",
-          height: "60vw",
-          maxWidth: "900px",
-          maxHeight: "900px",
+          width: shouldUseSimpleMode ? "40vw" : "60vw",
+          height: shouldUseSimpleMode ? "40vw" : "60vw",
+          maxWidth: shouldUseSimpleMode ? "400px" : "900px",
+          maxHeight: shouldUseSimpleMode ? "400px" : "900px",
           background: "radial-gradient(circle, hsl(84 65% 50%), transparent 55%)",
           bottom: "-10%",
           right: "-10%",
           opacity: 0.06,
+          filter: shouldUseSimpleMode ? "blur(30px)" : "blur(64px)",
+          willChange: shouldUseSimpleMode ? "auto" : "transform",
         }}
-        animate={{
+        animate={shouldUseSimpleMode ? {} : {
           x: [20, -40, 30, 20],
           y: [-20, 40, -30, -20],
           scale: [1, 1.04, 0.97, 1],
@@ -152,54 +181,21 @@ export function PrismaticBackground({
         }}
       />
 
-      {/* Primary gradient blobs with parallax */}
+      {/* Primary gradient blobs with parallax - static on mobile */}
       <motion.div
-        className="gradient-blob animate-blob-drift"
+        className="gradient-blob"
         style={{
-          width: "60vw",
-          height: "60vw",
-          maxWidth: "800px",
-          maxHeight: "800px",
+          width: shouldUseSimpleMode ? "50vw" : "60vw",
+          height: shouldUseSimpleMode ? "50vw" : "60vw",
+          maxWidth: shouldUseSimpleMode ? "400px" : "800px",
+          maxHeight: shouldUseSimpleMode ? "400px" : "800px",
           background: "radial-gradient(circle, hsl(162 85% 35% / 0.6), transparent 70%)",
           top: "10%",
           left: "5%",
           opacity: blobOpacity,
-          x: enableParallax ? mousePosition.x * parallaxMultiplier : 0,
-          y: enableParallax ? mousePosition.y * parallaxMultiplier : 0,
-        }}
-        transition={{ type: "spring", stiffness: 50, damping: 30 }}
-      />
-
-      <motion.div
-        className="gradient-blob animate-blob-drift-2"
-        style={{
-          width: "50vw",
-          height: "50vw",
-          maxWidth: "700px",
-          maxHeight: "700px",
-          background: "radial-gradient(circle, hsl(174 72% 40% / 0.5), transparent 70%)",
-          top: "40%",
-          right: "10%",
-          opacity: blobOpacity,
-          x: enableParallax ? -mousePosition.x * parallaxMultiplier * 0.8 : 0,
-          y: enableParallax ? -mousePosition.y * parallaxMultiplier * 0.8 : 0,
-        }}
-        transition={{ type: "spring", stiffness: 50, damping: 30 }}
-      />
-
-      <motion.div
-        className="gradient-blob animate-blob-drift-3"
-        style={{
-          width: "45vw",
-          height: "45vw",
-          maxWidth: "600px",
-          maxHeight: "600px",
-          background: "radial-gradient(circle, hsl(84 65% 45% / 0.4), transparent 70%)",
-          bottom: "5%",
-          left: "25%",
-          opacity: blobOpacity * 0.8,
-          x: enableParallax ? mousePosition.x * parallaxMultiplier * 0.6 : 0,
-          y: enableParallax ? -mousePosition.y * parallaxMultiplier * 0.6 : 0,
+          x: effectiveParallax ? mousePosition.x * parallaxMultiplier : 0,
+          y: effectiveParallax ? mousePosition.y * parallaxMultiplier : 0,
+          willChange: effectiveParallax ? "transform" : "auto",
         }}
         transition={{ type: "spring", stiffness: 50, damping: 30 }}
       />
@@ -207,28 +203,66 @@ export function PrismaticBackground({
       <motion.div
         className="gradient-blob"
         style={{
-          width: "30vw",
-          height: "30vw",
-          maxWidth: "400px",
-          maxHeight: "400px",
+          width: shouldUseSimpleMode ? "40vw" : "50vw",
+          height: shouldUseSimpleMode ? "40vw" : "50vw",
+          maxWidth: shouldUseSimpleMode ? "350px" : "700px",
+          maxHeight: shouldUseSimpleMode ? "350px" : "700px",
+          background: "radial-gradient(circle, hsl(174 72% 40% / 0.5), transparent 70%)",
+          top: "40%",
+          right: "10%",
+          opacity: blobOpacity,
+          x: effectiveParallax ? -mousePosition.x * parallaxMultiplier * 0.8 : 0,
+          y: effectiveParallax ? -mousePosition.y * parallaxMultiplier * 0.8 : 0,
+          willChange: effectiveParallax ? "transform" : "auto",
+        }}
+        transition={{ type: "spring", stiffness: 50, damping: 30 }}
+      />
+
+      <motion.div
+        className="gradient-blob"
+        style={{
+          width: shouldUseSimpleMode ? "35vw" : "45vw",
+          height: shouldUseSimpleMode ? "35vw" : "45vw",
+          maxWidth: shouldUseSimpleMode ? "300px" : "600px",
+          maxHeight: shouldUseSimpleMode ? "300px" : "600px",
+          background: "radial-gradient(circle, hsl(84 65% 45% / 0.4), transparent 70%)",
+          bottom: "5%",
+          left: "25%",
+          opacity: blobOpacity * 0.8,
+          x: effectiveParallax ? mousePosition.x * parallaxMultiplier * 0.6 : 0,
+          y: effectiveParallax ? -mousePosition.y * parallaxMultiplier * 0.6 : 0,
+          willChange: effectiveParallax ? "transform" : "auto",
+        }}
+        transition={{ type: "spring", stiffness: 50, damping: 30 }}
+      />
+
+      {/* Pulsing accent blob - slower on mobile */}
+      <motion.div
+        className="gradient-blob"
+        style={{
+          width: shouldUseSimpleMode ? "20vw" : "30vw",
+          height: shouldUseSimpleMode ? "20vw" : "30vw",
+          maxWidth: shouldUseSimpleMode ? "200px" : "400px",
+          maxHeight: shouldUseSimpleMode ? "200px" : "400px",
           background: "radial-gradient(circle, hsl(186 80% 42% / 0.35), transparent 70%)",
           top: "60%",
           left: "60%",
           opacity: blobOpacity * 0.6,
+          willChange: prefersReducedMotion ? "auto" : "transform, opacity",
         }}
-        animate={{
+        animate={prefersReducedMotion ? {} : {
           scale: [1, 1.1, 1],
           opacity: [blobOpacity * 0.6, blobOpacity * 0.8, blobOpacity * 0.6],
         }}
         transition={{
-          duration: 8,
+          duration: shouldUseSimpleMode ? 12 : 8,
           repeat: Infinity,
           ease: "easeInOut",
         }}
       />
 
-      {/* Floating particles for lively feel */}
-      {particles.map((particle) => (
+      {/* Floating particles - reduced count on mobile, no glow effect */}
+      {!prefersReducedMotion && particles.map((particle) => (
         <motion.div
           key={particle.id}
           className="absolute rounded-full"
@@ -238,8 +272,7 @@ export function PrismaticBackground({
             background: particle.color,
             left: `${particle.x}%`,
             top: `${particle.y}%`,
-            filter: "blur(1px)",
-            boxShadow: `0 0 ${particle.size * 2}px ${particle.color}`,
+            willChange: "transform, opacity",
           }}
           animate={{
             y: [0, particle.driftY, 0],
@@ -256,95 +289,107 @@ export function PrismaticBackground({
         />
       ))}
 
-      {/* Shimmer light rays */}
-      <motion.div
-        className="absolute"
-        style={{
-          width: "200%",
-          height: "2px",
-          background: "linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.3), transparent)",
-          top: "30%",
-          left: "-50%",
-          transform: "rotate(-15deg)",
-        }}
-        animate={{
-          x: ["-100%", "100%"],
-          opacity: [0, 0.5, 0],
-        }}
-        transition={{
-          duration: 8,
-          repeat: Infinity,
-          ease: "easeInOut",
-          repeatDelay: 4,
-        }}
-      />
+      {/* Shimmer light rays - only on desktop */}
+      {!shouldUseSimpleMode && (
+        <>
+          <motion.div
+            className="absolute"
+            style={{
+              width: "200%",
+              height: "2px",
+              background: "linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.3), transparent)",
+              top: "30%",
+              left: "-50%",
+              transform: "rotate(-15deg)",
+              willChange: "transform, opacity",
+            }}
+            animate={{
+              x: ["-100%", "100%"],
+              opacity: [0, 0.5, 0],
+            }}
+            transition={{
+              duration: 8,
+              repeat: Infinity,
+              ease: "easeInOut",
+              repeatDelay: 4,
+            }}
+          />
 
-      <motion.div
-        className="absolute"
-        style={{
-          width: "150%",
-          height: "1px",
-          background: "linear-gradient(90deg, transparent, rgba(45, 212, 191, 0.25), transparent)",
-          top: "60%",
-          left: "-25%",
-          transform: "rotate(10deg)",
-        }}
-        animate={{
-          x: ["-100%", "100%"],
-          opacity: [0, 0.4, 0],
-        }}
-        transition={{
-          duration: 10,
-          repeat: Infinity,
-          ease: "easeInOut",
-          delay: 3,
-          repeatDelay: 5,
-        }}
-      />
+          <motion.div
+            className="absolute"
+            style={{
+              width: "150%",
+              height: "1px",
+              background: "linear-gradient(90deg, transparent, rgba(45, 212, 191, 0.25), transparent)",
+              top: "60%",
+              left: "-25%",
+              transform: "rotate(10deg)",
+              willChange: "transform, opacity",
+            }}
+            animate={{
+              x: ["-100%", "100%"],
+              opacity: [0, 0.4, 0],
+            }}
+            transition={{
+              duration: 10,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 3,
+              repeatDelay: 5,
+            }}
+          />
+        </>
+      )}
 
-      {/* Pulsing glow spots */}
-      <motion.div
-        className="absolute rounded-full"
-        style={{
-          width: "100px",
-          height: "100px",
-          background: "radial-gradient(circle, hsl(162 85% 50% / 0.15), transparent 70%)",
-          top: "15%",
-          right: "20%",
-          filter: "blur(20px)",
-        }}
-        animate={{
-          scale: [1, 1.5, 1],
-          opacity: [0.3, 0.6, 0.3],
-        }}
-        transition={{
-          duration: 4,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-      />
+      {/* Pulsing glow spots - only on desktop */}
+      {!shouldUseSimpleMode && (
+        <>
+          <motion.div
+            className="absolute rounded-full"
+            style={{
+              width: "100px",
+              height: "100px",
+              background: "radial-gradient(circle, hsl(162 85% 50% / 0.15), transparent 70%)",
+              top: "15%",
+              right: "20%",
+              filter: "blur(20px)",
+              willChange: "transform, opacity",
+            }}
+            animate={{
+              scale: [1, 1.5, 1],
+              opacity: [0.3, 0.6, 0.3],
+            }}
+            transition={{
+              duration: 4,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          />
 
-      <motion.div
-        className="absolute rounded-full"
-        style={{
-          width: "80px",
-          height: "80px",
-          background: "radial-gradient(circle, hsl(84 65% 55% / 0.12), transparent 70%)",
-          bottom: "25%",
-          left: "15%",
-          filter: "blur(15px)",
-        }}
-        animate={{
-          scale: [1, 1.4, 1],
-          opacity: [0.2, 0.5, 0.2],
-        }}
-        transition={{
-          duration: 5,
-          repeat: Infinity,
-          ease: "easeInOut",
-          delay: 2,
-        }}
-      />
+          <motion.div
+            className="absolute rounded-full"
+            style={{
+              width: "80px",
+              height: "80px",
+              background: "radial-gradient(circle, hsl(84 65% 55% / 0.12), transparent 70%)",
+              bottom: "25%",
+              left: "15%",
+              filter: "blur(15px)",
+              willChange: "transform, opacity",
+            }}
+            animate={{
+              scale: [1, 1.4, 1],
+              opacity: [0.2, 0.5, 0.2],
+            }}
+            transition={{
+              duration: 5,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 2,
+            }}
+          />
+        </>
+      )}
 
       <div className="noise-overlay" />
     </div>
