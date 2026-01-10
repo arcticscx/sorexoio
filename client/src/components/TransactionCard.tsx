@@ -99,7 +99,7 @@ export const TransactionCard = forwardRef<HTMLDivElement, TransactionCardProps>(
         layout
         data-testid={`transaction-card-${transaction.id}`}
       >
-        <div className="w-10 h-10 rounded-xl bg-black/30 flex items-center justify-center flex-shrink-0">
+        <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
           {icon}
         </div>
 
