@@ -56,16 +56,16 @@ export function PrismaticBackground({
 
   const allParticles = useMemo(() => {
     const colors = [
-      "hsl(162 85% 50%)",
-      "hsl(174 72% 55%)",
-      "hsl(84 65% 55%)",
-      "hsl(186 80% 52%)",
+      "hsl(162 80% 45%)",
+      "hsl(162 70% 50%)",
+      "hsl(160 75% 40%)",
+      "hsl(165 85% 42%)",
     ];
     return Array.from({ length: 20 }, (_, i) => ({
       id: i,
       x: Math.random() * 100,
       y: Math.random() * 100,
-      size: Math.random() * 4 + 2,
+      size: Math.random() * 3 + 1.5,
       duration: Math.random() * 10 + 15,
       delay: Math.random() * 5,
       color: colors[Math.floor(Math.random() * colors.length)],
@@ -110,11 +110,11 @@ export function PrismaticBackground({
           height: shouldUseSimpleMode ? "60vw" : "80vw",
           maxWidth: shouldUseSimpleMode ? "600px" : "1200px",
           maxHeight: shouldUseSimpleMode ? "600px" : "1200px",
-          background: "radial-gradient(circle, hsl(162 85% 40%), transparent 60%)",
+          background: "radial-gradient(circle, hsl(162 75% 30%), transparent 60%)",
           top: "-20%",
           left: "-15%",
-          opacity: 0.08,
-          filter: shouldUseSimpleMode ? "blur(40px)" : "blur(64px)",
+          opacity: 0.12,
+          filter: shouldUseSimpleMode ? "blur(40px)" : "blur(80px)",
           willChange: shouldUseSimpleMode ? "auto" : "transform",
         }}
         animate={shouldUseSimpleMode ? {} : {
@@ -136,11 +136,11 @@ export function PrismaticBackground({
           height: shouldUseSimpleMode ? "50vw" : "70vw",
           maxWidth: shouldUseSimpleMode ? "500px" : "1000px",
           maxHeight: shouldUseSimpleMode ? "500px" : "1000px",
-          background: "radial-gradient(circle, hsl(174 72% 45%), transparent 55%)",
+          background: "radial-gradient(circle, hsl(162 70% 35%), transparent 55%)",
           top: "30%",
           left: "25%",
-          opacity: 0.07,
-          filter: shouldUseSimpleMode ? "blur(30px)" : "blur(64px)",
+          opacity: 0.1,
+          filter: shouldUseSimpleMode ? "blur(30px)" : "blur(80px)",
           willChange: shouldUseSimpleMode ? "auto" : "transform",
         }}
         animate={shouldUseSimpleMode ? {} : {
@@ -162,11 +162,11 @@ export function PrismaticBackground({
           height: shouldUseSimpleMode ? "40vw" : "60vw",
           maxWidth: shouldUseSimpleMode ? "400px" : "900px",
           maxHeight: shouldUseSimpleMode ? "400px" : "900px",
-          background: "radial-gradient(circle, hsl(84 65% 50%), transparent 55%)",
+          background: "radial-gradient(circle, hsl(162 65% 32%), transparent 55%)",
           bottom: "-10%",
           right: "-10%",
-          opacity: 0.06,
-          filter: shouldUseSimpleMode ? "blur(30px)" : "blur(64px)",
+          opacity: 0.08,
+          filter: shouldUseSimpleMode ? "blur(30px)" : "blur(80px)",
           willChange: shouldUseSimpleMode ? "auto" : "transform",
         }}
         animate={shouldUseSimpleMode ? {} : {
@@ -189,10 +189,10 @@ export function PrismaticBackground({
           height: shouldUseSimpleMode ? "50vw" : "60vw",
           maxWidth: shouldUseSimpleMode ? "400px" : "800px",
           maxHeight: shouldUseSimpleMode ? "400px" : "800px",
-          background: "radial-gradient(circle, hsl(162 85% 35% / 0.6), transparent 70%)",
+          background: "radial-gradient(circle, hsl(162 75% 28% / 0.5), transparent 70%)",
           top: "10%",
           left: "5%",
-          opacity: blobOpacity,
+          opacity: blobOpacity * 0.6,
           x: effectiveParallax ? mousePosition.x * parallaxMultiplier : 0,
           y: effectiveParallax ? mousePosition.y * parallaxMultiplier : 0,
           willChange: effectiveParallax ? "transform" : "auto",
@@ -207,10 +207,10 @@ export function PrismaticBackground({
           height: shouldUseSimpleMode ? "40vw" : "50vw",
           maxWidth: shouldUseSimpleMode ? "350px" : "700px",
           maxHeight: shouldUseSimpleMode ? "350px" : "700px",
-          background: "radial-gradient(circle, hsl(174 72% 40% / 0.5), transparent 70%)",
+          background: "radial-gradient(circle, hsl(162 70% 32% / 0.4), transparent 70%)",
           top: "40%",
           right: "10%",
-          opacity: blobOpacity,
+          opacity: blobOpacity * 0.5,
           x: effectiveParallax ? -mousePosition.x * parallaxMultiplier * 0.8 : 0,
           y: effectiveParallax ? -mousePosition.y * parallaxMultiplier * 0.8 : 0,
           willChange: effectiveParallax ? "transform" : "auto",
@@ -225,10 +225,10 @@ export function PrismaticBackground({
           height: shouldUseSimpleMode ? "35vw" : "45vw",
           maxWidth: shouldUseSimpleMode ? "300px" : "600px",
           maxHeight: shouldUseSimpleMode ? "300px" : "600px",
-          background: "radial-gradient(circle, hsl(84 65% 45% / 0.4), transparent 70%)",
+          background: "radial-gradient(circle, hsl(162 65% 35% / 0.35), transparent 70%)",
           bottom: "5%",
           left: "25%",
-          opacity: blobOpacity * 0.8,
+          opacity: blobOpacity * 0.5,
           x: effectiveParallax ? mousePosition.x * parallaxMultiplier * 0.6 : 0,
           y: effectiveParallax ? -mousePosition.y * parallaxMultiplier * 0.6 : 0,
           willChange: effectiveParallax ? "transform" : "auto",
@@ -244,15 +244,15 @@ export function PrismaticBackground({
           height: shouldUseSimpleMode ? "20vw" : "30vw",
           maxWidth: shouldUseSimpleMode ? "200px" : "400px",
           maxHeight: shouldUseSimpleMode ? "200px" : "400px",
-          background: "radial-gradient(circle, hsl(186 80% 42% / 0.35), transparent 70%)",
+          background: "radial-gradient(circle, hsl(162 80% 38% / 0.3), transparent 70%)",
           top: "60%",
           left: "60%",
-          opacity: blobOpacity * 0.6,
+          opacity: blobOpacity * 0.4,
           willChange: prefersReducedMotion ? "auto" : "transform, opacity",
         }}
         animate={prefersReducedMotion ? {} : {
           scale: [1, 1.1, 1],
-          opacity: [blobOpacity * 0.6, blobOpacity * 0.8, blobOpacity * 0.6],
+          opacity: [blobOpacity * 0.4, blobOpacity * 0.6, blobOpacity * 0.4],
         }}
         transition={{
           duration: shouldUseSimpleMode ? 12 : 8,
@@ -349,7 +349,7 @@ export function PrismaticBackground({
             style={{
               width: "100px",
               height: "100px",
-              background: "radial-gradient(circle, hsl(162 85% 50% / 0.15), transparent 70%)",
+              background: "radial-gradient(circle, hsl(162 80% 45% / 0.15), transparent 70%)",
               top: "15%",
               right: "20%",
               filter: "blur(20px)",
@@ -357,7 +357,7 @@ export function PrismaticBackground({
             }}
             animate={{
               scale: [1, 1.5, 1],
-              opacity: [0.3, 0.6, 0.3],
+              opacity: [0.2, 0.5, 0.2],
             }}
             transition={{
               duration: 4,
@@ -371,7 +371,7 @@ export function PrismaticBackground({
             style={{
               width: "80px",
               height: "80px",
-              background: "radial-gradient(circle, hsl(84 65% 55% / 0.12), transparent 70%)",
+              background: "radial-gradient(circle, hsl(162 70% 50% / 0.12), transparent 70%)",
               bottom: "25%",
               left: "15%",
               filter: "blur(15px)",
@@ -379,7 +379,7 @@ export function PrismaticBackground({
             }}
             animate={{
               scale: [1, 1.4, 1],
-              opacity: [0.2, 0.5, 0.2],
+              opacity: [0.15, 0.4, 0.15],
             }}
             transition={{
               duration: 5,
