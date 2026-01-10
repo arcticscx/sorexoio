@@ -5,3 +5,4 @@ export { GlassInput } from "./GlassInput";
 export { GlassPill } from "./GlassPill";
 export { GlassModal } from "./GlassModal";
 export { GlassNavbar } from "./GlassNavbar";
+export { CustomCursor } from "./CustomCursor";

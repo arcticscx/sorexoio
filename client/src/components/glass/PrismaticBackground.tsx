@@ -1,9 +1,19 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import { motion } from "framer-motion";
 
 interface PrismaticBackgroundProps {
   enableParallax?: boolean;
   intensity?: "low" | "medium" | "high";
+}
+
+interface Particle {
+  id: number;
+  x: number;
+  y: number;
+  size: number;
+  duration: number;
+  delay: number;
+  color: string;
 }
 
 export function PrismaticBackground({ 
@@ -24,6 +34,26 @@ export function PrismaticBackground({
     medium: 0.4,
     high: 0.55,
   }[intensity];
+
+  const particles = useMemo(() => {
+    const colors = [
+      "hsl(162 85% 50%)",
+      "hsl(174 72% 55%)",
+      "hsl(84 65% 55%)",
+      "hsl(186 80% 52%)",
+    ];
+    return Array.from({ length: 20 }, (_, i) => ({
+      id: i,
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+      size: Math.random() * 4 + 2,
+      duration: Math.random() * 10 + 15,
+      delay: Math.random() * 5,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      driftX: Math.random() * 40 - 20,
+      driftY: -80,
+    }));
+  }, []);
 
   useEffect(() => {
     if (!enableParallax) return;
@@ -194,6 +224,125 @@ export function PrismaticBackground({
           duration: 8,
           repeat: Infinity,
           ease: "easeInOut",
+        }}
+      />
+
+      {/* Floating particles for lively feel */}
+      {particles.map((particle) => (
+        <motion.div
+          key={particle.id}
+          className="absolute rounded-full"
+          style={{
+            width: particle.size,
+            height: particle.size,
+            background: particle.color,
+            left: `${particle.x}%`,
+            top: `${particle.y}%`,
+            filter: "blur(1px)",
+            boxShadow: `0 0 ${particle.size * 2}px ${particle.color}`,
+          }}
+          animate={{
+            y: [0, particle.driftY, 0],
+            x: [0, particle.driftX, 0],
+            opacity: [0, 0.6, 0],
+            scale: [0.5, 1, 0.5],
+          }}
+          transition={{
+            duration: particle.duration,
+            delay: particle.delay,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+      ))}
+
+      {/* Shimmer light rays */}
+      <motion.div
+        className="absolute"
+        style={{
+          width: "200%",
+          height: "2px",
+          background: "linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.3), transparent)",
+          top: "30%",
+          left: "-50%",
+          transform: "rotate(-15deg)",
+        }}
+        animate={{
+          x: ["-100%", "100%"],
+          opacity: [0, 0.5, 0],
+        }}
+        transition={{
+          duration: 8,
+          repeat: Infinity,
+          ease: "easeInOut",
+          repeatDelay: 4,
+        }}
+      />
+
+      <motion.div
+        className="absolute"
+        style={{
+          width: "150%",
+          height: "1px",
+          background: "linear-gradient(90deg, transparent, rgba(45, 212, 191, 0.25), transparent)",
+          top: "60%",
+          left: "-25%",
+          transform: "rotate(10deg)",
+        }}
+        animate={{
+          x: ["-100%", "100%"],
+          opacity: [0, 0.4, 0],
+        }}
+        transition={{
+          duration: 10,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: 3,
+          repeatDelay: 5,
+        }}
+      />
+
+      {/* Pulsing glow spots */}
+      <motion.div
+        className="absolute rounded-full"
+        style={{
+          width: "100px",
+          height: "100px",
+          background: "radial-gradient(circle, hsl(162 85% 50% / 0.15), transparent 70%)",
+          top: "15%",
+          right: "20%",
+          filter: "blur(20px)",
+        }}
+        animate={{
+          scale: [1, 1.5, 1],
+          opacity: [0.3, 0.6, 0.3],
+        }}
+        transition={{
+          duration: 4,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+      />
+
+      <motion.div
+        className="absolute rounded-full"
+        style={{
+          width: "80px",
+          height: "80px",
+          background: "radial-gradient(circle, hsl(84 65% 55% / 0.12), transparent 70%)",
+          bottom: "25%",
+          left: "15%",
+          filter: "blur(15px)",
+        }}
+        animate={{
+          scale: [1, 1.4, 1],
+          opacity: [0.2, 0.5, 0.2],
+        }}
+        transition={{
+          duration: 5,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: 2,
         }}
       />
 
