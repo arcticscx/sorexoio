@@ -345,7 +345,7 @@ export default function Exchange() {
                           }`}
                           data-testid={`button-payment-${method.id}`}
                         >
-                          <div className="w-14 h-14 rounded-xl bg-white/10 flex items-center justify-center overflow-hidden">
+                          <div className="w-14 h-14 rounded-xl bg-black/30 flex items-center justify-center overflow-hidden">
                             {method.icon ? (
                               <img src={method.icon} alt={method.name} className="w-full h-full object-cover" />
                             ) : (
