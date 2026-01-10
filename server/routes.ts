@@ -253,30 +253,21 @@ export async function registerRoutes(
       const cryptoTypes = ["BTC", "ETH", "USDT", "SOL"];
       
       for (let i = 0; i < 15; i++) {
-        // Most people exchange in even numbers (ending in 0 or 5)
-        let amount;
-        const randomType = Math.random();
-        
-        if (randomType > 0.1) {
-          // 90% chance for smaller amounts ($100 - $1000)
-          const bases = [10, 50, 100];
-          const base = bases[Math.floor(Math.random() * bases.length)];
-          // Generate between 100 and 1000
-          amount = (Math.floor(Math.random() * (900 / base)) + Math.ceil(100 / base)) * base;
-        } else {
-          // 10% chance for larger amounts ($1000 - $3000)
-          const bases = [100, 250, 500];
-          const base = bases[Math.floor(Math.random() * bases.length)];
-          amount = (Math.floor(Math.random() * (2000 / base)) + Math.ceil(1000 / base)) * base;
-        }
+        // Generate amounts between $100 - $1000 in even numbers
+        const bases = [50, 100];
+        const base = bases[Math.floor(Math.random() * bases.length)];
+        const amount = (Math.floor(Math.random() * 18) + 2) * base; // 100 to 1000
 
         const cryptoType = cryptoTypes[Math.floor(Math.random() * cryptoTypes.length)];
-        const rate = cryptoType === "BTC" ? 50000 : cryptoType === "ETH" ? 3000 : 1;
+        const rate = cryptoType === "BTC" ? 50000 : cryptoType === "ETH" ? 3000 : cryptoType === "SOL" ? 150 : 1;
+        
+        // Apply 2% fee - amount shown is after fee deduction
+        const amountAfterFee = amount * 0.98;
         
         await storage.createTransaction({
-          amount,
+          amount: amountAfterFee,
           currency: "USD",
-          cryptoAmount: amount / rate,
+          cryptoAmount: amountAfterFee / rate,
           cryptoType,
           paymentMethod: paymentMethods[Math.floor(Math.random() * paymentMethods.length)],
           status: statuses[Math.floor(Math.random() * statuses.length)],

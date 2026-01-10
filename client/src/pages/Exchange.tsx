@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { ArrowRight, ArrowLeft, Check, Wallet, Mail, ArrowDownUp, Sparkles, DollarSign } from "lucide-react";
 import { GlassCard, GlassButton, GlassInput, PrismaticBackground, GlassNavbar } from "@/components/glass";
+import { CryptoIcon } from "@/components/CryptoIcon";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import type { Crypto, PaymentMethod } from "@shared/schema";
@@ -284,13 +285,14 @@ export default function Exchange() {
                               onClick={() =>
                                 setFormData({ ...formData, cryptoType: crypto.symbol })
                               }
-                              className={`p-3 rounded-xl border transition-all duration-200 ${
+                              className={`p-3 rounded-xl border transition-all duration-200 flex items-center justify-center gap-2 ${
                                 formData.cryptoType === crypto.symbol
                                   ? "bg-emerald-500/20 border-emerald-500/50 text-white"
                                   : "bg-white/5 border-white/10 text-white/60 hover:bg-white/10"
                               }`}
                               data-testid={`button-crypto-${crypto.symbol}`}
                             >
+                              <CryptoIcon symbol={crypto.symbol} size="sm" />
                               <span className="font-semibold">{crypto.symbol}</span>
                             </button>
                           ))}
