@@ -248,7 +248,7 @@ export async function registerRoutes(
 
   app.post("/api/seed", async (_req, res) => {
     try {
-      const paymentMethods = ["paypal", "card", "bitcoin", "ethereum"];
+      const paymentMethods = ["paypal", "card"];
       const statuses = ["completed", "pending", "processing", "completed", "completed"];
       const cryptoTypes = ["BTC", "ETH", "USDT", "SOL"];
       
@@ -298,8 +298,6 @@ export async function registerRoutes(
       if (existingPaymentMethods.length === 0) {
         await storage.createPaymentMethod({ name: "Card", key: "card", description: "0 KYC", isActive: true, sortOrder: 1 });
         await storage.createPaymentMethod({ name: "PayPal", key: "paypal", description: "Fast & secure", isActive: true, sortOrder: 2 });
-        await storage.createPaymentMethod({ name: "Bitcoin", key: "bitcoin", description: "Crypto payment", isActive: true, sortOrder: 3 });
-        await storage.createPaymentMethod({ name: "Ethereum", key: "ethereum", description: "ETH payment", isActive: true, sortOrder: 4 });
       }
 
       res.json({ message: "Seed data created successfully" });

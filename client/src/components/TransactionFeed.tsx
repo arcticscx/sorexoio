@@ -17,7 +17,6 @@ const filterOptions = [
   { value: "all", label: "All" },
   { value: "paypal", label: "PayPal" },
   { value: "card", label: "Card" },
-  { value: "crypto", label: "Crypto" },
 ];
 
 export function TransactionFeed({ transactions: initialTransactions, isLoading = false }: TransactionFeedProps) {
@@ -57,9 +56,6 @@ export function TransactionFeed({ transactions: initialTransactions, isLoading =
   const filteredTransactions = liveTransactions.filter((t) => {
     if (filter === "all") return true;
     const method = t.paymentMethod.toLowerCase();
-    if (filter === "crypto") {
-      return ["bitcoin", "ethereum", "crypto", "btc", "eth"].includes(method);
-    }
     return method.includes(filter);
   });
 

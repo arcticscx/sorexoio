@@ -14,6 +14,12 @@ interface TransactionCardProps {
   paymentMethods?: PaymentMethod[];
 }
 
+const paymentLabels: Record<string, string> = {
+  card: "Card",
+  paypal: "PayPal",
+  bank: "Bank",
+};
+
 function PaymentIcon({ type }: { type: string }) {
   const key = type.toLowerCase();
   
@@ -22,18 +28,6 @@ function PaymentIcon({ type }: { type: string }) {
   }
   if (key === "paypal") {
     return <img src={paypalIcon} alt="PayPal" className="w-5 h-5 object-contain rounded" />;
-  }
-  
-  const cryptoMap: Record<string, string> = {
-    bitcoin: "BTC",
-    btc: "BTC",
-    ethereum: "ETH",
-    eth: "ETH",
-    crypto: "BTC",
-  };
-  
-  if (cryptoMap[key]) {
-    return <CryptoIcon symbol={cryptoMap[key]} size="md" />;
   }
   if (key === "bank") {
     return <Wallet className="w-5 h-5 text-emerald-400" />;
@@ -123,8 +117,8 @@ export const TransactionCard = forwardRef<HTMLDivElement, TransactionCardProps>(
             )}
           </div>
           <div className="flex items-center gap-2 mt-0.5">
-            <span className="text-white/50 text-sm capitalize">
-              {transaction.paymentMethod}
+            <span className="text-white/50 text-sm">
+              {paymentLabels[paymentKey] || transaction.paymentMethod}
             </span>
             <span className="text-white/30">•</span>
             <span className="text-white/40 text-sm flex items-center gap-1">
