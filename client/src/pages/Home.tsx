@@ -74,12 +74,11 @@ export default function Home() {
               transition={{ duration: 0.6 }}
             >
               <div className="inline-flex items-center gap-2 px-4 py-2 glass-pill mb-6">
-                <Sparkles className="w-4 h-4 text-emerald-400" />
                 <span className="text-sm text-white/80">The Future of Crypto Exchange</span>
               </div>
 
               <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 text-balance">
-                Exchange Crypto with{" "}
+                Purchase Crypto with{" "}
                 <span className="prismatic-text">Crystal Clarity</span>
               </h1>
 
