@@ -77,7 +77,7 @@ export default function Home() {
                 <span className="text-sm text-white/80">The Future of Crypto Exchange</span>
               </div>
 
-              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 text-balance">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 text-balance" style={{ fontFamily: "Satoshi, var(--font-sans)" }}>
                 Purchase Crypto with{" "}
                 <span className="prismatic-text" style={{ fontFamily: "var(--font-logo)" }}>Crystal Clarity</span>
               </h1>
