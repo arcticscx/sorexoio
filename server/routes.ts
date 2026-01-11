@@ -38,6 +38,51 @@ export async function registerRoutes(
   // Register object storage routes for file uploads
   registerObjectStorageRoutes(app);
 
+  // Cache for crypto prices (5 minute TTL)
+  let priceCache: { prices: Record<string, number>; timestamp: number } | null = null;
+  const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+  app.get("/api/prices", async (_req, res) => {
+    try {
+      // Check cache
+      if (priceCache && Date.now() - priceCache.timestamp < CACHE_TTL) {
+        return res.json(priceCache.prices);
+      }
+
+      // Fetch live prices from CoinGecko
+      const response = await fetch(
+        "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana,tether&vs_currencies=usd"
+      );
+      
+      if (!response.ok) {
+        throw new Error("Failed to fetch prices from CoinGecko");
+      }
+
+      const data = await response.json();
+      
+      const prices: Record<string, number> = {
+        BTC: data.bitcoin?.usd || 97000,
+        ETH: data.ethereum?.usd || 3300,
+        SOL: data.solana?.usd || 140,
+        USDT: data.tether?.usd || 1,
+      };
+
+      // Update cache
+      priceCache = { prices, timestamp: Date.now() };
+
+      res.json(prices);
+    } catch (error) {
+      console.error("Price fetch error:", error);
+      // Return fallback prices if API fails
+      res.json({
+        BTC: 97000,
+        ETH: 3300,
+        SOL: 140,
+        USDT: 1,
+      });
+    }
+  });
+
   app.get("/api/transactions", async (_req, res) => {
     try {
       const transactions = await storage.getTransactions();

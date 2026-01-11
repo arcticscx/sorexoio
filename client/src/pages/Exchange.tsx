@@ -63,6 +63,21 @@ export default function Exchange() {
     queryKey: ["/api/payment-methods"],
   });
 
+  const { data: prices } = useQuery<Record<string, number>>({
+    queryKey: ["/api/prices"],
+    refetchInterval: 60000, // Refresh every minute
+  });
+
+  // Get price for selected crypto (with fallbacks)
+  const getCryptoRate = (symbol: string) => {
+    if (prices && prices[symbol]) {
+      return prices[symbol];
+    }
+    // Fallback prices if API fails
+    const fallbacks: Record<string, number> = { BTC: 97000, ETH: 3300, SOL: 140, USDT: 1 };
+    return fallbacks[symbol] || 1;
+  };
+
   const paymentMethods = (dbPaymentMethods && dbPaymentMethods.length > 0) 
     ? dbPaymentMethods.filter(pm => pm.isActive).map(pm => ({
         id: pm.key,
@@ -75,9 +90,8 @@ export default function Exchange() {
 
   const createTransaction = useMutation({
     mutationFn: async () => {
-      // Crypto rates: BTC ~97k, ETH ~3.3k, SOL ~140, USDT = 1
-      const rate = formData.cryptoType === "BTC" ? 97000 : formData.cryptoType === "ETH" ? 3300 : formData.cryptoType === "SOL" ? 140 : 1;
-      // Apply 5% fee to the crypto amount
+      // Use live crypto rate with 5% fee
+      const rate = getCryptoRate(formData.cryptoType);
       const cryptoAmount = (parseFloat(formData.amount) * 0.95) / rate;
       
       const res = await apiRequest("POST", "/api/transactions", {
@@ -181,9 +195,8 @@ export default function Exchange() {
   const currentStepIndex = steps.findIndex((s) => s.id === step);
 
   const cryptoList = cryptos?.length ? cryptos : defaultCryptos;
-  // Crypto rates: BTC ~97k, ETH ~3.3k, SOL ~140, USDT = 1
-  const cryptoRate = formData.cryptoType === "BTC" ? 97000 : formData.cryptoType === "ETH" ? 3300 : formData.cryptoType === "SOL" ? 140 : 1;
-  // Apply 5% fee to the crypto amount
+  // Use live crypto rate from API with 5% fee applied
+  const cryptoRate = getCryptoRate(formData.cryptoType);
   const estimatedCrypto = formData.amount ? ((parseFloat(formData.amount) * 0.95) / cryptoRate).toFixed(8) : "0.00000000";
 
   return (
