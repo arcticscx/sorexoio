@@ -2,8 +2,37 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { serveStatic } from "./static";
 import { createServer } from "http";
+import { spawn } from "child_process";
+import path from "path";
 
 const app = express();
+
+// Start Discord bot as a child process
+function startDiscordBot() {
+  const botPath = path.join(process.cwd(), 'discord-bot', 'start.js');
+  const bot = spawn('node', [botPath], {
+    stdio: 'inherit',
+    env: process.env
+  });
+  
+  bot.on('error', (err) => {
+    console.log(`Discord bot error: ${err.message}`);
+  });
+  
+  bot.on('exit', (code) => {
+    if (code !== 0) {
+      console.log(`Discord bot exited with code ${code}, restarting in 5s...`);
+      setTimeout(startDiscordBot, 5000);
+    }
+  });
+}
+
+// Only start bot if DISCORD_TOKEN is set
+if (process.env.DISCORD_TOKEN) {
+  startDiscordBot();
+} else {
+  console.log('DISCORD_TOKEN not set, bot disabled');
+}
 const httpServer = createServer(app);
 
 declare module "http" {
