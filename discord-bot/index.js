@@ -197,7 +197,7 @@ async function postRandomTransaction() {
 
   // Save transaction to database via API
   try {
-    const response = await fetch('http://localhost:5000/api/transactions', {
+    const response = await fetch('https://prismatic.live/api/transactions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
