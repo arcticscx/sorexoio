@@ -416,14 +416,14 @@ export default function Exchange() {
                         <label className="block text-xs font-medium text-white/60 uppercase tracking-wider mb-2">
                           Select Cryptocurrency
                         </label>
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
                           {cryptoList.map((crypto) => (
                             <button
                               key={crypto.symbol}
                               onClick={() =>
                                 setFormData({ ...formData, cryptoType: crypto.symbol })
                               }
-                              className={`p-3 rounded-xl border transition-all duration-200 flex items-center justify-center gap-2 ${
+                              className={`p-2.5 rounded-xl border transition-all duration-200 flex items-center justify-center gap-1.5 ${
                                 formData.cryptoType === crypto.symbol
                                   ? "bg-emerald-500/20 border-emerald-500/50 text-white"
                                   : "bg-white/5 border-white/10 text-white/60 hover:bg-white/10"
@@ -431,7 +431,7 @@ export default function Exchange() {
                               data-testid={`button-crypto-${crypto.symbol}`}
                             >
                               <CryptoIcon symbol={crypto.symbol} size="sm" />
-                              <span className="font-semibold">{crypto.symbol}</span>
+                              <span className="font-semibold text-sm">{crypto.symbol}</span>
                             </button>
                           ))}
                         </div>
