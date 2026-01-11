@@ -155,6 +155,17 @@
     box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
   }
 
+  /* Remove number input spinners */
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type=number] {
+    -moz-appearance: textfield;
+  }
+
   .glass-navbar {
     @apply fixed top-0 left-0 right-0 z-50;
     background: rgba(5, 5, 5, 0.85);
