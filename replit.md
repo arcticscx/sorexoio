@@ -42,6 +42,7 @@ Preferred communication style: Simple, everyday language.
 - Cryptocurrencies management (`/api/cryptos`)
 - Currencies management (`/api/currencies`)
 - Settings key-value store (`/api/settings`)
+- Live crypto prices (`/api/prices`) - Fetches BTC, ETH, SOL, USDT prices from CoinGecko with 5-minute caching
 
 **Real-time Updates:** WebSocket server at `/ws` path broadcasts new transactions to connected clients
 
