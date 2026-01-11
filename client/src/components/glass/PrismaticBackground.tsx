@@ -292,57 +292,6 @@ export function PrismaticBackground({
         />
       ))}
 
-      {/* Shimmer light rays - only on desktop */}
-      {!shouldUseSimpleMode && (
-        <>
-          <motion.div
-            className="absolute"
-            style={{
-              width: "200%",
-              height: "2px",
-              background: "linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.3), transparent)",
-              top: "30%",
-              left: "-50%",
-              transform: "rotate(-15deg)",
-              willChange: "transform, opacity",
-            }}
-            animate={{
-              x: ["-100%", "100%"],
-              opacity: [0, 0.5, 0],
-            }}
-            transition={{
-              duration: 8,
-              repeat: Infinity,
-              ease: "easeInOut",
-              repeatDelay: 4,
-            }}
-          />
-
-          <motion.div
-            className="absolute"
-            style={{
-              width: "150%",
-              height: "1px",
-              background: "linear-gradient(90deg, transparent, rgba(45, 212, 191, 0.25), transparent)",
-              top: "60%",
-              left: "-25%",
-              transform: "rotate(10deg)",
-              willChange: "transform, opacity",
-            }}
-            animate={{
-              x: ["-100%", "100%"],
-              opacity: [0, 0.4, 0],
-            }}
-            transition={{
-              duration: 10,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: 3,
-              repeatDelay: 5,
-            }}
-          />
-        </>
-      )}
 
       {/* Pulsing glow spots - only on desktop */}
       {!shouldUseSimpleMode && (
