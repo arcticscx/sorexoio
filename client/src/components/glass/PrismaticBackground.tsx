@@ -56,21 +56,23 @@ export function PrismaticBackground({
 
   const allParticles = useMemo(() => {
     const colors = [
-      "hsl(162 80% 45%)",
-      "hsl(162 70% 50%)",
-      "hsl(160 75% 40%)",
-      "hsl(165 85% 42%)",
+      "hsl(142 80% 55%)",
+      "hsl(152 85% 50%)",
+      "hsl(162 90% 48%)",
+      "hsl(135 75% 52%)",
+      "hsl(145 85% 45%)",
     ];
-    return Array.from({ length: 20 }, (_, i) => ({
+    return Array.from({ length: 50 }, (_, i) => ({
       id: i,
       x: Math.random() * 100,
       y: Math.random() * 100,
-      size: Math.random() * 3 + 1.5,
-      duration: Math.random() * 10 + 15,
-      delay: Math.random() * 5,
+      size: Math.random() * 4 + 2,
+      duration: Math.random() * 12 + 10,
+      delay: Math.random() * 8,
       color: colors[Math.floor(Math.random() * colors.length)],
-      driftX: Math.random() * 40 - 20,
-      driftY: -80,
+      driftX: Math.random() * 60 - 30,
+      driftY: Math.random() * -100 - 50,
+      glowSize: Math.random() * 8 + 4,
     }));
   }, []);
 
@@ -261,7 +263,7 @@ export function PrismaticBackground({
         }}
       />
 
-      {/* Floating particles - reduced count on mobile, no glow effect */}
+      {/* Floating green particles with glow effect */}
       {!prefersReducedMotion && particles.map((particle) => (
         <motion.div
           key={particle.id}
@@ -272,13 +274,14 @@ export function PrismaticBackground({
             background: particle.color,
             left: `${particle.x}%`,
             top: `${particle.y}%`,
+            boxShadow: `0 0 ${particle.glowSize}px ${particle.color}, 0 0 ${particle.glowSize * 2}px ${particle.color}`,
             willChange: "transform, opacity",
           }}
           animate={{
             y: [0, particle.driftY, 0],
             x: [0, particle.driftX, 0],
-            opacity: [0, 0.6, 0],
-            scale: [0.5, 1, 0.5],
+            opacity: [0, 0.9, 0],
+            scale: [0.3, 1.2, 0.3],
           }}
           transition={{
             duration: particle.duration,
