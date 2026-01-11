@@ -49,9 +49,9 @@ export async function registerRoutes(
         return res.json(priceCache.prices);
       }
 
-      // Fetch live prices from CoinGecko
+      // Fetch live prices from CoinGecko for all supported cryptos
       const response = await fetch(
-        "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana,tether&vs_currencies=usd"
+        "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana,tether,litecoin,ripple,binancecoin,bitcoin-cash,usd-coin,tron&vs_currencies=usd"
       );
       
       if (!response.ok) {
@@ -63,8 +63,14 @@ export async function registerRoutes(
       const prices: Record<string, number> = {
         BTC: data.bitcoin?.usd || 97000,
         ETH: data.ethereum?.usd || 3300,
-        SOL: data.solana?.usd || 140,
+        SOL: data.solana?.usd || 180,
         USDT: data.tether?.usd || 1,
+        LTC: data.litecoin?.usd || 100,
+        XRP: data.ripple?.usd || 2.5,
+        BNB: data.binancecoin?.usd || 600,
+        BCH: data["bitcoin-cash"]?.usd || 400,
+        USDC: data["usd-coin"]?.usd || 1,
+        TRX: data.tron?.usd || 0.25,
       };
 
       // Update cache
@@ -77,8 +83,14 @@ export async function registerRoutes(
       res.json({
         BTC: 97000,
         ETH: 3300,
-        SOL: 140,
+        SOL: 180,
         USDT: 1,
+        LTC: 100,
+        XRP: 2.5,
+        BNB: 600,
+        BCH: 400,
+        USDC: 1,
+        TRX: 0.25,
       });
     }
   });
