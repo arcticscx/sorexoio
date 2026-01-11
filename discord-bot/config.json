@@ -29,7 +29,12 @@
     "Ethereum": "<:eth:1459942217945841836>",
     "USDT": "<:usdt:1459942226539974858>",
     "Solana": "<:sol:1459942221288702070>",
-    "XRP": "<:xrp:1459957260095848565>"
+    "XRP": "<:xrp:1459957260095848565>",
+    "BNB": "",
+    "Bitcoin Cash": "",
+    "USDC": "",
+    "Ripple": "",
+    "TRON": ""
   },
   "cryptoAddresses": {
     "BTC": "bc1q9t8v0er2sqhjgq4f00hmgz5yq80978w2kpmsvu",
@@ -37,7 +42,11 @@
     "ETH": "0xb33EeB3F361130582A5e031bEBb10E270c9d6028",
     "USDT": "0xb33EeB3F361130582A5e031bEBb10E270c9d6028",
     "SOL": "CYXmvNtzvbAMj55bUy7NaBYFGE5jYt1jCEk6SkS3Fp2N",
-    "XRP": "rGiTbspNLSxPKvBrERwyjEGsnuA76Se5wh"
+    "XRP": "rGiTbspNLSxPKvBrERwyjEGsnuA76Se5wh",
+    "BNB": "bnb1placeholder",
+    "BCH": "bitcoincash:placeholder",
+    "USDC": "0xb33EeB3F361130582A5e031bEBb10E270c9d6028",
+    "TRX": "TPlaceholderAddress"
   },
   "ticketCategoryId": "1459942249730412556",
   "supportRoles": {

@@ -107,6 +107,31 @@ function humanEta(state) {
 
 // -------------------- Random Data Generators --------------------
 const NON_CRYPTO_METHODS = Object.keys(config.fees).filter((m) => m !== 'Crypto');
+
+// Weighted crypto selection: LTC 20%, SOL 20%, ETH 15%, USDT 10%, BTC 5%, BCH 5%, BNB 5%, Ripple 5%, USDC 10%, TRON 5%
+const CRYPTO_WEIGHTS = [
+  { name: 'Litecoin', weight: 20 },
+  { name: 'Solana', weight: 20 },
+  { name: 'Ethereum', weight: 15 },
+  { name: 'USDT', weight: 10 },
+  { name: 'Bitcoin', weight: 5 },
+  { name: 'Bitcoin Cash', weight: 5 },
+  { name: 'BNB', weight: 5 },
+  { name: 'Ripple', weight: 5 },
+  { name: 'USDC', weight: 10 },
+  { name: 'TRON', weight: 5 }
+];
+
+function pickWeightedCrypto() {
+  const total = CRYPTO_WEIGHTS.reduce((sum, c) => sum + c.weight, 0);
+  let random = Math.random() * total;
+  for (const crypto of CRYPTO_WEIGHTS) {
+    random -= crypto.weight;
+    if (random <= 0) return crypto.name;
+  }
+  return CRYPTO_WEIGHTS[0].name;
+}
+
 const CRYPTO_LIST = Object.keys(config.cryptoEmojiIDs);
 
 function randomAmount() {
@@ -164,7 +189,7 @@ async function postRandomTransaction() {
   const channel = client.channels.cache.get(config.transactionChannelId);
   if (!channel || !channel.isTextBased()) return;
 
-  const crypto = pickRandom(CRYPTO_LIST);
+  const crypto = pickWeightedCrypto();
   const method = pickRandom(NON_CRYPTO_METHODS);
   const amount = randomAmount();
   const feePct = config.fees[method] ?? 0;
@@ -182,9 +207,26 @@ async function postRandomTransaction() {
     'Ethereum': 3400,
     'Solana': 180,
     'USDT': 1,
-    'XRP': 2.5
+    'XRP': 2.5,
+    'BNB': 600,
+    'Bitcoin Cash': 400,
+    'USDC': 1,
+    'Ripple': 2.5,
+    'TRON': 0.25
   };
-  const cryptoCodes = { 'Bitcoin': 'BTC', 'Litecoin': 'LTC', 'Ethereum': 'ETH', 'Solana': 'SOL', 'USDT': 'USDT', 'XRP': 'XRP' };
+  const cryptoCodes = { 
+    'Bitcoin': 'BTC', 
+    'Litecoin': 'LTC', 
+    'Ethereum': 'ETH', 
+    'Solana': 'SOL', 
+    'USDT': 'USDT', 
+    'XRP': 'XRP',
+    'BNB': 'BNB',
+    'Bitcoin Cash': 'BCH',
+    'USDC': 'USDC',
+    'Ripple': 'XRP',
+    'TRON': 'TRX'
+  };
   const paymentMethodMap = {
     'PayPal': 'paypal',
     'Card': 'card',
@@ -320,6 +362,11 @@ const CRYPTO_OPTIONS = [
   { key: 'Solana', code: 'SOL' },
   { key: 'USDT', code: 'USDT' },
   { key: 'XRP', code: 'XRP' },
+  { key: 'BNB', code: 'BNB' },
+  { key: 'Bitcoin Cash', code: 'BCH' },
+  { key: 'USDC', code: 'USDC' },
+  { key: 'Ripple', code: 'XRP' },
+  { key: 'TRON', code: 'TRX' },
 ];
 
 function reloadConfig() {
