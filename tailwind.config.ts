@@ -97,27 +97,10 @@ export default {
         },
       },
       fontFamily: {
-        sans: [
-          "-apple-system",
-          "BlinkMacSystemFont",
-          "SF Pro Text",
-          "SF Pro Display",
-          "Helvetica Neue",
-          "Helvetica",
-          "Arial",
-          "sans-serif"
-        ],
-        display: [
-          "-apple-system",
-          "BlinkMacSystemFont", 
-          "SF Pro Display",
-          "Helvetica Neue",
-          "Helvetica",
-          "Arial",
-          "sans-serif"
-        ],
-        serif: ["Georgia", "serif"],
-        mono: ["SF Mono", "Menlo", "Monaco", "Consolas", "monospace"],
+        sans: ["Questrial", "sans-serif"],
+        display: ["Questrial", "sans-serif"],
+        serif: ["Questrial", "sans-serif"],
+        mono: ["Questrial", "sans-serif"],
         questrial: ["Questrial", "sans-serif"],
       },
       backdropBlur: {

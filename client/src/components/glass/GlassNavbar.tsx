@@ -51,7 +51,7 @@ export function GlassNavbar() {
               data-testid="link-logo"
             >
               <img src={logoPngPath} alt="Prismatic Logo" className="w-8 h-8 rounded-lg shadow-glow object-cover" />
-              <span className="text-base font-semibold prismatic-text hidden sm:block font-questrial">
+              <span className="text-base font-semibold prismatic-text hidden sm:block">
                 Prismatic
               </span>
             </Link>
