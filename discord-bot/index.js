@@ -35,8 +35,9 @@ const schedulerState = {
   ratings: { enabled: true, timeout: null, nextAt: null, remainingMs: null }
 };
 
-// Store the last transaction ID so ratings can use the same ID
+// Store the last transaction ID and amount so ratings can use the same values
 let lastTransactionId = null;
+let lastTransactionAmount = null;
 
 function randInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -195,8 +196,9 @@ async function postRandomTransaction() {
   const feePct = config.fees[method] ?? 0;
   const feeUsd = Math.round((amount * feePct) ) / 100; // integer cents? keep simple
   const txId = `${config.transactionIdPrefix || 'PRISM'}-${randInt(1000000000, 9999999999)}`;
-  // Store the transaction ID so ratings can use the same one
+  // Store the transaction ID and amount so ratings can use the same values
   lastTransactionId = txId;
+  lastTransactionAmount = amount;
   const now = new Date();
   const footerText = formatFooterTime(now);
 
@@ -309,8 +311,9 @@ async function postRandomRating() {
   const channel = client.channels.cache.get(config.ratingChannelId);
   if (!channel || !channel.isTextBased()) return;
 
-  // Use the last transaction ID from the transactions channel, or generate a new one if none exists
+  // Use the last transaction ID and amount from the transactions channel, or generate new ones if none exists
   const txId = lastTransactionId || `${config.transactionIdPrefix || 'PRISM'}-${randInt(1000000000, 9999999999)}`;
+  const amount = lastTransactionAmount || randomAmount();
   const text = pickRandom(config.ratingTexts || ['Thanks for your feedback!']);
   const now = new Date();
   const footerText = formatFooterTime(now);
@@ -322,6 +325,7 @@ async function postRandomRating() {
     .setImage('https://cdn.discordapp.com/attachments/1459945692696150027/1459945896904097935/9.png?ex=69652012&is=6963ce92&hm=8a8ca43df5e832fc81b9e1a65de2a1e436881f7c65d5b34f832bfcafda783d79&')
     .addFields(
       { name: 'Rating', value: randomStars(), inline: true },
+      { name: 'Amount', value: `\`${amount} USD\``, inline: true },
       { name: 'Transaction ID', value: `\`${txId}\``, inline: true },
       { name: 'Exchange By', value: randomExchangerMention(), inline: true },
       { name: 'Summary', value: text }
