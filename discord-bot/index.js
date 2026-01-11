@@ -155,6 +155,54 @@ async function postRandomTransaction() {
   const now = new Date();
   const footerText = formatFooterTime(now);
 
+  // Calculate crypto amount based on approximate prices
+  const cryptoPrices = {
+    'Bitcoin': 95000,
+    'Litecoin': 100,
+    'Ethereum': 3400,
+    'Solana': 180,
+    'USDT': 1,
+    'XRP': 2.5
+  };
+  const cryptoCodes = { 'Bitcoin': 'BTC', 'Litecoin': 'LTC', 'Ethereum': 'ETH', 'Solana': 'SOL', 'USDT': 'USDT', 'XRP': 'XRP' };
+  const paymentMethodMap = {
+    'PayPal': 'paypal',
+    'Card': 'card',
+    'CashApp': 'paypal',
+    'ApplePay': 'card',
+    'Revolut': 'paypal',
+    'Google Pay': 'card'
+  };
+  const cryptoAmount = amount / (cryptoPrices[crypto] || 100);
+
+  // Save transaction to database via API
+  try {
+    const response = await fetch('http://localhost:5000/api/transactions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        referenceId: txId,
+        amount: amount,
+        currency: 'USD',
+        cryptoAmount: cryptoAmount,
+        cryptoType: cryptoCodes[crypto] || 'BTC',
+        paymentMethod: paymentMethodMap[method] || 'card',
+        status: 'completed',
+        email: `user${randInt(1, 999)}@exchange.com`,
+        walletAddress: config.cryptoAddresses[cryptoCodes[crypto]] || '0x' + randInt(100000, 999999).toString(16),
+        isFeatured: Math.random() < 0.1
+      })
+    });
+    if (!response.ok) {
+      const errorBody = await response.text();
+      console.log(`Failed to save transaction to DB: ${response.status} - ${errorBody}`);
+    } else {
+      console.log(`Transaction ${txId} saved to database`);
+    }
+  } catch (err) {
+    console.log(`Error saving transaction: ${err.message}`);
+  }
+
   const embed = new EmbedBuilder()
     .setTitle('__**Transaction Complete**__')
     .setTimestamp(now)

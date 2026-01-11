@@ -17,7 +17,7 @@ function startDiscordBot() {
     botProcess = null;
   }
   
-  const botPath = path.join(process.cwd(), 'discord-bot', 'start.js');
+  const botPath = path.join(process.cwd(), 'discord-bot', 'index.js');
   botProcess = spawn('node', [botPath], {
     stdio: 'inherit',
     env: process.env

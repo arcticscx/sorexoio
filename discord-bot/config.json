@@ -58,7 +58,7 @@
   },
   "invoiceDescription": "By purchasing this product you agree that you are the rightful owner of this card/payment method and that you agree that we do not hand out refunds in any circumstances only purchase if you are sure you WANT this.",
   "ticketImageUrl": "https://cdn.discordapp.com/attachments/1435824300174344192/1456821211924271290/Copy_of_banners_2.png?ex=6959c1fb&is=6958707b&hm=ef96067e178ff4bd987f5d33b62a4e71135ebec10da9dee3ce4420e1a465367a",
-  "transactionIdPrefix": "MOON",
+  "transactionIdPrefix": "PRISM",
   "transactionChannelId": "1456823937160708302",
   "ratingChannelId": "1425972407633576038",
   "scheduler": {
