@@ -82,6 +82,12 @@ const defaultCryptos = [
   { symbol: "ETH", name: "Ethereum" },
   { symbol: "USDT", name: "Tether" },
   { symbol: "SOL", name: "Solana" },
+  { symbol: "LTC", name: "Litecoin" },
+  { symbol: "XRP", name: "XRP" },
+  { symbol: "BNB", name: "BNB" },
+  { symbol: "BCH", name: "Bitcoin Cash" },
+  { symbol: "USDC", name: "USD Coin" },
+  { symbol: "TRX", name: "TRON" },
 ];
 
 export default function Exchange() {
@@ -136,7 +142,10 @@ export default function Exchange() {
       return prices[symbol];
     }
     // Fallback prices if API fails
-    const fallbacks: Record<string, number> = { BTC: 97000, ETH: 3300, SOL: 140, USDT: 1 };
+    const fallbacks: Record<string, number> = { 
+      BTC: 97000, ETH: 3300, SOL: 180, USDT: 1, LTC: 100, XRP: 2.5, 
+      BNB: 600, BCH: 400, USDC: 1, TRX: 0.25 
+    };
     return fallbacks[symbol] || 1;
   };
 

@@ -1,9 +1,14 @@
 import btcIcon from "@assets/Copy_of_crypto_icons_-_btc_1768070926134.png";
 import ethIcon from "@assets/Copy_of_crypto_icons_-_eth_1768070926134.png";
-import ltcIcon from "@assets/Copy_of_crypto_icons_-_ltc_1768070926134.png";
+import ltcIcon from "@assets/ltc_1768174820231.png";
 import solIcon from "@assets/Copy_of_crypto_icons_-_sol_1768070926134.png";
 import usdtIcon from "@assets/Copy_of_crypto_icons_-_usdt_1768070926134.png";
 import xrpIcon from "@assets/Copy_of_crypto_icons_-_btc_(2)_1768070926134.png";
+import bnbIcon from "@assets/bnb_1768174820230.png";
+import bchIcon from "@assets/btc_cash_1768174820230.png";
+import usdcIcon from "@assets/usdc_1768174820231.png";
+import rippleIcon from "@assets/ripple_1768174820231.png";
+import tronIcon from "@assets/tron_1768174820231.png";
 
 const cryptoIcons: Record<string, string> = {
   BTC: btcIcon,
@@ -23,7 +28,19 @@ const cryptoIcons: Record<string, string> = {
   tether: usdtIcon,
   XRP: xrpIcon,
   xrp: xrpIcon,
-  ripple: xrpIcon,
+  BNB: bnbIcon,
+  bnb: bnbIcon,
+  BCH: bchIcon,
+  bch: bchIcon,
+  "bitcoin cash": bchIcon,
+  USDC: usdcIcon,
+  usdc: usdcIcon,
+  ripple: rippleIcon,
+  Ripple: rippleIcon,
+  TRX: tronIcon,
+  trx: tronIcon,
+  tron: tronIcon,
+  TRON: tronIcon,
 };
 
 interface CryptoIconProps {
