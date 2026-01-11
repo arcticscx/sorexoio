@@ -8,24 +8,44 @@ import path from "path";
 const app = express();
 
 // Start Discord bot as a child process
+let botProcess: ReturnType<typeof spawn> | null = null;
+let botRestarting = false;
+
 function startDiscordBot() {
+  if (botProcess) {
+    botProcess.kill();
+    botProcess = null;
+  }
+  
   const botPath = path.join(process.cwd(), 'discord-bot', 'start.js');
-  const bot = spawn('node', [botPath], {
+  botProcess = spawn('node', [botPath], {
     stdio: 'inherit',
     env: process.env
   });
   
-  bot.on('error', (err) => {
+  botProcess.on('error', (err) => {
     console.log(`Discord bot error: ${err.message}`);
   });
   
-  bot.on('exit', (code) => {
-    if (code !== 0) {
+  botProcess.on('exit', (code) => {
+    if (code !== 0 && !botRestarting) {
       console.log(`Discord bot exited with code ${code}, restarting in 5s...`);
-      setTimeout(startDiscordBot, 5000);
+      botRestarting = true;
+      setTimeout(() => {
+        botRestarting = false;
+        startDiscordBot();
+      }, 5000);
     }
   });
 }
+
+// Cleanup on server shutdown
+process.on('SIGTERM', () => {
+  if (botProcess) botProcess.kill();
+});
+process.on('SIGINT', () => {
+  if (botProcess) botProcess.kill();
+});
 
 // Only start bot if DISCORD_TOKEN is set
 if (process.env.DISCORD_TOKEN) {

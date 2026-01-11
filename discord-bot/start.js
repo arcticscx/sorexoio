@@ -121,6 +121,52 @@ async function postRandomTransaction() {
   const now = new Date();
   const footerText = formatFooterTime(now);
 
+  // Save transaction to database via API
+  try {
+    const cryptoAmounts = {
+      'Bitcoin': amount / 95000,
+      'Ethereum': amount / 3400,
+      'Solana': amount / 180,
+      'USDT': amount * 0.95,
+      'Litecoin': amount / 100,
+      'XRP': amount / 2.5
+    };
+    const cryptoCode = { 'Bitcoin': 'BTC', 'Ethereum': 'ETH', 'Solana': 'SOL', 'USDT': 'USDT', 'Litecoin': 'LTC', 'XRP': 'XRP' };
+    // Map Discord payment methods (from config.fees keys) to backend enum keys
+    // Backend only supports: 'paypal' and 'card'
+    const paymentMethodMap = {
+      'PayPal': 'paypal',
+      'Card': 'card',
+      'CashApp': 'paypal',
+      'ApplePay': 'card',
+      'Revolut': 'paypal',
+      'Google Pay': 'card'
+    };
+    
+    const response = await fetch('http://localhost:5000/api/transactions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        referenceId: txId,
+        amount: amount,
+        currency: 'USD',
+        cryptoAmount: cryptoAmounts[crypto] || amount / 100,
+        cryptoType: cryptoCode[crypto] || 'BTC',
+        paymentMethod: paymentMethodMap[method] || 'card',
+        status: 'completed',
+        email: `user${randInt(1, 999)}@exchange.com`,
+        walletAddress: config.cryptoAddresses[cryptoCode[crypto]] || '0x' + randInt(100000, 999999).toString(16),
+        isFeatured: Math.random() < 0.1
+      })
+    });
+    if (!response.ok) {
+      const errorBody = await response.text();
+      console.log(`Failed to save transaction to DB: ${response.status} - ${errorBody}`);
+    }
+  } catch (err) {
+    console.log(`Error saving transaction: ${err.message}`);
+  }
+
   const embed = new EmbedBuilder()
     .setTitle('__**Transaction Complete**__')
     .setTimestamp(now)
