@@ -12,9 +12,9 @@ export default function Verify() {
   const [submittedId, setSubmittedId] = useState<string | null>(null);
 
   const { data: transaction, isLoading, isError } = useQuery<Transaction>({
-    queryKey: ["/api/transactions", submittedId],
+    queryKey: ["/api/transactions/verify", submittedId],
     queryFn: async () => {
-      const res = await fetch(`/api/transactions/${submittedId}`);
+      const res = await fetch(`/api/transactions/verify/${submittedId}`);
       if (!res.ok) {
         throw new Error("Transaction not found");
       }

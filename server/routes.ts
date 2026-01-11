@@ -92,6 +92,18 @@ export async function registerRoutes(
     }
   });
 
+  app.get("/api/transactions/verify/:referenceId", async (req, res) => {
+    try {
+      const transaction = await storage.getTransactionByReferenceId(req.params.referenceId);
+      if (!transaction) {
+        return res.status(404).json({ error: "Transaction not found" });
+      }
+      res.json(transaction);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch transaction" });
+    }
+  });
+
   app.get("/api/transactions/:id", async (req, res) => {
     try {
       const transaction = await storage.getTransaction(req.params.id);

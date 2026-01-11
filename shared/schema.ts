@@ -13,6 +13,7 @@ export const users = pgTable("users", {
 
 export const transactions = pgTable("transactions", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  referenceId: text("reference_id").unique(),
   amount: real("amount").notNull(),
   currency: text("currency").notNull().default("USD"),
   cryptoAmount: real("crypto_amount"),
