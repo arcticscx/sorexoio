@@ -812,6 +812,28 @@ export default function Admin() {
                   </GlassCard>
 
                   <GlassCard className="p-6" hover={false}>
+                    <h3 className="text-lg font-semibold text-white mb-6">PayPal Settings</h3>
+                    
+                    <div className="space-y-6">
+                      <div>
+                        <label className="block text-xs font-medium text-white/60 uppercase tracking-wider mb-2">
+                          PayPal Email (for receiving payments)
+                        </label>
+                        <GlassInput
+                          type="email"
+                          placeholder="your-paypal@email.com"
+                          defaultValue={getSetting("paypalEmail", "")}
+                          onBlur={(e) => updateSetting.mutate({ key: "paypalEmail", value: e.target.value })}
+                          data-testid="input-paypal-email"
+                        />
+                        <p className="text-white/40 text-sm mt-2">
+                          This email will be shown to users when they select PayPal as payment method
+                        </p>
+                      </div>
+                    </div>
+                  </GlassCard>
+
+                  <GlassCard className="p-6" hover={false}>
                     <h3 className="text-lg font-semibold text-white mb-6">Animation Settings</h3>
                     
                     <div>

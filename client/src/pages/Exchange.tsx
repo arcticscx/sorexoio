@@ -7,12 +7,12 @@ import { GlassCard, GlassButton, GlassInput, PrismaticBackground, GlassNavbar } 
 import { CryptoIcon } from "@/components/CryptoIcon";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import type { Crypto, PaymentMethod } from "@shared/schema";
+import type { Crypto, PaymentMethod, Setting } from "@shared/schema";
 
 import cardIcon from "@assets/ARCTIC_1768071339190.png";
 import paypalIcon from "@assets/ARCTIC_1768071353413.png";
 
-type Step = "amount" | "payment" | "details" | "confirm" | "success";
+type Step = "amount" | "payment" | "details" | "paypal_payment" | "confirm" | "success";
 
 function PaymentMethodIcon({ type }: { type: string }) {
   const key = type.toLowerCase();
@@ -67,6 +67,25 @@ export default function Exchange() {
     queryKey: ["/api/prices"],
     refetchInterval: 60000, // Refresh every minute
   });
+
+  const { data: settings = [] } = useQuery<Setting[]>({
+    queryKey: ["/api/settings"],
+  });
+
+  // Get setting value by key
+  const getSetting = (key: string, defaultValue: string = ""): string => {
+    const setting = settings.find((s) => s.key === key);
+    return setting?.value || defaultValue;
+  };
+
+  // Generate a unique reference code for the transaction
+  const generateReferenceCode = () => {
+    const timestamp = Date.now().toString(36).toUpperCase();
+    const random = Math.random().toString(36).substring(2, 6).toUpperCase();
+    return `PRS-${timestamp}-${random}`;
+  };
+
+  const [referenceCode] = useState(generateReferenceCode);
 
   // Get price for selected crypto (with fallbacks)
   const getCryptoRate = (symbol: string) => {
@@ -155,7 +174,12 @@ export default function Exchange() {
   const handleNext = () => {
     if (!validateStep(step)) return;
 
-    const steps: Step[] = ["amount", "payment", "details", "confirm"];
+    // Dynamic step flow - insert paypal_payment step if PayPal is selected
+    const isPayPal = formData.paymentMethod.toLowerCase() === "paypal";
+    const steps: Step[] = isPayPal 
+      ? ["amount", "payment", "details", "paypal_payment", "confirm"]
+      : ["amount", "payment", "details", "confirm"];
+    
     const currentIndex = steps.indexOf(step);
     if (currentIndex < steps.length - 1) {
       setStep(steps[currentIndex + 1]);
@@ -165,7 +189,11 @@ export default function Exchange() {
   };
 
   const handleBack = () => {
-    const steps: Step[] = ["amount", "payment", "details", "confirm"];
+    const isPayPal = formData.paymentMethod.toLowerCase() === "paypal";
+    const steps: Step[] = isPayPal 
+      ? ["amount", "payment", "details", "paypal_payment", "confirm"]
+      : ["amount", "payment", "details", "confirm"];
+    
     const currentIndex = steps.indexOf(step);
     if (currentIndex > 0) {
       setStep(steps[currentIndex - 1]);
@@ -185,12 +213,22 @@ export default function Exchange() {
     setErrors({});
   };
 
-  const steps = [
-    { id: "amount", label: "Amount", number: 1 },
-    { id: "payment", label: "Payment", number: 2 },
-    { id: "details", label: "Details", number: 3 },
-    { id: "confirm", label: "Confirm", number: 4 },
-  ];
+  // Dynamic step indicators based on payment method
+  const isPayPalSelected = formData.paymentMethod.toLowerCase() === "paypal";
+  const steps = isPayPalSelected
+    ? [
+        { id: "amount", label: "Amount", number: 1 },
+        { id: "payment", label: "Payment", number: 2 },
+        { id: "details", label: "Details", number: 3 },
+        { id: "paypal_payment", label: "Pay", number: 4 },
+        { id: "confirm", label: "Confirm", number: 5 },
+      ]
+    : [
+        { id: "amount", label: "Amount", number: 1 },
+        { id: "payment", label: "Payment", number: 2 },
+        { id: "details", label: "Details", number: 3 },
+        { id: "confirm", label: "Confirm", number: 4 },
+      ];
 
   const currentStepIndex = steps.findIndex((s) => s.id === step);
 
@@ -436,6 +474,63 @@ export default function Exchange() {
                           Make sure your wallet address is correct. Transactions sent to wrong
                           addresses cannot be recovered.
                         </p>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+
+                {step === "paypal_payment" && (
+                  <motion.div
+                    key="paypal_payment"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <h2 className="text-xl font-semibold text-white mb-6">
+                      PayPal Payment Instructions
+                    </h2>
+
+                    <div className="space-y-5">
+                      <div className="p-5 rounded-xl bg-white/5 border border-white/10">
+                        <div className="text-white/50 text-sm mb-2">Send payment to:</div>
+                        <div className="text-xl font-semibold text-white break-all">
+                          {getSetting("paypalEmail", "payment@example.com")}
+                        </div>
+                      </div>
+
+                      <div className="p-5 rounded-xl bg-white/5 border border-white/10">
+                        <div className="text-white/50 text-sm mb-2">Amount to send:</div>
+                        <div className="text-xl font-semibold text-white">
+                          ${parseFloat(formData.amount).toLocaleString()} {formData.currency}
+                        </div>
+                      </div>
+
+                      <div className="p-5 rounded-xl bg-emerald-500/10 border border-emerald-500/30">
+                        <div className="text-emerald-400 text-sm mb-2 font-medium">Add this note when sending:</div>
+                        <div className="text-lg font-mono font-semibold text-white bg-black/30 p-3 rounded-lg select-all">
+                          {referenceCode}
+                        </div>
+                        <p className="text-emerald-300/70 text-xs mt-2">
+                          Copy and paste this code into the PayPal payment note
+                        </p>
+                      </div>
+
+                      <div className="flex items-start gap-3 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                        <div className="w-5 h-5 text-amber-400 mt-0.5 flex-shrink-0">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                          </svg>
+                        </div>
+                        <div>
+                          <p className="text-sm font-semibold text-amber-200 mb-1">
+                            Important: Send as "Friends and Family"
+                          </p>
+                          <p className="text-sm text-amber-200/70">
+                            You must select "Sending to a friend" or "Friends and Family" option when making the payment. 
+                            Payments sent as "Goods and Services" will be refunded and your order cancelled.
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </motion.div>
