@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { motion } from "framer-motion";
-import { Menu, X, Sparkles } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import logoPngPath from "@assets/Blue_Circle_Icon_Modern_Simple_Business_Logo_copy_1768165841720.png";
 
 interface NavLink {
   href: string;
@@ -46,12 +47,10 @@ export function GlassNavbar() {
           <div className="apple-glass-inner">
             <Link
               href="/"
-              className="flex items-center gap-2 pr-4 border-r border-white/10"
+              className="flex items-center gap-2 pr-4"
               data-testid="link-logo"
             >
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-glow">
-                <Sparkles className="w-4 h-4 text-white" />
-              </div>
+              <img src={logoPngPath} alt="Prismatic Logo" className="w-8 h-8 rounded-lg shadow-glow object-cover" />
               <span className="text-base font-semibold prismatic-text hidden sm:block font-questrial">
                 Prismatic
               </span>
@@ -71,26 +70,6 @@ export function GlassNavbar() {
                   {link.label}
                 </Link>
               ))}
-              <Link
-                href="/admin"
-                className={cn(
-                  "nav-item-glass",
-                  location === "/admin" && "nav-item-glass-active"
-                )}
-                data-testid="link-nav-admin"
-              >
-                Admin
-              </Link>
-            </div>
-
-            <div className="hidden md:block pl-2 border-l border-white/10">
-              <Link
-                href="/exchange"
-                className="get-started-glass"
-                data-testid="button-get-started"
-              >
-                Get Started
-              </Link>
             </div>
 
             <button
@@ -150,29 +129,6 @@ export function GlassNavbar() {
                 {link.label}
               </Link>
             ))}
-            <Link
-              href="/admin"
-              className={cn(
-                "block px-5 py-4 rounded-xl text-base font-medium transition-all duration-200",
-                location === "/admin"
-                  ? "text-white bg-white/15"
-                  : "text-white/80 hover:text-white hover:bg-white/10"
-              )}
-              onClick={() => setIsMobileMenuOpen(false)}
-              data-testid="link-mobile-admin"
-            >
-              Admin
-            </Link>
-            <div className="pt-3">
-              <Link
-                href="/exchange"
-                className="block w-full text-center liquid-glass-cta py-4 text-base font-semibold"
-                onClick={() => setIsMobileMenuOpen(false)}
-                data-testid="button-mobile-get-started"
-              >
-                Get Started
-              </Link>
-            </div>
           </div>
         </motion.div>
       </motion.div>
