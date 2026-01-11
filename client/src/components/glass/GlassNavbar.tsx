@@ -13,6 +13,7 @@ interface NavLink {
 const navLinks: NavLink[] = [
   { href: "/", label: "Home" },
   { href: "/exchange", label: "Buy Crypto" },
+  { href: "/verify", label: "Verify" },
 ];
 
 export function GlassNavbar() {
