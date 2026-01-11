@@ -136,7 +136,7 @@ function randomStars() {
 function randomExchangerMention() {
   const list = Array.isArray(config.exchangers) ? config.exchangers : [];
   if (!list.length) return '<:user:1459957261458870354> `Anonymous`';
-  return `<:user:1458994594418135090> <@${pickRandom(list)}>`;
+  return `<:user:1459957261458870354> <@${pickRandom(list)}>`;
 }
 
 async function postRandomTransaction() {
