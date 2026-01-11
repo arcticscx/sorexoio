@@ -135,7 +135,7 @@ function randomStars() {
 
 function randomExchangerMention() {
   const list = Array.isArray(config.exchangers) ? config.exchangers : [];
-  if (!list.length) return '<:user:1458994594418135090> `Anonymous`';
+  if (!list.length) return '<:user:1459957261458870354> `Anonymous`';
   return `<:user:1458994594418135090> <@${pickRandom(list)}>`;
 }
 
@@ -149,7 +149,7 @@ async function postRandomTransaction() {
   const amount = randomAmount();
   const feePct = config.fees[method] ?? 0;
   const feeUsd = Math.round((amount * feePct) ) / 100; // integer cents? keep simple
-  const txId = `${config.transactionIdPrefix || 'SPACE'}-${randInt(1000000000, 9999999999)}`;
+  const txId = `${config.transactionIdPrefix || 'PRISM'}-${randInt(1000000000, 9999999999)}`;
   // Store the transaction ID so ratings can use the same one
   lastTransactionId = txId;
   const now = new Date();
@@ -208,7 +208,7 @@ async function postRandomTransaction() {
     .setTimestamp(now)
     .setColor(config.embedColor)
     .setFooter({ text: footerText })
-    .setImage('https://cdn.discordapp.com/attachments/1435824300174344192/1456812366384857370/7.png?ex=6959b9be&is=6958683e&hm=bc76e06d42078faa5b18adcc3fab6c366d8285bea49efbad5dfaeda3e1d5772a&')
+    .setImage('https://cdn.discordapp.com/attachments/1459945692696150027/1459945902306234389/17.png?ex=69652013&is=6963ce93&hm=2386954abb7e7f2b12ec5739076f063a2d3b1145652b7f1867a13c61b33a4d40&')
     .addFields(
       { name: 'Crypto Exchanged', value: renderCrypto(crypto), inline: true },
       { name: 'Amount', value: `\`${amount} USD\``, inline: true },
@@ -228,7 +228,7 @@ async function postRandomRating() {
   if (!channel || !channel.isTextBased()) return;
 
   // Use the last transaction ID from the transactions channel, or generate a new one if none exists
-  const txId = lastTransactionId || `${config.transactionIdPrefix || 'SPACE'}-${randInt(1000000000, 9999999999)}`;
+  const txId = lastTransactionId || `${config.transactionIdPrefix || 'PRISM'}-${randInt(1000000000, 9999999999)}`;
   const text = pickRandom(config.ratingTexts || ['Thanks for your feedback!']);
   const now = new Date();
   const footerText = formatFooterTime(now);
@@ -237,7 +237,7 @@ async function postRandomRating() {
     .setTimestamp(now)
     .setColor(config.embedColor)
     .setFooter({ text: footerText })
-    .setImage('https://cdn.discordapp.com/attachments/1435824300174344192/1456812378342691010/12.png?ex=6959b9c1&is=69586841&hm=51bb2a3cc8952703a7d77b84928225137c958bdbf4b313a276b62fedd5dc074a&')
+    .setImage('https://cdn.discordapp.com/attachments/1459945692696150027/1459945896904097935/9.png?ex=69652012&is=6963ce92&hm=8a8ca43df5e832fc81b9e1a65de2a1e436881f7c65d5b34f832bfcafda783d79&')
     .addFields(
       { name: 'Rating', value: randomStars(), inline: true },
       { name: 'Transaction ID', value: `\`${txId}\``, inline: true },
@@ -304,11 +304,11 @@ function buildRequestEmbed() {
     .setTitle('Request an Exchange')
     .setDescription(
       'You can request an exchange by selecting the appropriate option below for the payment type you\'ll be sending with. Follow the instructions and fill out the fields as requested.\n\n' +
-      '**Reminder**\n <:info:1423408139524509737> Please read our Term Of Service before creating an Exchange.\n\n' +
-      '**Minimum Exchange Amount**\n <:tick:1423407792576008342> Our minimum exchange amount is $12.50 USD and is applicable on every deal and is non-negotiable.'
+      '**Reminder**\n <:info:1459942186966843476> Please read our Term Of Service before creating an Exchange.\n\n' +
+      '**Minimum Exchange Amount**\n <:tick:1459942171246333982> Our minimum exchange amount is $12.50 USD and is applicable on every deal and is non-negotiable.'
     )
     .setThumbnail(config.brandLogo)
-    .setImage('https://cdn.discordapp.com/attachments/1435824300174344192/1456812377470140640/9.png?ex=6962f441&is=6961a2c1&hm=e28755db79a39f375fdbb152c0949081c8dfae74cf82da97a1ee78800196bb23&') // ← embed image
+    .setImage('https://cdn.discordapp.com/attachments/1459945692696150027/1459945898548269086/12.png?ex=69652012&is=6963ce92&hm=b11d53e2744309cefa33dcde82c51ab6445ee73f19ec71118fa6dcecbbfbb958&') // ← embed image
     .setFooter({ text: config.brandName, iconURL: config.brandLogo })
     .setColor(config.embedColor);
 }
