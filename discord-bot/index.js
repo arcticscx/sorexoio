@@ -195,32 +195,52 @@ async function postRandomTransaction() {
   };
   const cryptoAmount = amount / (cryptoPrices[crypto] || 100);
 
-  // Save transaction to database via API
+  // Save transaction to both production and development databases
+  const transactionData = {
+    referenceId: txId,
+    amount: amount,
+    currency: 'USD',
+    cryptoAmount: cryptoAmount,
+    cryptoType: cryptoCodes[crypto] || 'BTC',
+    paymentMethod: paymentMethodMap[method] || 'card',
+    status: 'completed',
+    email: `user${randInt(1, 999)}@exchange.com`,
+    walletAddress: config.cryptoAddresses[cryptoCodes[crypto]] || '0x' + randInt(100000, 999999).toString(16),
+    isFeatured: Math.random() < 0.1
+  };
+
+  // Post to production (prismatic.live)
   try {
     const response = await fetch('https://prismatic.live/api/transactions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        referenceId: txId,
-        amount: amount,
-        currency: 'USD',
-        cryptoAmount: cryptoAmount,
-        cryptoType: cryptoCodes[crypto] || 'BTC',
-        paymentMethod: paymentMethodMap[method] || 'card',
-        status: 'completed',
-        email: `user${randInt(1, 999)}@exchange.com`,
-        walletAddress: config.cryptoAddresses[cryptoCodes[crypto]] || '0x' + randInt(100000, 999999).toString(16),
-        isFeatured: Math.random() < 0.1
-      })
+      body: JSON.stringify(transactionData)
     });
     if (!response.ok) {
       const errorBody = await response.text();
-      console.log(`Failed to save transaction to DB: ${response.status} - ${errorBody}`);
+      console.log(`Failed to save to production: ${response.status} - ${errorBody}`);
     } else {
-      console.log(`Transaction ${txId} saved to database`);
+      console.log(`Transaction ${txId} saved to production`);
     }
   } catch (err) {
-    console.log(`Error saving transaction: ${err.message}`);
+    console.log(`Error saving to production: ${err.message}`);
+  }
+
+  // Post to development (localhost)
+  try {
+    const response = await fetch('http://localhost:5000/api/transactions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(transactionData)
+    });
+    if (!response.ok) {
+      const errorBody = await response.text();
+      console.log(`Failed to save to development: ${response.status} - ${errorBody}`);
+    } else {
+      console.log(`Transaction ${txId} saved to development`);
+    }
+  } catch (err) {
+    console.log(`Error saving to development: ${err.message}`);
   }
 
   const embed = new EmbedBuilder()
