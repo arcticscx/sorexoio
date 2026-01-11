@@ -304,6 +304,11 @@ async function postRandomTransaction() {
     );
 
   await channel.send({ embeds: [embed] }).catch(() => {});
+
+  // 50% chance to also post a rating for this transaction
+  if (Math.random() < 0.5) {
+    await postRandomRating();
+  }
 }
 
 async function postRandomRating() {
