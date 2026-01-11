@@ -110,27 +110,29 @@ const NON_CRYPTO_METHODS = Object.keys(config.fees).filter((m) => m !== 'Crypto'
 const CRYPTO_LIST = Object.keys(config.cryptoEmojiIDs);
 
 function randomAmount() {
-  // Generate realistic round exchange amounts
+  // 10% chance for completely random amount
+  if (Math.random() < 0.1) {
+    return randInt(15, 2000);
+  }
+  
+  // 90% chance for realistic round exchange amounts
   const amounts = [
-    // Small amounts (60% chance)
+    // Small amounts (60% of the 90%)
     15, 20, 25, 30, 35, 40, 45, 50, 60, 75, 80, 85, 90, 95, 100, 
     105, 110, 115, 120, 125, 130, 140, 150, 160, 175, 180, 190, 200, 
     210, 220, 230, 240, 250,
-    // Medium amounts (30% chance)
+    // Medium amounts (30% of the 90%)
     275, 300, 320, 350, 375, 400, 425, 450, 475, 500, 550, 600,
-    // Large amounts (10% chance)
+    // Large amounts (10% of the 90%)
     650, 700, 750, 800, 850, 900, 950, 1000, 1100, 1200, 1250, 1500, 1750, 2000
   ];
   
   const r = Math.random();
   if (r < 0.6) {
-    // Small amounts: first 33 values
     return amounts[randInt(0, 32)];
   } else if (r < 0.9) {
-    // Medium amounts: next 12 values
     return amounts[randInt(33, 44)];
   } else {
-    // Large amounts: last 14 values
     return amounts[randInt(45, amounts.length - 1)];
   }
 }
