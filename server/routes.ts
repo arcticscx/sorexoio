@@ -249,31 +249,45 @@ export async function registerRoutes(
   app.post("/api/seed", async (_req, res) => {
     try {
       const paymentMethods = ["paypal", "card"];
-      const statuses = ["completed", "pending", "processing", "completed", "completed"];
+      const statuses = ["completed", "completed", "completed", "completed", "completed"];
       const cryptoTypes = ["BTC", "ETH", "USDT", "SOL"];
       
-      for (let i = 0; i < 15; i++) {
-        // Generate amounts between $100 - $1000 in even numbers
-        const bases = [50, 100];
-        const base = bases[Math.floor(Math.random() * bases.length)];
-        const amount = (Math.floor(Math.random() * 18) + 2) * base; // 100 to 1000
+      // Amounts ending in 5 or 0 between $100-$1000
+      const possibleAmounts = [
+        150, 200, 250, 300, 350, 400, 450, 500, 
+        550, 600, 650, 700, 755, 800, 850, 900, 955, 1000,
+        105, 155, 205, 255, 305, 355, 405, 455, 505, 555, 
+        605, 655, 705, 750, 805, 855, 905, 950
+      ];
+      
+      for (let i = 0; i < 8; i++) {
+        // Pick random amount ending in 5 or 0
+        const amount = possibleAmounts[Math.floor(Math.random() * possibleAmounts.length)];
 
         const cryptoType = cryptoTypes[Math.floor(Math.random() * cryptoTypes.length)];
-        const rate = cryptoType === "BTC" ? 50000 : cryptoType === "ETH" ? 3000 : cryptoType === "SOL" ? 150 : 1;
+        // Fixed rates: BTC ~97k, ETH ~3.3k, SOL ~140, USDT = 1
+        const rate = cryptoType === "BTC" ? 97000 : cryptoType === "ETH" ? 3300 : cryptoType === "SOL" ? 140 : 1;
         
-        // Apply 2% fee - amount shown is after fee deduction
-        const amountAfterFee = amount * 0.98;
+        // Apply 5% fee - crypto amount is after fee deduction
+        const cryptoAmount = (amount * 0.95) / rate;
+        
+        // Random timestamp within the past 24 hours
+        const now = new Date();
+        const randomHoursAgo = Math.floor(Math.random() * 24);
+        const randomMinutesAgo = Math.floor(Math.random() * 60);
+        const createdAt = new Date(now.getTime() - (randomHoursAgo * 60 + randomMinutesAgo) * 60 * 1000);
         
         await storage.createTransaction({
-          amount: amountAfterFee,
+          amount,
           currency: "USD",
-          cryptoAmount: amountAfterFee / rate,
+          cryptoAmount,
           cryptoType,
           paymentMethod: paymentMethods[Math.floor(Math.random() * paymentMethods.length)],
           status: statuses[Math.floor(Math.random() * statuses.length)],
           email: `user${i + 1}@example.com`,
           walletAddress: `0x${Math.random().toString(16).slice(2, 42)}`,
           isFeatured: Math.random() > 0.8,
+          createdAt,
         });
       }
 

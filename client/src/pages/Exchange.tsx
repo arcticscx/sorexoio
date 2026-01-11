@@ -75,11 +75,16 @@ export default function Exchange() {
 
   const createTransaction = useMutation({
     mutationFn: async () => {
+      // Crypto rates: BTC ~97k, ETH ~3.3k, SOL ~140, USDT = 1
+      const rate = formData.cryptoType === "BTC" ? 97000 : formData.cryptoType === "ETH" ? 3300 : formData.cryptoType === "SOL" ? 140 : 1;
+      // Apply 5% fee to the crypto amount
+      const cryptoAmount = (parseFloat(formData.amount) * 0.95) / rate;
+      
       const res = await apiRequest("POST", "/api/transactions", {
         amount: parseFloat(formData.amount),
         currency: formData.currency,
         cryptoType: formData.cryptoType,
-        cryptoAmount: parseFloat(formData.amount) / 50000,
+        cryptoAmount,
         paymentMethod: formData.paymentMethod,
         email: formData.email,
         walletAddress: formData.walletAddress,
@@ -176,8 +181,10 @@ export default function Exchange() {
   const currentStepIndex = steps.findIndex((s) => s.id === step);
 
   const cryptoList = cryptos?.length ? cryptos : defaultCryptos;
-  const cryptoRate = formData.cryptoType === "BTC" ? 50000 : formData.cryptoType === "ETH" ? 3000 : 1;
-  const estimatedCrypto = formData.amount ? (parseFloat(formData.amount) / cryptoRate).toFixed(8) : "0.00000000";
+  // Crypto rates: BTC ~97k, ETH ~3.3k, SOL ~140, USDT = 1
+  const cryptoRate = formData.cryptoType === "BTC" ? 97000 : formData.cryptoType === "ETH" ? 3300 : formData.cryptoType === "SOL" ? 140 : 1;
+  // Apply 5% fee to the crypto amount
+  const estimatedCrypto = formData.amount ? ((parseFloat(formData.amount) * 0.95) / cryptoRate).toFixed(8) : "0.00000000";
 
   return (
     <div className="min-h-screen">
