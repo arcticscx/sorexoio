@@ -17,6 +17,7 @@ interface PriceData {
 
 const SWAP_FEE = 0.002; // 0.2% fee
 const MIN_SWAP_USD = 50; // Minimum $50 swap
+const MAX_SWAP_USD = 1000000; // Maximum $1,000,000 swap
 
 export default function Swap() {
   const { toast } = useToast();
@@ -75,8 +76,9 @@ export default function Swap() {
     setFromAmount("");
   };
 
-  const canProceed = fromCrypto && toCrypto && fromCrypto.id !== toCrypto.id && fromAmountNum > 0 && fromValueUsd >= MIN_SWAP_USD;
+  const canProceed = fromCrypto && toCrypto && fromCrypto.id !== toCrypto.id && fromAmountNum > 0 && fromValueUsd >= MIN_SWAP_USD && fromValueUsd <= MAX_SWAP_USD;
   const belowMinimum = fromAmountNum > 0 && fromValueUsd < MIN_SWAP_USD;
+  const aboveMaximum = fromAmountNum > 0 && fromValueUsd > MAX_SWAP_USD;
 
   const renderCryptoSelector = (
     selected: SwapWallet | null,
@@ -242,6 +244,11 @@ export default function Swap() {
                         {belowMinimum && (
                           <p className="text-red-400 text-sm mt-2">
                             Minimum swap amount is ${MIN_SWAP_USD} USD
+                          </p>
+                        )}
+                        {aboveMaximum && (
+                          <p className="text-red-400 text-sm mt-2">
+                            Maximum swap amount is ${MAX_SWAP_USD.toLocaleString()} USD
                           </p>
                         )}
                       </div>
