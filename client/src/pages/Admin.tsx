@@ -25,16 +25,17 @@ import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useUpload } from "@/hooks/use-upload";
 import { cn } from "@/lib/utils";
-import type { Transaction, Crypto, Setting, PaymentMethod } from "@shared/schema";
-import { CreditCard } from "lucide-react";
+import type { Transaction, Crypto, Setting, PaymentMethod, SwapWallet } from "@shared/schema";
+import { CreditCard, ArrowLeftRight } from "lucide-react";
 
-type Tab = "dashboard" | "transactions" | "cryptos" | "payments" | "settings";
+type Tab = "dashboard" | "transactions" | "cryptos" | "payments" | "swapwallets" | "settings";
 
 const tabs = [
   { id: "dashboard" as Tab, label: "Dashboard", icon: LayoutDashboard },
   { id: "transactions" as Tab, label: "Transactions", icon: Activity },
   { id: "cryptos" as Tab, label: "Cryptos", icon: Coins },
   { id: "payments" as Tab, label: "Payments", icon: CreditCard },
+  { id: "swapwallets" as Tab, label: "Swap Wallets", icon: ArrowLeftRight },
   { id: "settings" as Tab, label: "Settings", icon: Settings },
 ];
 
@@ -67,6 +68,10 @@ export default function Admin() {
   const [editingPayment, setEditingPayment] = useState<PaymentMethod | null>(null);
   const [newPayment, setNewPayment] = useState({ name: "", key: "", icon: "", description: "" });
   const paymentIconInputRef = useRef<HTMLInputElement>(null);
+  const [isSwapWalletModalOpen, setIsSwapWalletModalOpen] = useState(false);
+  const [editingSwapWallet, setEditingSwapWallet] = useState<SwapWallet | null>(null);
+  const [newSwapWallet, setNewSwapWallet] = useState({ cryptoSymbol: "", cryptoName: "", walletAddress: "", qrCodeImage: "" });
+  const swapWalletQrInputRef = useRef<HTMLInputElement>(null);
 
   const { uploadFile, isUploading: isUploadingPaymentIcon } = useUpload({
     onSuccess: (response) => {
@@ -90,9 +95,36 @@ export default function Admin() {
         return;
       }
       await uploadFile(file);
-      // Reset file input to allow re-uploading the same file
       if (paymentIconInputRef.current) {
         paymentIconInputRef.current.value = "";
+      }
+    }
+  };
+
+  const { uploadFile: uploadSwapQr, isUploading: isUploadingSwapQr } = useUpload({
+    onSuccess: (response) => {
+      setNewSwapWallet(prev => ({ ...prev, qrCodeImage: response.objectPath }));
+      toast({ title: "QR code uploaded successfully" });
+    },
+    onError: (error) => {
+      toast({ title: "Upload failed", description: error.message, variant: "destructive" });
+    },
+  });
+
+  const handleSwapQrUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (!file.type.startsWith('image/')) {
+        toast({ title: "Invalid file", description: "Please select an image file", variant: "destructive" });
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        toast({ title: "File too large", description: "Maximum file size is 5MB", variant: "destructive" });
+        return;
+      }
+      await uploadSwapQr(file);
+      if (swapWalletQrInputRef.current) {
+        swapWalletQrInputRef.current.value = "";
       }
     }
   };
@@ -114,6 +146,11 @@ export default function Admin() {
 
   const { data: paymentMethods = [], isLoading: paymentsLoading } = useQuery<PaymentMethod[]>({
     queryKey: ["/api/payment-methods"],
+    enabled: isAuthenticated,
+  });
+
+  const { data: swapWallets = [], isLoading: swapWalletsLoading } = useQuery<SwapWallet[]>({
+    queryKey: ["/api/swap-wallets"],
     enabled: isAuthenticated,
   });
 
@@ -211,6 +248,44 @@ export default function Admin() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/payment-methods"] });
       toast({ title: "Payment method deleted successfully" });
+    },
+  });
+
+  const createSwapWallet = useMutation({
+    mutationFn: async (data: typeof newSwapWallet) => {
+      const res = await apiRequest("POST", "/api/swap-wallets", data);
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/swap-wallets"] });
+      setIsSwapWalletModalOpen(false);
+      setEditingSwapWallet(null);
+      setNewSwapWallet({ cryptoSymbol: "", cryptoName: "", walletAddress: "", qrCodeImage: "" });
+      toast({ title: "Swap wallet added successfully" });
+    },
+  });
+
+  const updateSwapWallet = useMutation({
+    mutationFn: async (data: Partial<SwapWallet> & { id: string }) => {
+      const res = await apiRequest("PATCH", `/api/swap-wallets/${data.id}`, data);
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/swap-wallets"] });
+      setIsSwapWalletModalOpen(false);
+      setEditingSwapWallet(null);
+      setNewSwapWallet({ cryptoSymbol: "", cryptoName: "", walletAddress: "", qrCodeImage: "" });
+      toast({ title: "Swap wallet updated successfully" });
+    },
+  });
+
+  const deleteSwapWallet = useMutation({
+    mutationFn: async (id: string) => {
+      await apiRequest("DELETE", `/api/swap-wallets/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/swap-wallets"] });
+      toast({ title: "Swap wallet deleted successfully" });
     },
   });
 
@@ -744,6 +819,113 @@ export default function Admin() {
                 </motion.div>
               )}
 
+              {activeTab === "swapwallets" && (
+                <motion.div
+                  key="swapwallets"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <GlassCard className="p-6" hover={false}>
+                    <div className="flex items-center justify-between mb-6">
+                      <div>
+                        <h3 className="text-lg font-semibold text-white">Swap Wallets</h3>
+                        <p className="text-white/50 text-sm mt-1">Manage crypto addresses for swaps (0.2% fee)</p>
+                      </div>
+                      <GlassButton
+                        variant="primary"
+                        size="sm"
+                        onClick={() => {
+                          setEditingSwapWallet(null);
+                          setNewSwapWallet({ cryptoSymbol: "", cryptoName: "", walletAddress: "", qrCodeImage: "" });
+                          setIsSwapWalletModalOpen(true);
+                        }}
+                        data-testid="button-add-swap-wallet"
+                      >
+                        <Plus className="w-4 h-4" />
+                        Add Wallet
+                      </GlassButton>
+                    </div>
+
+                    {swapWalletsLoading ? (
+                      <div className="space-y-3">
+                        {[1, 2, 3].map((i) => (
+                          <div key={i} className="h-24 rounded-lg bg-white/5 animate-pulse" />
+                        ))}
+                      </div>
+                    ) : swapWallets.length === 0 ? (
+                      <div className="text-center py-12">
+                        <ArrowLeftRight className="w-12 h-12 text-white/20 mx-auto mb-3" />
+                        <p className="text-white/50">No swap wallets configured</p>
+                        <p className="text-white/30 text-sm mt-1">Add wallet addresses for crypto-to-crypto swaps</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        {swapWallets.map((sw) => (
+                          <div
+                            key={sw.id}
+                            className="flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/10"
+                          >
+                            <div className="w-16 h-16 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                              {sw.qrCodeImage ? (
+                                <img src={sw.qrCodeImage} alt={`${sw.cryptoSymbol} QR`} className="w-full h-full object-cover" />
+                              ) : (
+                                <span className="font-bold text-white/50 text-lg">{sw.cryptoSymbol}</span>
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2">
+                                <span className="font-semibold text-white">{sw.cryptoName}</span>
+                                <span className="text-emerald-400 text-xs font-medium">({sw.cryptoSymbol})</span>
+                              </div>
+                              <p className="text-white/40 text-sm truncate mt-1 font-mono">{sw.walletAddress}</p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <div className={cn(
+                                "px-2 py-1 rounded-full text-xs",
+                                sw.isActive ? "bg-emerald-500/20 text-emerald-300" : "bg-white/10 text-white/50"
+                              )}>
+                                {sw.isActive ? "Active" : "Inactive"}
+                              </div>
+                              <GlassButton
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => {
+                                  setEditingSwapWallet(sw);
+                                  setNewSwapWallet({
+                                    cryptoSymbol: sw.cryptoSymbol,
+                                    cryptoName: sw.cryptoName,
+                                    walletAddress: sw.walletAddress,
+                                    qrCodeImage: sw.qrCodeImage || ""
+                                  });
+                                  setIsSwapWalletModalOpen(true);
+                                }}
+                                data-testid={`button-edit-swap-wallet-${sw.id}`}
+                              >
+                                <Edit3 className="w-4 h-4" />
+                              </GlassButton>
+                              <GlassButton
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => {
+                                  if (confirm("Delete this swap wallet?")) {
+                                    deleteSwapWallet.mutate(sw.id);
+                                  }
+                                }}
+                                data-testid={`button-delete-swap-wallet-${sw.id}`}
+                              >
+                                <Trash2 className="w-4 h-4 text-red-400" />
+                              </GlassButton>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </GlassCard>
+                </motion.div>
+              )}
+
               {activeTab === "settings" && (
                 <motion.div
                   key="settings"
@@ -1125,6 +1307,119 @@ export default function Admin() {
               {editingPayment 
                 ? (updatePaymentMethod.isPending ? "Saving..." : "Save Changes")
                 : (createPaymentMethod.isPending ? "Adding..." : "Add Payment")
+              }
+            </GlassButton>
+          </div>
+        </div>
+      </GlassModal>
+
+      <GlassModal
+        isOpen={isSwapWalletModalOpen}
+        onClose={() => {
+          setIsSwapWalletModalOpen(false);
+          setEditingSwapWallet(null);
+          setNewSwapWallet({ cryptoSymbol: "", cryptoName: "", walletAddress: "", qrCodeImage: "" });
+        }}
+        title={editingSwapWallet ? "Edit Swap Wallet" : "Add Swap Wallet"}
+        size="md"
+      >
+        <div className="space-y-4">
+          <GlassInput
+            label="Crypto Name"
+            placeholder="Bitcoin"
+            value={newSwapWallet.cryptoName}
+            onChange={(e) => setNewSwapWallet({ ...newSwapWallet, cryptoName: e.target.value })}
+            data-testid="input-swap-crypto-name"
+          />
+          <GlassInput
+            label="Symbol"
+            placeholder="BTC"
+            value={newSwapWallet.cryptoSymbol}
+            onChange={(e) => setNewSwapWallet({ ...newSwapWallet, cryptoSymbol: e.target.value.toUpperCase() })}
+            data-testid="input-swap-crypto-symbol"
+          />
+          <GlassInput
+            label="Wallet Address"
+            placeholder="Enter wallet address for receiving swaps"
+            value={newSwapWallet.walletAddress}
+            onChange={(e) => setNewSwapWallet({ ...newSwapWallet, walletAddress: e.target.value })}
+            data-testid="input-swap-wallet-address"
+          />
+          <div>
+            <label className="block text-xs font-medium text-white/60 uppercase tracking-wider mb-2">
+              QR Code Image
+            </label>
+            <input
+              type="file"
+              ref={swapWalletQrInputRef}
+              onChange={handleSwapQrUpload}
+              accept="image/*"
+              className="hidden"
+              data-testid="input-swap-qr-file"
+            />
+            <div className="flex items-center gap-3">
+              <GlassButton
+                type="button"
+                variant="ghost"
+                onClick={() => swapWalletQrInputRef.current?.click()}
+                disabled={isUploadingSwapQr}
+                data-testid="button-upload-swap-qr"
+              >
+                <Upload className="w-4 h-4 mr-2" />
+                {isUploadingSwapQr ? "Uploading..." : "Upload QR Code"}
+              </GlassButton>
+              {newSwapWallet.qrCodeImage && (
+                <div className="flex items-center gap-2">
+                  <div className="w-16 h-16 rounded-lg overflow-hidden bg-white/10">
+                    <img src={newSwapWallet.qrCodeImage} alt="QR preview" className="w-full h-full object-cover" />
+                  </div>
+                  <GlassButton
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setNewSwapWallet({ ...newSwapWallet, qrCodeImage: "" })}
+                  >
+                    <X className="w-4 h-4" />
+                  </GlassButton>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="flex gap-3 pt-4">
+            <GlassButton
+              variant="ghost"
+              className="flex-1"
+              onClick={() => {
+                setIsSwapWalletModalOpen(false);
+                setEditingSwapWallet(null);
+                setNewSwapWallet({ cryptoSymbol: "", cryptoName: "", walletAddress: "", qrCodeImage: "" });
+              }}
+            >
+              Cancel
+            </GlassButton>
+            <GlassButton
+              variant="primary"
+              className="flex-1"
+              onClick={() => {
+                if (editingSwapWallet) {
+                  updateSwapWallet.mutate({
+                    id: editingSwapWallet.id,
+                    cryptoSymbol: newSwapWallet.cryptoSymbol,
+                    cryptoName: newSwapWallet.cryptoName,
+                    walletAddress: newSwapWallet.walletAddress,
+                    qrCodeImage: newSwapWallet.qrCodeImage || null,
+                  });
+                } else {
+                  createSwapWallet.mutate(newSwapWallet);
+                }
+              }}
+              disabled={(editingSwapWallet ? updateSwapWallet.isPending : createSwapWallet.isPending) || !newSwapWallet.cryptoName || !newSwapWallet.cryptoSymbol || !newSwapWallet.walletAddress}
+              data-testid="button-save-swap-wallet"
+            >
+              {editingSwapWallet 
+                ? (updateSwapWallet.isPending ? "Saving..." : "Save Changes")
+                : (createSwapWallet.isPending ? "Adding..." : "Add Wallet")
               }
             </GlassButton>
           </div>
