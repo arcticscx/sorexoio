@@ -26,7 +26,9 @@ Preferred communication style: Simple, everyday language.
 
 **Page Structure:**
 - Home (`/`) - Landing page with transaction feed and stats
-- Exchange (`/exchange`) - Multi-step cryptocurrency exchange wizard
+- Exchange (`/exchange`) - Multi-step fiat-to-crypto exchange wizard
+- Swap (`/swap`) - Crypto-to-crypto swap with 0.2% fee
+- Verify (`/verify`) - Transaction verification page
 - Admin (`/admin`) - Dashboard for managing platform content
 - 404 - Not found fallback
 
@@ -42,7 +44,8 @@ Preferred communication style: Simple, everyday language.
 - Cryptocurrencies management (`/api/cryptos`)
 - Currencies management (`/api/currencies`)
 - Settings key-value store (`/api/settings`)
-- Live crypto prices (`/api/prices`) - Fetches BTC, ETH, SOL, USDT prices from CoinGecko with 5-minute caching
+- Swap wallets CRUD (`/api/swap-wallets`) - Manage crypto addresses for swaps
+- Live crypto prices (`/api/prices`) - Fetches BTC, ETH, SOL, USDT, LTC, XRP, BNB, BCH, USDC, TRX prices from CoinGecko with 5-minute caching
 
 **Real-time Updates:** WebSocket server at `/ws` path broadcasts new transactions to connected clients
 
@@ -59,6 +62,7 @@ Preferred communication style: Simple, everyday language.
 - `cryptos` - Supported cryptocurrencies with wallet addresses
 - `currencies` - Fiat currencies
 - `settings` - Key-value configuration store
+- `swapWallets` - Crypto addresses and QR codes for crypto-to-crypto swaps
 
 ### Build System
 

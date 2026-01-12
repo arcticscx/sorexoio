@@ -11,7 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import type { SwapWallet } from "@shared/schema";
 
 interface PriceData {
-  [key: string]: { usd: number };
+  [key: string]: number;
 }
 
 const SWAP_FEE = 0.002; // 0.2% fee
@@ -41,22 +41,7 @@ export default function Swap() {
   );
 
   const getPrice = (symbol: string): number => {
-    const symbolMap: { [key: string]: string } = {
-      'BTC': 'bitcoin',
-      'ETH': 'ethereum',
-      'SOL': 'solana',
-      'USDT': 'tether',
-      'USDC': 'usd-coin',
-      'LTC': 'litecoin',
-      'XRP': 'ripple',
-      'BNB': 'binancecoin',
-      'BCH': 'bitcoin-cash',
-      'TRX': 'tron',
-      'DOGE': 'dogecoin',
-      'ADA': 'cardano',
-    };
-    const coinId = symbolMap[symbol.toUpperCase()] || symbol.toLowerCase();
-    return prices[coinId]?.usd || 0;
+    return prices[symbol.toUpperCase()] || 0;
   };
 
   const fromPrice = fromCrypto ? getPrice(fromCrypto.cryptoSymbol) : 0;
@@ -69,9 +54,9 @@ export default function Swap() {
   const toAmount = toPrice > 0 ? netValueUsd / toPrice : 0;
 
   const handleCopy = async () => {
-    if (!toCrypto) return;
+    if (!fromCrypto) return;
     try {
-      await navigator.clipboard.writeText(toCrypto.walletAddress);
+      await navigator.clipboard.writeText(fromCrypto.walletAddress);
       setCopied(true);
       toast({ title: "Address copied to clipboard" });
       setTimeout(() => setCopied(false), 2000);
