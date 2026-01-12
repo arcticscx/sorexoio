@@ -3,6 +3,7 @@ import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { ArrowRight, ArrowDownUp, Shield, Zap, CheckCircle, Sparkles, Clock, TrendingUp, Percent } from "lucide-react";
 import { GlassCard, GlassButton, PrismaticBackground, GlassNavbar } from "@/components/glass";
+import { Seo } from "@/components/Seo";
 
 const benefits = [
   {
@@ -50,6 +51,7 @@ export default function CryptoSwapPage() {
 
   return (
     <div className="min-h-screen">
+      <Seo />
       <PrismaticBackground intensity="medium" enableParallax />
       <GlassNavbar />
 

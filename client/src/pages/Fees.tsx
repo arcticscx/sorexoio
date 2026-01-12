@@ -3,6 +3,7 @@ import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { ArrowRight, Sparkles, Percent, CheckCircle, TrendingDown, Shield, Zap } from "lucide-react";
 import { GlassCard, GlassButton, PrismaticBackground, GlassNavbar } from "@/components/glass";
+import { Seo } from "@/components/Seo";
 
 const feeStructure = [
   {
@@ -62,6 +63,7 @@ export default function Fees() {
 
   return (
     <div className="min-h-screen">
+      <Seo />
       <PrismaticBackground intensity="medium" enableParallax />
       <GlassNavbar />
 

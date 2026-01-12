@@ -3,6 +3,7 @@ import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { ArrowRight, Shield, Lock, Eye, EyeOff, CheckCircle, Sparkles, Zap, Globe, UserX } from "lucide-react";
 import { GlassCard, GlassButton, PrismaticBackground, GlassNavbar } from "@/components/glass";
+import { Seo } from "@/components/Seo";
 
 const benefits = [
   {
@@ -58,6 +59,7 @@ export default function NoKycCrypto() {
 
   return (
     <div className="min-h-screen">
+      <Seo />
       <PrismaticBackground intensity="medium" enableParallax />
       <GlassNavbar />
 

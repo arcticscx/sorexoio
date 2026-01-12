@@ -3,6 +3,7 @@ import { Link } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Sparkles, HelpCircle, ChevronDown, Search } from "lucide-react";
 import { GlassCard, GlassButton, GlassInput, PrismaticBackground, GlassNavbar } from "@/components/glass";
+import { Seo } from "@/components/Seo";
 
 const faqs = [
   {
@@ -155,6 +156,7 @@ export default function Faq() {
 
   return (
     <div className="min-h-screen">
+      <Seo />
       <PrismaticBackground intensity="medium" enableParallax />
       <GlassNavbar />
 

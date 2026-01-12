@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, Sparkles, TrendingUp, Clock, Shield, Zap } from "lucide-react";
 import { GlassCard, GlassButton, PrismaticBackground, GlassNavbar } from "@/components/glass";
 import { CryptoIcon } from "@/components/CryptoIcon";
+import { Seo } from "@/components/Seo";
 
 const coins = [
   {
@@ -75,6 +76,7 @@ export default function SupportedCoins() {
 
   return (
     <div className="min-h-screen">
+      <Seo />
       <PrismaticBackground intensity="medium" enableParallax />
       <GlassNavbar />
 

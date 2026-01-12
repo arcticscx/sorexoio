@@ -6,6 +6,7 @@ import { ArrowRight, Shield, Zap, Globe, TrendingUp } from "lucide-react";
 import { GlassCard, GlassButton, GlassPill, PrismaticBackground, GlassNavbar } from "@/components/glass";
 import { TransactionFeed } from "@/components/TransactionFeed";
 import { SeoFooter } from "@/components/SeoFooter";
+import { Seo } from "@/components/Seo";
 import type { Transaction } from "@shared/schema";
 
 const periodOptions = [
@@ -63,6 +64,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen">
+      <Seo />
       <PrismaticBackground intensity="medium" enableParallax />
       <GlassNavbar />
 

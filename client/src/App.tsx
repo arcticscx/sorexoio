@@ -3,6 +3,7 @@ import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { GlobalSeo } from "@/components/Seo";
 import Home from "@/pages/Home";
 import Exchange from "@/pages/Exchange";
 import Swap from "@/pages/Swap";
@@ -41,6 +42,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
+        <GlobalSeo />
         <Toaster />
         <Router />
       </TooltipProvider>

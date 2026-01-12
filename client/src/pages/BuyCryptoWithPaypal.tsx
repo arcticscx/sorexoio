@@ -3,6 +3,7 @@ import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { ArrowRight, Shield, Zap, Globe, CheckCircle, Sparkles, CreditCard, Clock, Lock } from "lucide-react";
 import { GlassCard, GlassButton, PrismaticBackground, GlassNavbar } from "@/components/glass";
+import { Seo } from "@/components/Seo";
 
 const benefits = [
   {
@@ -50,6 +51,7 @@ export default function BuyCryptoWithPaypal() {
 
   return (
     <div className="min-h-screen">
+      <Seo />
       <PrismaticBackground intensity="medium" enableParallax />
       <GlassNavbar />
 

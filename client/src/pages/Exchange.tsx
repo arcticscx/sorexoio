@@ -7,6 +7,7 @@ import { GlassCard, GlassButton, GlassInput, PrismaticBackground, GlassNavbar } 
 import { CryptoIcon } from "@/components/CryptoIcon";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { Seo } from "@/components/Seo";
 import type { Crypto, PaymentMethod, Setting } from "@shared/schema";
 
 import cardIcon from "@assets/ARCTIC_1768071339190.png";
@@ -319,6 +320,7 @@ export default function Exchange() {
 
   return (
     <div className="min-h-screen">
+      <Seo />
       <PrismaticBackground intensity="medium" enableParallax />
       <GlassNavbar />
 

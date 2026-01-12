@@ -9,6 +9,7 @@ import { GlassNavbar } from "@/components/glass/GlassNavbar";
 import { PrismaticBackground } from "@/components/glass/PrismaticBackground";
 import { CryptoIcon } from "@/components/CryptoIcon";
 import { useToast } from "@/hooks/use-toast";
+import { Seo } from "@/components/Seo";
 import type { SwapWallet } from "@shared/schema";
 
 interface PriceData {
@@ -177,6 +178,7 @@ export default function Swap() {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
+      <Seo />
       <PrismaticBackground />
       <GlassNavbar />
       

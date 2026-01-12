@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Search, CheckCircle, XCircle, Clock, ArrowLeft, Shield } from "lucide-react";
 import { GlassCard, GlassButton, GlassInput, PrismaticBackground, GlassNavbar } from "@/components/glass";
 import { CryptoIcon } from "@/components/CryptoIcon";
+import { Seo } from "@/components/Seo";
 import type { Transaction } from "@shared/schema";
 
 export default function Verify() {
@@ -74,6 +75,7 @@ export default function Verify() {
 
   return (
     <div className="min-h-screen relative">
+      <Seo />
       <PrismaticBackground />
       <GlassNavbar />
 
