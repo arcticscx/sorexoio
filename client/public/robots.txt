@@ -1,0 +1,22 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://prismatic.live/sitemap.xml
+
+# Crawl-delay: 1
+
+# Allow all search engines to index all pages
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: Discordbot
+Allow: /
