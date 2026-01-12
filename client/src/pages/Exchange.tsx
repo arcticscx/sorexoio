@@ -19,9 +19,9 @@ function generatePaymentLink(amount: string, email: string) {
   const baseUrl = "https://checkout.paymentiq.io/cashier/master/payment-method";
   
   const queryParams = new URLSearchParams({
-    merchantId: import.meta.env.VITE_PAYMENTIQ_MERCHANT_ID || "",
-    userId: import.meta.env.VITE_PAYMENTIQ_USER_ID || "",
-    sessionId: import.meta.env.VITE_PAYMENTIQ_SESSION_ID || "",
+    merchantId: "100259001",
+    userId: "22562969",
+    sessionId: "$2y$10$fLmjvewQygu0susC.JdpIu3udaYmckgxiJN4LvOw3DC/GCevSoimC",
     environment: "production",
     amount: amount,
     method: "deposit",
