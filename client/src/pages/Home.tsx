@@ -101,25 +101,25 @@ export default function Home() {
             </motion.div>
 
             <motion.div
-              className="grid grid-cols-1 xs:grid-cols-3 gap-3 sm:gap-8 max-w-3xl mx-auto mt-12 sm:mt-16"
+              className="grid grid-cols-3 gap-4 sm:gap-8 max-w-3xl mx-auto mt-16"
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
               <GlassCard className="p-4 sm:p-6 text-center" hover={false}>
-                <div className="text-xl sm:text-3xl font-bold prismatic-text">
+                <div className="text-2xl sm:text-3xl font-bold prismatic-text">
                   ${(stats.totalVolume / 1000000).toFixed(1)}M
                 </div>
                 <div className="text-xs sm:text-sm text-white/50 mt-1">Volume (24h)</div>
               </GlassCard>
               <GlassCard className="p-4 sm:p-6 text-center" hover={false}>
-                <div className="text-xl sm:text-3xl font-bold prismatic-text">
+                <div className="text-2xl sm:text-3xl font-bold prismatic-text">
                   {stats.totalTransactions.toLocaleString()}
                 </div>
                 <div className="text-xs sm:text-sm text-white/50 mt-1">Transactions</div>
               </GlassCard>
               <GlassCard className="p-4 sm:p-6 text-center" hover={false}>
-                <div className="text-xl sm:text-3xl font-bold prismatic-text">
+                <div className="text-2xl sm:text-3xl font-bold prismatic-text">
                   {stats.activeUsers.toLocaleString()}
                 </div>
                 <div className="text-xs sm:text-sm text-white/50 mt-1">Active Users</div>

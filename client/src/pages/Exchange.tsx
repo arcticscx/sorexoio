@@ -339,12 +339,12 @@ export default function Exchange() {
             </div>
 
             {step !== "success" && (
-              <div className="mb-6 sm:mb-8">
+              <div className="mb-8">
                 <div className="flex items-center justify-between">
                   {steps.map((s, i) => (
                     <div key={s.id} className="flex items-center">
                       <div
-                        className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-semibold text-sm sm:text-base transition-all duration-300 ${
+                        className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all duration-300 ${
                           i <= currentStepIndex
                             ? "bg-gradient-to-br from-emerald-500 to-teal-500 text-white shadow-glow"
                             : "bg-white/10 text-white/40"
@@ -352,14 +352,14 @@ export default function Exchange() {
                         data-testid={`step-indicator-${s.id}`}
                       >
                         {i < currentStepIndex ? (
-                          <Check className="w-4 h-4 sm:w-5 sm:h-5" />
+                          <Check className="w-5 h-5" />
                         ) : (
                           s.number
                         )}
                       </div>
                       {i < steps.length - 1 && (
                         <div
-                          className={`w-8 xs:w-12 sm:w-24 h-0.5 mx-1 sm:mx-2 transition-all duration-300 ${
+                          className={`w-16 sm:w-24 h-0.5 mx-2 transition-all duration-300 ${
                             i < currentStepIndex ? "bg-emerald-500" : "bg-white/10"
                           }`}
                         />
