@@ -4,7 +4,8 @@ import {
   cryptos, type Crypto, type InsertCrypto,
   currencies, type Currency, type InsertCurrency,
   settings, type Setting, type InsertSetting,
-  paymentMethods, type PaymentMethod, type InsertPaymentMethod
+  paymentMethods, type PaymentMethod, type InsertPaymentMethod,
+  swapWallets, type SwapWallet, type InsertSwapWallet
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc } from "drizzle-orm";
@@ -44,6 +45,13 @@ export interface IStorage {
   createPaymentMethod(paymentMethod: InsertPaymentMethod): Promise<PaymentMethod>;
   updatePaymentMethod(id: string, data: Partial<InsertPaymentMethod>): Promise<PaymentMethod | undefined>;
   deletePaymentMethod(id: string): Promise<boolean>;
+
+  getSwapWallets(): Promise<SwapWallet[]>;
+  getSwapWallet(id: string): Promise<SwapWallet | undefined>;
+  getSwapWalletBySymbol(symbol: string): Promise<SwapWallet | undefined>;
+  createSwapWallet(wallet: InsertSwapWallet): Promise<SwapWallet>;
+  updateSwapWallet(id: string, data: Partial<InsertSwapWallet>): Promise<SwapWallet | undefined>;
+  deleteSwapWallet(id: string): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -189,6 +197,35 @@ export class DatabaseStorage implements IStorage {
 
   async deletePaymentMethod(id: string): Promise<boolean> {
     const result = await db.delete(paymentMethods).where(eq(paymentMethods.id, id)).returning();
+    return result.length > 0;
+  }
+
+  async getSwapWallets(): Promise<SwapWallet[]> {
+    return db.select().from(swapWallets);
+  }
+
+  async getSwapWallet(id: string): Promise<SwapWallet | undefined> {
+    const [wallet] = await db.select().from(swapWallets).where(eq(swapWallets.id, id));
+    return wallet || undefined;
+  }
+
+  async getSwapWalletBySymbol(symbol: string): Promise<SwapWallet | undefined> {
+    const [wallet] = await db.select().from(swapWallets).where(eq(swapWallets.cryptoSymbol, symbol));
+    return wallet || undefined;
+  }
+
+  async createSwapWallet(wallet: InsertSwapWallet): Promise<SwapWallet> {
+    const [created] = await db.insert(swapWallets).values(wallet).returning();
+    return created;
+  }
+
+  async updateSwapWallet(id: string, data: Partial<InsertSwapWallet>): Promise<SwapWallet | undefined> {
+    const [updated] = await db.update(swapWallets).set(data).where(eq(swapWallets.id, id)).returning();
+    return updated || undefined;
+  }
+
+  async deleteSwapWallet(id: string): Promise<boolean> {
+    const result = await db.delete(swapWallets).where(eq(swapWallets.id, id)).returning();
     return result.length > 0;
   }
 }

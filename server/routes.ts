@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { WebSocketServer, WebSocket } from "ws";
 import { storage } from "./storage";
-import { insertTransactionSchema, insertCryptoSchema, insertCurrencySchema, insertPaymentMethodSchema } from "@shared/schema";
+import { insertTransactionSchema, insertCryptoSchema, insertCurrencySchema, insertPaymentMethodSchema, insertSwapWalletSchema } from "@shared/schema";
 import { z } from "zod";
 import { registerObjectStorageRoutes } from "./replit_integrations/object_storage";
 
@@ -312,6 +312,64 @@ export async function registerRoutes(
       res.status(204).send();
     } catch (error) {
       res.status(500).json({ error: "Failed to delete payment method" });
+    }
+  });
+
+  app.get("/api/swap-wallets", async (_req, res) => {
+    try {
+      const wallets = await storage.getSwapWallets();
+      res.json(wallets);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch swap wallets" });
+    }
+  });
+
+  app.get("/api/swap-wallets/:symbol", async (req, res) => {
+    try {
+      const wallet = await storage.getSwapWalletBySymbol(req.params.symbol.toUpperCase());
+      if (!wallet) {
+        return res.status(404).json({ error: "Swap wallet not found" });
+      }
+      res.json(wallet);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch swap wallet" });
+    }
+  });
+
+  app.post("/api/swap-wallets", async (req, res) => {
+    try {
+      const data = insertSwapWalletSchema.parse(req.body);
+      const wallet = await storage.createSwapWallet(data);
+      res.status(201).json(wallet);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: "Invalid swap wallet data", details: error.errors });
+      }
+      res.status(500).json({ error: "Failed to create swap wallet" });
+    }
+  });
+
+  app.patch("/api/swap-wallets/:id", async (req, res) => {
+    try {
+      const wallet = await storage.updateSwapWallet(req.params.id, req.body);
+      if (!wallet) {
+        return res.status(404).json({ error: "Swap wallet not found" });
+      }
+      res.json(wallet);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update swap wallet" });
+    }
+  });
+
+  app.delete("/api/swap-wallets/:id", async (req, res) => {
+    try {
+      const deleted = await storage.deleteSwapWallet(req.params.id);
+      if (!deleted) {
+        return res.status(404).json({ error: "Swap wallet not found" });
+      }
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete swap wallet" });
     }
   });
 
