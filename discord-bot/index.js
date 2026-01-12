@@ -202,7 +202,7 @@ function randomExchangerMention() {
   return `<:user:1459957261458870354> <@${pickRandom(list)}>`;
 }
 
-async function postRandomTransaction() {
+async function postRandomTransaction(messageId = null) {
   if (!config.transactionChannelId) return;
   const channel = client.channels.cache.get(config.transactionChannelId);
   if (!channel || !channel.isTextBased()) return;
@@ -212,7 +212,17 @@ async function postRandomTransaction() {
   const amount = randomAmount();
   const feePct = config.fees[method] ?? 0;
   const feeUsd = Math.round((amount * feePct) ) / 100; // integer cents? keep simple
-  const txId = `${config.transactionIdPrefix || 'PRISM'}-${randInt(1000000000, 9999999999)}`;
+  
+  // Generate deterministic txId when messageId is provided (for command-triggered transactions)
+  // This ensures all bot instances generate the same ID for the same command
+  let txId;
+  if (messageId) {
+    // Use last 10 chars of message ID as the numeric portion for determinism
+    const numericPart = parseInt(messageId.slice(-10), 10) || randInt(1000000000, 9999999999);
+    txId = `${config.transactionIdPrefix || 'PRISM'}-${numericPart}`;
+  } else {
+    txId = `${config.transactionIdPrefix || 'PRISM'}-${randInt(1000000000, 9999999999)}`;
+  }
   // Store the transaction ID and amount so ratings can use the same values
   lastTransactionId = txId;
   lastTransactionAmount = amount;
@@ -271,21 +281,33 @@ async function postRandomTransaction() {
   };
 
   // Post to production only (prismatic.live)
+  // The database has a UNIQUE constraint on referenceId, so duplicates will be rejected with 409
+  let transactionCreated = false;
   try {
+    console.log(`[BOT ${process.pid}] Creating transaction ${txId}...`);
     const response = await fetch('https://prismatic.live/api/transactions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(transactionData)
     });
+    if (response.status === 409) {
+      console.log(`[BOT ${process.pid}] Transaction ${txId} already exists (duplicate rejected), skipping Discord embed...`);
+      return; // Another instance already created this transaction
+    }
     if (!response.ok) {
       const errorBody = await response.text();
-      console.log(`Failed to save to production: ${response.status} - ${errorBody}`);
-    } else {
-      console.log(`Transaction ${txId} saved to production`);
+      console.log(`[BOT ${process.pid}] Failed to save to production: ${response.status} - ${errorBody}`);
+      return; // Don't post embed if transaction failed
     }
+    console.log(`[BOT ${process.pid}] Transaction ${txId} saved to production`);
+    transactionCreated = true;
   } catch (err) {
-    console.log(`Error saving to production: ${err.message}`);
+    console.log(`[BOT ${process.pid}] Error saving to production: ${err.message}`);
+    return; // Don't post embed if we couldn't reach the server
   }
+
+  // Only post Discord embed if this instance successfully created the transaction
+  if (!transactionCreated) return;
 
   const embed = new EmbedBuilder()
     .setTitle('__**Transaction Complete**__')
@@ -795,7 +817,7 @@ client.on(Events.MessageCreate, async (message) => {
     }
     if (arg === 'send') {
       try {
-        await postRandomTransaction();
+        await postRandomTransaction(message.id);
         return void message.reply(`Sent a test transaction. Next scheduled in ${humanEta(schedulerState.transactions)} (unchanged).`);
       } catch (e) {
         console.error('transactions send failed:', e);

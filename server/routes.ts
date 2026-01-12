@@ -138,6 +138,11 @@ export async function registerRoutes(
       if (error instanceof z.ZodError) {
         return res.status(400).json({ error: "Invalid transaction data", details: error.errors });
       }
+      // Check for duplicate referenceId (unique constraint violation)
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      if (errorMessage.includes('duplicate key') || errorMessage.includes('unique constraint')) {
+        return res.status(409).json({ error: "Transaction with this reference ID already exists" });
+      }
       res.status(500).json({ error: "Failed to create transaction" });
     }
   });
