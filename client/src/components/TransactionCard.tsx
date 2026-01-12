@@ -104,24 +104,24 @@ export const TransactionCard = forwardRef<HTMLDivElement, TransactionCardProps>(
         </div>
 
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <span className="text-white font-semibold text-lg">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+            <span className="text-white font-semibold text-base sm:text-lg">
               {formatAmount(transaction.amount, transaction.currency)}
             </span>
             {transaction.cryptoAmount && transaction.cryptoType && (
-              <span className="text-white/50 text-sm flex items-center gap-1">
+              <span className="text-white/50 text-xs sm:text-sm flex items-center gap-1">
                 →
                 <CryptoIcon symbol={transaction.cryptoType} size="sm" />
-                {transaction.cryptoAmount.toFixed(6)} {transaction.cryptoType}
+                <span className="truncate">{transaction.cryptoAmount.toFixed(6)} {transaction.cryptoType}</span>
               </span>
             )}
           </div>
           <div className="flex items-center gap-2 mt-0.5">
-            <span className="text-white/50 text-sm">
+            <span className="text-white/50 text-xs sm:text-sm">
               {paymentLabels[paymentKey] || transaction.paymentMethod}
             </span>
             <span className="text-white/30">•</span>
-            <span className="text-white/40 text-sm flex items-center gap-1">
+            <span className="text-white/40 text-xs sm:text-sm flex items-center gap-1">
               <Clock className="w-3 h-3" />
               {formatTimeAgo(transaction.createdAt)}
             </span>

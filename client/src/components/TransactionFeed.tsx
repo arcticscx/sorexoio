@@ -91,14 +91,14 @@ export function TransactionFeed({ transactions: initialTransactions, isLoading =
       hover={false}
       data-testid="transaction-feed"
     >
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20 flex items-center justify-center flex-shrink-0">
             <Activity className="w-5 h-5 text-emerald-400" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <h3 className="text-lg font-semibold text-white">Live Transactions</h3>
+            <div className="flex items-center gap-2 flex-wrap">
+              <h3 className="text-base sm:text-lg font-semibold text-white">Live Transactions</h3>
               <div className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs ${
                 isConnected 
                   ? "bg-emerald-500/20 text-emerald-300" 
@@ -117,11 +117,11 @@ export function TransactionFeed({ transactions: initialTransactions, isLoading =
                 )}
               </div>
             </div>
-            <p className="text-sm text-white/50">Real-time exchange activity</p>
+            <p className="text-xs sm:text-sm text-white/50">Real-time exchange activity</p>
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 self-end sm:self-auto">
           <GlassPill
             options={filterOptions}
             value={filter}
