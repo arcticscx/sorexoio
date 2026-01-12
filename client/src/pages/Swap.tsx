@@ -7,6 +7,7 @@ import { GlassButton } from "@/components/glass/GlassButton";
 import { GlassInput } from "@/components/glass/GlassInput";
 import { GlassNavbar } from "@/components/glass/GlassNavbar";
 import { PrismaticBackground } from "@/components/glass/PrismaticBackground";
+import { CryptoIcon } from "@/components/CryptoIcon";
 import { useToast } from "@/hooks/use-toast";
 import type { SwapWallet } from "@shared/schema";
 
@@ -95,8 +96,8 @@ export default function Swap() {
       >
         {selected ? (
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-400 flex items-center justify-center font-bold text-white text-sm">
-              {selected.cryptoSymbol.slice(0, 2)}
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400/20 to-cyan-400/20 flex items-center justify-center overflow-hidden">
+              <CryptoIcon symbol={selected.cryptoSymbol} size="md" />
             </div>
             <div className="text-left">
               <div className="font-semibold text-white">{selected.cryptoName}</div>
@@ -131,8 +132,8 @@ export default function Swap() {
                     className="w-full flex items-center gap-3 p-4 hover:bg-white/10 transition-all"
                     data-testid={`${testIdPrefix}-option-${wallet.cryptoSymbol.toLowerCase()}`}
                   >
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-400 flex items-center justify-center font-bold text-white text-sm">
-                      {wallet.cryptoSymbol.slice(0, 2)}
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400/20 to-cyan-400/20 flex items-center justify-center overflow-hidden">
+                      <CryptoIcon symbol={wallet.cryptoSymbol} size="md" />
                     </div>
                     <div className="text-left flex-1">
                       <div className="font-semibold text-white">{wallet.cryptoName}</div>
