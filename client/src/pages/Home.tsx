@@ -95,9 +95,11 @@ export default function Home() {
                     <ArrowRight className="w-5 h-5" />
                   </GlassButton>
                 </Link>
-                <GlassButton variant="outline" size="lg" data-testid="button-learn-more">
-                  Learn More
-                </GlassButton>
+                <Link href="/faq">
+                  <GlassButton variant="outline" size="lg" data-testid="button-learn-more">
+                    Learn More
+                  </GlassButton>
+                </Link>
               </div>
             </motion.div>
 
