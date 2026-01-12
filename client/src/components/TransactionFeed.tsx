@@ -99,22 +99,9 @@ export function TransactionFeed({ transactions: initialTransactions, isLoading =
           <div>
             <div className="flex items-center gap-2 flex-wrap">
               <h3 className="text-base sm:text-lg font-semibold text-white">Live Transactions</h3>
-              <div className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs ${
-                isConnected 
-                  ? "bg-emerald-500/20 text-emerald-300" 
-                  : "bg-amber-500/20 text-amber-300"
-              }`}>
-                {isConnected ? (
-                  <>
-                    <Wifi className="w-3 h-3" />
-                    <span>Live</span>
-                  </>
-                ) : (
-                  <>
-                    <WifiOff className="w-3 h-3" />
-                    <span>Polling</span>
-                  </>
-                )}
+              <div className="flex items-center gap-1 px-2 py-0.5 rounded-full text-xs bg-emerald-500/20 text-emerald-300">
+                <Wifi className="w-3 h-3" />
+                <span>Live</span>
               </div>
             </div>
             <p className="text-xs sm:text-sm text-white/50">Real-time exchange activity</p>
