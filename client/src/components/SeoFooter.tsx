@@ -1,5 +1,6 @@
 import { Link } from "wouter";
 import { Sparkles } from "lucide-react";
+import { SiDiscord } from "react-icons/si";
 
 const seoLinks = [
   { href: "/buy-crypto-with-paypal", label: "Buy Crypto with PayPal" },
@@ -28,9 +29,19 @@ export function SeoFooter() {
               <Sparkles className="w-5 h-5 text-emerald-400" />
               <span className="font-semibold prismatic-text">Prismatic</span>
             </div>
-            <p className="text-white/50 text-sm">
+            <p className="text-white/50 text-sm mb-4">
               The most seamless cryptocurrency exchange platform. Buy crypto with PayPal or card, swap coins instantly, no KYC required.
             </p>
+            <a
+              href="https://discord.gg/prismatics"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#5865F2] hover:bg-[#4752C4] text-white text-sm font-medium transition-colors"
+              data-testid="link-discord"
+            >
+              <SiDiscord className="w-4 h-4" />
+              Join Discord
+            </a>
           </div>
           
           <div>
