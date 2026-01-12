@@ -16,16 +16,18 @@ interface PriceData {
 }
 
 const SWAP_FEE = 0.002; // 0.2% fee
+const MIN_SWAP_USD = 50; // Minimum $50 swap
 
 export default function Swap() {
   const { toast } = useToast();
   const [fromCrypto, setFromCrypto] = useState<SwapWallet | null>(null);
   const [toCrypto, setToCrypto] = useState<SwapWallet | null>(null);
   const [fromAmount, setFromAmount] = useState("");
+  const [receiveAddress, setReceiveAddress] = useState("");
   const [copied, setCopied] = useState(false);
   const [showFromDropdown, setShowFromDropdown] = useState(false);
   const [showToDropdown, setShowToDropdown] = useState(false);
-  const [step, setStep] = useState<"select" | "confirm" | "send">("select");
+  const [step, setStep] = useState<"select" | "address" | "confirm" | "send">("select");
 
   const { data: swapWallets = [], isLoading: walletsLoading } = useQuery<SwapWallet[]>({
     queryKey: ["/api/swap-wallets"],
@@ -73,7 +75,8 @@ export default function Swap() {
     setFromAmount("");
   };
 
-  const canProceed = fromCrypto && toCrypto && fromCrypto.id !== toCrypto.id && fromAmountNum > 0;
+  const canProceed = fromCrypto && toCrypto && fromCrypto.id !== toCrypto.id && fromAmountNum > 0 && fromValueUsd >= MIN_SWAP_USD;
+  const belowMinimum = fromAmountNum > 0 && fromValueUsd < MIN_SWAP_USD;
 
   const renderCryptoSelector = (
     selected: SwapWallet | null,
@@ -236,6 +239,11 @@ export default function Swap() {
                             ≈ ${fromValueUsd.toLocaleString(undefined, { maximumFractionDigits: 2 })} USD
                           </p>
                         )}
+                        {belowMinimum && (
+                          <p className="text-red-400 text-sm mt-2">
+                            Minimum swap amount is ${MIN_SWAP_USD} USD
+                          </p>
+                        )}
                       </div>
 
                       <div className="flex justify-center py-2">
@@ -291,11 +299,81 @@ export default function Swap() {
                         variant="primary"
                         className="w-full mt-4"
                         disabled={!canProceed}
-                        onClick={() => setStep("confirm")}
+                        onClick={() => setStep("address")}
                         data-testid="button-continue-swap"
                       >
                         Continue
                       </GlassButton>
+                    </div>
+                  </GlassCard>
+                </motion.div>
+              )}
+
+              {step === "address" && toCrypto && (
+                <motion.div
+                  key="address"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                >
+                  <GlassCard className="p-6" hover={false}>
+                    <h3 className="text-lg font-semibold text-white mb-2 text-center">
+                      Your {toCrypto.cryptoSymbol} Address
+                    </h3>
+                    <p className="text-white/50 text-sm text-center mb-6">
+                      Enter the wallet address where you want to receive your {toCrypto.cryptoName}
+                    </p>
+                    
+                    <div className="space-y-6">
+                      <div className="flex items-center gap-3 p-4 rounded-xl bg-white/5">
+                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-emerald-400/20 to-cyan-400/20 flex items-center justify-center overflow-hidden">
+                          <CryptoIcon symbol={toCrypto.cryptoSymbol} size="md" />
+                        </div>
+                        <div>
+                          <p className="text-white font-semibold">{toCrypto.cryptoName}</p>
+                          <p className="text-emerald-400 text-sm">≈ {toAmount.toFixed(8)} {toCrypto.cryptoSymbol}</p>
+                        </div>
+                      </div>
+
+                      <GlassInput
+                        label={`Your ${toCrypto.cryptoSymbol} Wallet Address`}
+                        placeholder={`Enter your ${toCrypto.cryptoSymbol} address`}
+                        value={receiveAddress}
+                        onChange={(e) => setReceiveAddress(e.target.value)}
+                        data-testid="input-receive-address"
+                      />
+
+                      <div className="rounded-xl bg-amber-500/10 border border-amber-500/30 p-4">
+                        <div className="flex gap-3">
+                          <AlertCircle className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
+                          <div className="text-sm">
+                            <p className="text-amber-300 font-medium mb-1">Double-check your address</p>
+                            <p className="text-white/70">
+                              Make sure this is a valid {toCrypto.cryptoSymbol} address. Sending to an incorrect address may result in permanent loss of funds.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex gap-3">
+                        <GlassButton
+                          variant="ghost"
+                          className="flex-1"
+                          onClick={() => setStep("select")}
+                          data-testid="button-back-select"
+                        >
+                          Back
+                        </GlassButton>
+                        <GlassButton
+                          variant="primary"
+                          className="flex-1"
+                          disabled={!receiveAddress.trim()}
+                          onClick={() => setStep("confirm")}
+                          data-testid="button-continue-confirm"
+                        >
+                          Continue
+                        </GlassButton>
+                      </div>
                     </div>
                   </GlassCard>
                 </motion.div>
@@ -338,6 +416,13 @@ export default function Swap() {
                         </div>
                       </div>
 
+                      <div className="rounded-xl bg-white/5 p-4">
+                        <div className="text-sm">
+                          <p className="text-white/50 mb-1">Your {toCrypto?.cryptoSymbol} will be sent to:</p>
+                          <code className="text-emerald-400 font-mono text-xs break-all">{receiveAddress}</code>
+                        </div>
+                      </div>
+
                       <div className="rounded-xl bg-amber-500/10 border border-amber-500/30 p-4">
                         <div className="flex gap-3">
                           <AlertCircle className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
@@ -345,7 +430,7 @@ export default function Swap() {
                             <p className="text-amber-300 font-medium mb-1">Important</p>
                             <p className="text-white/70">
                               You'll need to send your {fromCrypto?.cryptoSymbol} to the address shown in the next step. 
-                              Once received, we'll send your {toCrypto?.cryptoSymbol} to the address you provide.
+                              Once received, we'll send your {toCrypto?.cryptoSymbol} to the address above.
                             </p>
                           </div>
                         </div>
@@ -355,8 +440,8 @@ export default function Swap() {
                         <GlassButton
                           variant="ghost"
                           className="flex-1"
-                          onClick={() => setStep("select")}
-                          data-testid="button-back-select"
+                          onClick={() => setStep("address")}
+                          data-testid="button-back-address"
                         >
                           Back
                         </GlassButton>
@@ -440,10 +525,15 @@ export default function Swap() {
                         </div>
                       </div>
 
+                      <div className="rounded-xl bg-white/5 p-4">
+                        <p className="text-white/50 text-xs mb-1">Your {toCrypto?.cryptoSymbol} will be sent to:</p>
+                        <code className="text-emerald-400 font-mono text-sm break-all">{receiveAddress}</code>
+                      </div>
+
                       <div className="rounded-xl bg-blue-500/10 border border-blue-500/30 p-4">
                         <p className="text-sm text-blue-300">
                           After sending, please allow up to 30 minutes for confirmation. 
-                          Your {toCrypto?.cryptoSymbol} will be sent to your provided address once the transaction is verified.
+                          Your {toCrypto?.cryptoSymbol} will be sent to the address above once the transaction is verified.
                         </p>
                       </div>
 
@@ -455,6 +545,7 @@ export default function Swap() {
                           setFromCrypto(null);
                           setToCrypto(null);
                           setFromAmount("");
+                          setReceiveAddress("");
                         }}
                         data-testid="button-new-swap"
                       >
