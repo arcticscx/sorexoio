@@ -38,6 +38,59 @@ export async function registerRoutes(
   // Register object storage routes for file uploads
   registerObjectStorageRoutes(app);
 
+  // Dynamic sitemap.xml with accurate priorities and lastmod
+  const seoPages = [
+    { path: "/", priority: 1.0, changefreq: "daily" },
+    { path: "/exchange", priority: 0.9, changefreq: "daily" },
+    { path: "/swap", priority: 0.9, changefreq: "daily" },
+    { path: "/buy-crypto-with-paypal", priority: 0.95, changefreq: "weekly" },
+    { path: "/card-to-crypto", priority: 0.95, changefreq: "weekly" },
+    { path: "/crypto-swap", priority: 0.85, changefreq: "weekly" },
+    { path: "/no-kyc-crypto", priority: 0.95, changefreq: "weekly" },
+    { path: "/supported-coins", priority: 0.7, changefreq: "weekly" },
+    { path: "/fees", priority: 0.6, changefreq: "weekly" },
+    { path: "/faq", priority: 0.5, changefreq: "monthly" },
+    { path: "/sitemap", priority: 0.3, changefreq: "monthly" }
+  ];
+
+  app.get("/sitemap.xml", (_req, res) => {
+    const baseUrl = "https://prismatic.live";
+    const lastmod = new Date().toISOString().split("T")[0];
+    
+    const urls = seoPages.map(page => `
+  <url>
+    <loc>${baseUrl}${page.path}</loc>
+    <lastmod>${lastmod}</lastmod>
+    <changefreq>${page.changefreq}</changefreq>
+    <priority>${page.priority.toFixed(1)}</priority>
+  </url>`).join("");
+
+    const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+        http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">${urls}
+</urlset>`;
+
+    res.header("Content-Type", "application/xml");
+    res.header("Cache-Control", "public, max-age=3600");
+    res.send(sitemap);
+  });
+
+  // robots.txt with sitemap reference
+  app.get("/robots.txt", (_req, res) => {
+    const robotsTxt = `User-agent: *
+Allow: /
+
+Sitemap: https://prismatic.live/sitemap.xml
+
+# Prismatic Crypto Exchange
+# Buy crypto with PayPal and Card - No KYC required
+`;
+    res.header("Content-Type", "text/plain");
+    res.send(robotsTxt);
+  });
+
   // Cache for crypto prices (5 minute TTL)
   let priceCache: { prices: Record<string, number>; timestamp: number } | null = null;
   const CACHE_TTL = 5 * 60 * 1000; // 5 minutes

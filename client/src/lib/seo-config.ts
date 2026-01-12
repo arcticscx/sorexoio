@@ -208,6 +208,18 @@ export const seoConfig: Record<string, PageSeoConfig> = {
     canonicalPath: "/verify",
     priority: 0.4,
     changefreq: "monthly"
+  },
+  "/sitemap": {
+    title: "Sitemap | All Pages – Prismatic",
+    description: "Navigate to all pages on Prismatic. Find information about buying crypto with PayPal, card payments, supported coins, and more.",
+    keywords: [
+      "Prismatic sitemap",
+      "site navigation",
+      "all pages"
+    ],
+    canonicalPath: "/sitemap",
+    priority: 0.3,
+    changefreq: "monthly"
   }
 };
 

@@ -16,6 +16,7 @@ import NoKycCrypto from "@/pages/NoKycCrypto";
 import SupportedCoins from "@/pages/SupportedCoins";
 import Fees from "@/pages/Fees";
 import Faq from "@/pages/Faq";
+import Sitemap from "@/pages/Sitemap";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -33,6 +34,7 @@ function Router() {
       <Route path="/supported-coins" component={SupportedCoins} />
       <Route path="/fees" component={Fees} />
       <Route path="/faq" component={Faq} />
+      <Route path="/sitemap" component={Sitemap} />
       <Route component={NotFound} />
     </Switch>
   );
