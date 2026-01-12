@@ -13,6 +13,8 @@ interface TransactionFeedProps {
   isLoading?: boolean;
 }
 
+type CryptoPrices = Record<string, number>;
+
 const filterOptions = [
   { value: "all", label: "All" },
   { value: "paypal", label: "PayPal" },
@@ -28,6 +30,11 @@ export function TransactionFeed({ transactions: initialTransactions, isLoading =
 
   const { data: paymentMethods = [] } = useQuery<PaymentMethod[]>({
     queryKey: ["/api/payment-methods"],
+  });
+
+  const { data: prices = {} } = useQuery<CryptoPrices>({
+    queryKey: ["/api/prices"],
+    refetchInterval: 30000,
   });
 
   useEffect(() => {
@@ -140,6 +147,7 @@ export function TransactionFeed({ transactions: initialTransactions, isLoading =
                 transaction={transaction}
                 index={index}
                 paymentMethods={paymentMethods}
+                prices={prices}
               />
             ))
           ) : (

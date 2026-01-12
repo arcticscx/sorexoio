@@ -8,10 +8,13 @@ import type { Transaction, PaymentMethod } from "@shared/schema";
 import cardIcon from "@assets/ARCTIC_1768071339190.png";
 import paypalIcon from "@assets/ARCTIC_1768071353413.png";
 
+type CryptoPrices = Record<string, number>;
+
 interface TransactionCardProps {
   transaction: Transaction;
   index?: number;
   paymentMethods?: PaymentMethod[];
+  prices?: CryptoPrices;
 }
 
 const paymentLabels: Record<string, string> = {
@@ -68,9 +71,12 @@ function formatTimeAgo(date: Date | string | null): string {
 }
 
 export const TransactionCard = forwardRef<HTMLDivElement, TransactionCardProps>(
-  function TransactionCard({ transaction, index = 0, paymentMethods = [] }, ref) {
+  function TransactionCard({ transaction, index = 0, paymentMethods = [], prices = {} }, ref) {
     const paymentKey = transaction.paymentMethod.toLowerCase();
     const customPaymentMethod = paymentMethods.find(pm => pm.key === paymentKey);
+    
+    const livePrice = transaction.cryptoType ? prices[transaction.cryptoType] : null;
+    const liveCryptoAmount = livePrice && transaction.amount ? transaction.amount / livePrice : null;
     
     const icon = customPaymentMethod?.icon ? (
       <img src={customPaymentMethod.icon} alt={customPaymentMethod.name} className="w-5 h-5 object-cover rounded" />
@@ -108,11 +114,13 @@ export const TransactionCard = forwardRef<HTMLDivElement, TransactionCardProps>(
             <span className="text-white font-semibold text-base sm:text-lg">
               {formatAmount(transaction.amount, transaction.currency)}
             </span>
-            {transaction.cryptoAmount && transaction.cryptoType && (
+            {transaction.cryptoType && (
               <span className="text-white/50 text-xs sm:text-sm flex items-center gap-1">
                 →
                 <CryptoIcon symbol={transaction.cryptoType} size="sm" />
-                <span className="truncate">{transaction.cryptoAmount.toFixed(6)} {transaction.cryptoType}</span>
+                <span className="truncate">
+                  {liveCryptoAmount ? liveCryptoAmount.toFixed(6) : (transaction.cryptoAmount?.toFixed(6) || "0")} {transaction.cryptoType}
+                </span>
               </span>
             )}
           </div>
