@@ -57,7 +57,7 @@ export function GlassPill({ options, value, onChange, className }: GlassPillProp
           key={option.value}
           onClick={() => onChange(option.value)}
           className={cn(
-            "relative z-10 px-4 py-2 text-sm font-medium rounded-full transition-colors duration-200 flex items-center gap-2",
+            "relative z-10 px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium rounded-full transition-colors duration-200 flex items-center gap-1.5 sm:gap-2",
             value === option.value
               ? "text-white"
               : "text-white/50 hover:text-white/80"
