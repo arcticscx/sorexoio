@@ -467,29 +467,51 @@ export default function Swap() {
                   exit={{ opacity: 0, x: -20 }}
                 >
                   <GlassCard className="p-6" hover={false}>
-                    <h3 className="text-lg font-semibold text-white mb-2 text-center">
-                      Send Your {fromCrypto.cryptoSymbol}
-                    </h3>
-                    <p className="text-white/50 text-sm text-center mb-6">
-                      Send exactly <span className="text-emerald-400 font-semibold">{fromAmountNum} {fromCrypto.cryptoSymbol}</span> to the address below
-                    </p>
+                    <div className="flex items-center justify-center gap-3 mb-4">
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                        className="w-6 h-6 border-2 border-emerald-400 border-t-transparent rounded-full"
+                      />
+                      <h3 className="text-lg font-semibold text-white">
+                        Awaiting Payment
+                      </h3>
+                    </div>
+                    
+                    <motion.div
+                      animate={{ opacity: [0.5, 1, 0.5] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                      className="text-center mb-6"
+                    >
+                      <p className="text-white/70 text-sm">
+                        Send exactly <span className="text-emerald-400 font-semibold">{fromAmountNum} {fromCrypto.cryptoSymbol}</span> to the address below
+                      </p>
+                    </motion.div>
                     
                     <div className="space-y-6">
                       {fromCrypto.qrCodeImage && (
                         <div className="flex justify-center">
-                          <div className="bg-white p-4 rounded-xl">
+                          <motion.div 
+                            className="bg-white p-4 rounded-xl relative"
+                            animate={{ boxShadow: ["0 0 0 0 rgba(16, 185, 129, 0)", "0 0 0 8px rgba(16, 185, 129, 0.2)", "0 0 0 0 rgba(16, 185, 129, 0)"] }}
+                            transition={{ duration: 2, repeat: Infinity }}
+                          >
                             <img 
                               src={fromCrypto.qrCodeImage} 
                               alt={`${fromCrypto.cryptoSymbol} QR Code`}
                               className="w-48 h-48 object-contain"
                             />
-                          </div>
+                          </motion.div>
                         </div>
                       )}
 
-                      <div className="rounded-xl bg-white/5 p-4">
+                      <motion.div 
+                        className="rounded-xl bg-white/5 p-4 border border-emerald-500/30"
+                        animate={{ borderColor: ["rgba(16, 185, 129, 0.3)", "rgba(16, 185, 129, 0.6)", "rgba(16, 185, 129, 0.3)"] }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                      >
                         <label className="block text-xs font-medium text-white/60 uppercase tracking-wider mb-2">
-                          {fromCrypto.cryptoSymbol} Wallet Address
+                          Send {fromCrypto.cryptoSymbol} to this address
                         </label>
                         <div className="flex items-center gap-2">
                           <code className="flex-1 bg-black/30 rounded-lg p-3 text-sm text-white font-mono break-all">
@@ -508,7 +530,7 @@ export default function Swap() {
                             )}
                           </GlassButton>
                         </div>
-                      </div>
+                      </motion.div>
 
                       <div className="rounded-xl bg-white/5 p-4">
                         <div className="flex justify-between text-sm mb-2">
