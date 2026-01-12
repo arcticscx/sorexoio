@@ -39,6 +39,23 @@ const schedulerState = {
 let lastTransactionId = null;
 let lastTransactionAmount = null;
 
+// Deduplication guard - prevent processing the same message multiple times
+const processedMessages = new Set();
+const MAX_PROCESSED_MESSAGES = 1000;
+
+function hasProcessedMessage(messageId) {
+  if (processedMessages.has(messageId)) {
+    return true;
+  }
+  processedMessages.add(messageId);
+  // Clean up old entries to prevent memory leak
+  if (processedMessages.size > MAX_PROCESSED_MESSAGES) {
+    const iterator = processedMessages.values();
+    processedMessages.delete(iterator.next().value);
+  }
+  return false;
+}
+
 function randInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
@@ -239,7 +256,7 @@ async function postRandomTransaction() {
   };
   const cryptoAmount = amount / (cryptoPrices[crypto] || 100);
 
-  // Save transaction to both production and development databases
+  // Save transaction to production database only
   const transactionData = {
     referenceId: txId,
     amount: amount,
@@ -680,6 +697,10 @@ client.once(Events.ClientReady, async () => {
 client.on(Events.MessageCreate, async (message) => {
   if (message.author.bot) return;
   if (!message.guild) return;
+  
+  // Prevent duplicate processing of the same message
+  if (hasProcessedMessage(message.id)) return;
+  
   const content = message.content.trim();
 
   // !send (admin)
