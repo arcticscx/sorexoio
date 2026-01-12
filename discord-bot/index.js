@@ -253,7 +253,7 @@ async function postRandomTransaction() {
     isFeatured: Math.random() < 0.1
   };
 
-  // Post to production (prismatic.live)
+  // Post to production only (prismatic.live)
   try {
     const response = await fetch('https://prismatic.live/api/transactions', {
       method: 'POST',
@@ -268,23 +268,6 @@ async function postRandomTransaction() {
     }
   } catch (err) {
     console.log(`Error saving to production: ${err.message}`);
-  }
-
-  // Post to development (localhost)
-  try {
-    const response = await fetch('http://localhost:5000/api/transactions', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(transactionData)
-    });
-    if (!response.ok) {
-      const errorBody = await response.text();
-      console.log(`Failed to save to development: ${response.status} - ${errorBody}`);
-    } else {
-      console.log(`Transaction ${txId} saved to development`);
-    }
-  } catch (err) {
-    console.log(`Error saving to development: ${err.message}`);
   }
 
   const embed = new EmbedBuilder()
