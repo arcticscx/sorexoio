@@ -2,9 +2,10 @@ import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowRight, Shield, Zap, Globe, TrendingUp, Sparkles } from "lucide-react";
+import { ArrowRight, Shield, Zap, Globe, TrendingUp } from "lucide-react";
 import { GlassCard, GlassButton, GlassPill, PrismaticBackground, GlassNavbar } from "@/components/glass";
 import { TransactionFeed } from "@/components/TransactionFeed";
+import { SeoFooter } from "@/components/SeoFooter";
 import type { Transaction } from "@shared/schema";
 
 const periodOptions = [
@@ -222,17 +223,7 @@ export default function Home() {
         </div>
       </main>
 
-      <footer className="border-t border-white/10 py-8 px-4">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-emerald-400" />
-            <span className="font-semibold prismatic-text">Prismatic</span>
-          </div>
-          <p className="text-white/40 text-sm">
-            © {new Date().getFullYear()} Prismatic Exchange. All rights reserved.
-          </p>
-        </div>
-      </footer>
+      <SeoFooter />
     </div>
   );
 }
