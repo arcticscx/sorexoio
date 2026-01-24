@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -61,6 +61,7 @@ export default function Exchange() {
     walletAddress: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [paymentUrl, setPaymentUrl] = useState<string | null>(null);
 
   const { data: cryptos } = useQuery<Crypto[]>({
     queryKey: ["/api/cryptos"],
