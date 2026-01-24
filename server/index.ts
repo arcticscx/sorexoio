@@ -10,30 +10,30 @@ import { eq } from "drizzle-orm";
 
 const app = express();
 
-// Fix corrupted crypto names on startup
-async function fixCryptoNames() {
-  const correctNames: Record<string, string> = {
-    'BTC': 'Bitcoin',
-    'ETH': 'Ethereum',
-    'USDT': 'Tether',
-    'SOL': 'Solana',
-    'LTC': 'Litecoin',
-    'XRP': 'XRP',
-    'BNB': 'BNB',
-    'BCH': 'Bitcoin Cash',
-    'USDC': 'USD Coin',
-    'TRX': 'TRON'
-  };
+// Fix corrupted crypto data on startup - complete reset
+async function fixCryptoData() {
+  const correctCryptos = [
+    { name: 'Bitcoin', symbol: 'BTC', icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Bitcoin.svg/1024px-Bitcoin.svg.png', isActive: true, sortOrder: 1 },
+    { name: 'Ethereum', symbol: 'ETH', icon: null, isActive: true, sortOrder: 2 },
+    { name: 'Tether', symbol: 'USDT', icon: null, isActive: true, sortOrder: 3 },
+    { name: 'Solana', symbol: 'SOL', icon: null, isActive: true, sortOrder: 4 },
+    { name: 'Litecoin', symbol: 'LTC', icon: null, isActive: true, sortOrder: 5 },
+    { name: 'XRP', symbol: 'XRP', icon: null, isActive: true, sortOrder: 6 },
+    { name: 'BNB', symbol: 'BNB', icon: null, isActive: true, sortOrder: 7 },
+    { name: 'Bitcoin Cash', symbol: 'BCH', icon: null, isActive: true, sortOrder: 8 },
+    { name: 'USD Coin', symbol: 'USDC', icon: null, isActive: true, sortOrder: 9 },
+    { name: 'TRON', symbol: 'TRX', icon: null, isActive: true, sortOrder: 10 }
+  ];
 
   try {
-    for (const [symbol, correctName] of Object.entries(correctNames)) {
-      await db.update(cryptos)
-        .set({ name: correctName })
-        .where(eq(cryptos.symbol, symbol));
+    // Delete all existing cryptos and insert fresh data
+    await db.delete(cryptos);
+    for (const crypto of correctCryptos) {
+      await db.insert(cryptos).values(crypto);
     }
-    console.log('Crypto names verified/fixed on startup');
+    console.log('Crypto data completely reset on startup');
   } catch (error) {
-    console.error('Error fixing crypto names:', error);
+    console.error('Error resetting crypto data:', error);
   }
 }
 
@@ -139,8 +139,8 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-  // Fix corrupted crypto names before starting server
-  await fixCryptoNames();
+  // Fix corrupted crypto data before starting server
+  await fixCryptoData();
   
   await registerRoutes(httpServer, app);
 
