@@ -95,6 +95,30 @@ export default function Exchange() {
 
   const [referenceCode] = useState(generateReferenceCode);
 
+  // Fetch payment URL from backend when entering card payment step
+  useEffect(() => {
+    if (step === "card_payment" && formData.amount && formData.email) {
+      fetch("/api/payment-link", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount: formData.amount, email: formData.email }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.url) {
+            setPaymentUrl(data.url);
+          }
+        })
+        .catch(() => {
+          toast({
+            title: "Error",
+            description: "Failed to initialize payment. Please try again.",
+            variant: "destructive",
+          });
+        });
+    }
+  }, [step, formData.amount, formData.email, toast]);
+
   // Get price for selected crypto (with fallbacks)
   const getCryptoRate = (symbol: string) => {
     if (prices && prices[symbol]) {
@@ -540,13 +564,20 @@ export default function Exchange() {
                       </div>
 
                       <div className="rounded-xl overflow-hidden border border-white/10" style={{ minHeight: "450px" }}>
-                        <iframe
-                          src={generatePaymentLink(formData.amount, formData.email)}
-                          className="w-full h-full"
-                          style={{ minHeight: "450px", border: "none" }}
-                          title="Card Payment"
-                          data-testid="iframe-card-payment"
-                        />
+                        {paymentUrl ? (
+                          <iframe
+                            src={paymentUrl}
+                            className="w-full h-full"
+                            style={{ minHeight: "450px", border: "none" }}
+                            title="Card Payment"
+                            data-testid="iframe-card-payment"
+                          />
+                        ) : (
+                          <div className="flex items-center justify-center h-full min-h-[450px] text-white/50">
+                            <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin mr-3" />
+                            Loading payment...
+                          </div>
+                        )}
                       </div>
 
                       <div className="flex items-center justify-center gap-3 p-5 rounded-xl bg-white/5 border border-white/10" data-testid="status-card-pending">
