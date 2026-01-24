@@ -15,49 +15,6 @@ import paypalIcon from "@assets/ARCTIC_1768071353413.png";
 
 type Step = "amount" | "payment" | "details" | "card_payment" | "paypal_payment" | "confirm" | "success";
 
-function generatePaymentLink(amount: string, email: string) {
-  const baseUrl = "https://checkout.paymentiq.io/cashier/master/payment-method";
-  
-  const queryParams = new URLSearchParams({
-    merchantId: "100259001",
-    userId: "22562969",
-    sessionId: "$2y$10$fLmjvewQygu0susC.JdpIu3udaYmckgxiJN4LvOw3DC/GCevSoimC",
-    environment: "production",
-    amount: amount,
-    method: "deposit",
-    locale: "en",
-    mode: "ecommerce",
-    scrollToOffset: "8",
-    allowMobilePopup: "true",
-    showHeader: "false",
-    showFooter: "false",
-    showAccounts: "inline",
-    providerType: "creditcard",
-    fixedProviderType: "true",
-    containerWidth: "360px",
-    logoSize: "100%",
-    theme_input_color: "#FFF",
-    theme_inputbackground_color: "#1C2028",
-    theme_labels_color: "#FFF",
-    theme_headings_color: "#FFF",
-    theme_loader_color: "#29b355",
-    theme_buttons_color: "#00a15b",
-    theme_cardbackground_color: "#20232B",
-    theme_background_color: "#20232B",
-    theme_cashierbackground_color: "#20232B",
-    theme_headerbackground_color: "#20232b",
-    "attributes.payer_type": "user",
-    "attributes.country": "MA",
-    "attributes.playerRouting": "payment_iq",
-    "attributes.trusted_deposit_count": "0",
-    "attributes.hostUri": "https://api.hellcase.com",
-    "user.email": email,
-    "attributes.bootstrapVersion": "1.4.4"
-  });
-
-  return `${baseUrl}?${queryParams.toString()}`;
-}
-
 function PaymentMethodIcon({ type }: { type: string }) {
   const key = type.toLowerCase();
   
