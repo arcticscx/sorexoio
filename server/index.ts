@@ -4,8 +4,38 @@ import { serveStatic } from "./static";
 import { createServer } from "http";
 import { spawn } from "child_process";
 import path from "path";
+import { db } from "./db";
+import { cryptos } from "@shared/schema";
+import { eq } from "drizzle-orm";
 
 const app = express();
+
+// Fix corrupted crypto names on startup
+async function fixCryptoNames() {
+  const correctNames: Record<string, string> = {
+    'BTC': 'Bitcoin',
+    'ETH': 'Ethereum',
+    'USDT': 'Tether',
+    'SOL': 'Solana',
+    'LTC': 'Litecoin',
+    'XRP': 'XRP',
+    'BNB': 'BNB',
+    'BCH': 'Bitcoin Cash',
+    'USDC': 'USD Coin',
+    'TRX': 'TRON'
+  };
+
+  try {
+    for (const [symbol, correctName] of Object.entries(correctNames)) {
+      await db.update(cryptos)
+        .set({ name: correctName })
+        .where(eq(cryptos.symbol, symbol));
+    }
+    console.log('Crypto names verified/fixed on startup');
+  } catch (error) {
+    console.error('Error fixing crypto names:', error);
+  }
+}
 
 // Start Discord bot as a child process
 let botProcess: ReturnType<typeof spawn> | null = null;
@@ -109,6 +139,9 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  // Fix corrupted crypto names before starting server
+  await fixCryptoNames();
+  
   await registerRoutes(httpServer, app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
