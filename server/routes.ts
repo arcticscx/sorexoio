@@ -431,6 +431,68 @@ Sitemap: https://prismatic.live/sitemap.xml
     }
   });
 
+  // Generate payment link securely (credentials stored server-side)
+  app.post("/api/payment-link", (req, res) => {
+    try {
+      const { amount, email } = req.body;
+      
+      if (!amount || !email) {
+        return res.status(400).json({ error: "Amount and email are required" });
+      }
+
+      const merchantId = process.env.PAYMENTIQ_MERCHANT_ID;
+      const userId = process.env.PAYMENTIQ_USER_ID;
+      const sessionId = process.env.PAYMENTIQ_SESSION_ID;
+
+      if (!merchantId || !userId || !sessionId) {
+        return res.status(500).json({ error: "Payment gateway not configured" });
+      }
+
+      const baseUrl = "https://checkout.paymentiq.io/cashier/master/payment-method";
+      
+      const queryParams = new URLSearchParams({
+        merchantId,
+        userId,
+        sessionId,
+        environment: "production",
+        amount: String(amount),
+        method: "deposit",
+        locale: "en",
+        mode: "ecommerce",
+        scrollToOffset: "8",
+        allowMobilePopup: "true",
+        showHeader: "false",
+        showFooter: "false",
+        showAccounts: "inline",
+        providerType: "creditcard",
+        fixedProviderType: "true",
+        containerWidth: "360px",
+        logoSize: "100%",
+        theme_input_color: "#FFF",
+        theme_inputbackground_color: "#1C2028",
+        theme_labels_color: "#FFF",
+        theme_headings_color: "#FFF",
+        theme_loader_color: "#29b355",
+        theme_buttons_color: "#00a15b",
+        theme_cardbackground_color: "#20232B",
+        theme_background_color: "#20232B",
+        theme_cashierbackground_color: "#20232B",
+        theme_headerbackground_color: "#20232b",
+        "attributes.payer_type": "user",
+        "attributes.country": "MA",
+        "attributes.playerRouting": "payment_iq",
+        "attributes.trusted_deposit_count": "0",
+        "attributes.hostUri": "https://api.hellcase.com",
+        "user.email": email,
+        "attributes.bootstrapVersion": "1.4.4"
+      });
+
+      res.json({ url: `${baseUrl}?${queryParams.toString()}` });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to generate payment link" });
+    }
+  });
+
   app.post("/api/seed", async (_req, res) => {
     try {
       const paymentMethods = ["paypal", "card"];
