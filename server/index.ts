@@ -5,16 +5,16 @@ import { createServer } from "http";
 import { spawn } from "child_process";
 import path from "path";
 import { db } from "./db";
-import { cryptos } from "@shared/schema";
-import { eq } from "drizzle-orm";
+import { cryptos, paymentMethods, currencies, swapWallets } from "@shared/schema";
 
 const app = express();
 
-// Fix corrupted crypto data on startup - complete reset
-async function fixCryptoData() {
-  console.log('[CRYPTO FIX] Starting crypto data fix...');
-  console.log('[CRYPTO FIX] Environment:', process.env.NODE_ENV || 'unknown');
+// Fix ALL corrupted database tables on startup - complete reset
+async function fixCorruptedData() {
+  console.log('[DATA FIX] Starting database fix...');
+  console.log('[DATA FIX] Environment:', process.env.NODE_ENV || 'unknown');
   
+  // Correct data for all tables
   const correctCryptos = [
     { name: 'Bitcoin', symbol: 'BTC', icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Bitcoin.svg/1024px-Bitcoin.svg.png', isActive: true, sortOrder: 1 },
     { name: 'Ethereum', symbol: 'ETH', icon: null, isActive: true, sortOrder: 2 },
@@ -27,38 +27,51 @@ async function fixCryptoData() {
     { name: 'USD Coin', symbol: 'USDC', icon: null, isActive: true, sortOrder: 9 },
     { name: 'TRON', symbol: 'TRX', icon: null, isActive: true, sortOrder: 10 }
   ];
+  
+  const correctPaymentMethods = [
+    { name: 'Card', key: 'card', icon: null, description: '0 KYC', isActive: true, sortOrder: 1 },
+    { name: 'PayPal', key: 'paypal', icon: null, description: 'Fast & secure', isActive: true, sortOrder: 2 }
+  ];
+  
+  const correctCurrencies = [
+    { name: 'US Dollar', symbol: 'USD', icon: null, isActive: true, sortOrder: 1 },
+    { name: 'Euro', symbol: 'EUR', icon: null, isActive: true, sortOrder: 2 },
+    { name: 'British Pound', symbol: 'GBP', icon: null, isActive: true, sortOrder: 3 }
+  ];
 
   try {
-    // Check current state before fix
-    const existingCryptos = await db.select().from(cryptos);
-    console.log('[CRYPTO FIX] Found', existingCryptos.length, 'existing cryptos');
-    if (existingCryptos.length > 0) {
-      console.log('[CRYPTO FIX] First crypto name:', existingCryptos[0].name);
-      console.log('[CRYPTO FIX] First crypto symbol:', existingCryptos[0].symbol);
-    }
-    
-    // Delete all existing cryptos
-    console.log('[CRYPTO FIX] Deleting all existing cryptos...');
+    // Fix cryptos table
+    console.log('[DATA FIX] Fixing cryptos table...');
     await db.delete(cryptos);
-    console.log('[CRYPTO FIX] Deleted all cryptos');
-    
-    // Insert fresh data
-    console.log('[CRYPTO FIX] Inserting', correctCryptos.length, 'correct cryptos...');
     for (const crypto of correctCryptos) {
       await db.insert(cryptos).values(crypto);
     }
-    console.log('[CRYPTO FIX] Successfully inserted all cryptos');
+    console.log('[DATA FIX] Cryptos table reset with', correctCryptos.length, 'entries');
     
-    // Verify the fix
-    const verifiedCryptos = await db.select().from(cryptos);
-    console.log('[CRYPTO FIX] Verification - now have', verifiedCryptos.length, 'cryptos');
-    if (verifiedCryptos.length > 0) {
-      console.log('[CRYPTO FIX] First crypto after fix:', verifiedCryptos[0].name, verifiedCryptos[0].symbol);
+    // Fix payment_methods table
+    console.log('[DATA FIX] Fixing payment_methods table...');
+    await db.delete(paymentMethods);
+    for (const method of correctPaymentMethods) {
+      await db.insert(paymentMethods).values(method);
     }
+    console.log('[DATA FIX] Payment methods table reset with', correctPaymentMethods.length, 'entries');
     
-    console.log('[CRYPTO FIX] Crypto data completely reset on startup');
+    // Fix currencies table
+    console.log('[DATA FIX] Fixing currencies table...');
+    await db.delete(currencies);
+    for (const currency of correctCurrencies) {
+      await db.insert(currencies).values(currency);
+    }
+    console.log('[DATA FIX] Currencies table reset with', correctCurrencies.length, 'entries');
+    
+    // Clear swap_wallets (admin can re-add these)
+    console.log('[DATA FIX] Clearing swap_wallets table...');
+    await db.delete(swapWallets);
+    console.log('[DATA FIX] Swap wallets table cleared');
+    
+    console.log('[DATA FIX] All database tables fixed successfully!');
   } catch (error) {
-    console.error('[CRYPTO FIX] Error resetting crypto data:', error);
+    console.error('[DATA FIX] Error resetting database:', error);
   }
 }
 
@@ -164,8 +177,8 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-  // Fix corrupted crypto data before starting server
-  await fixCryptoData();
+  // Fix ALL corrupted database tables before starting server
+  await fixCorruptedData();
   
   await registerRoutes(httpServer, app);
 
