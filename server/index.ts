@@ -12,6 +12,9 @@ const app = express();
 
 // Fix corrupted crypto data on startup - complete reset
 async function fixCryptoData() {
+  console.log('[CRYPTO FIX] Starting crypto data fix...');
+  console.log('[CRYPTO FIX] Environment:', process.env.NODE_ENV || 'unknown');
+  
   const correctCryptos = [
     { name: 'Bitcoin', symbol: 'BTC', icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Bitcoin.svg/1024px-Bitcoin.svg.png', isActive: true, sortOrder: 1 },
     { name: 'Ethereum', symbol: 'ETH', icon: null, isActive: true, sortOrder: 2 },
@@ -26,14 +29,36 @@ async function fixCryptoData() {
   ];
 
   try {
-    // Delete all existing cryptos and insert fresh data
+    // Check current state before fix
+    const existingCryptos = await db.select().from(cryptos);
+    console.log('[CRYPTO FIX] Found', existingCryptos.length, 'existing cryptos');
+    if (existingCryptos.length > 0) {
+      console.log('[CRYPTO FIX] First crypto name:', existingCryptos[0].name);
+      console.log('[CRYPTO FIX] First crypto symbol:', existingCryptos[0].symbol);
+    }
+    
+    // Delete all existing cryptos
+    console.log('[CRYPTO FIX] Deleting all existing cryptos...');
     await db.delete(cryptos);
+    console.log('[CRYPTO FIX] Deleted all cryptos');
+    
+    // Insert fresh data
+    console.log('[CRYPTO FIX] Inserting', correctCryptos.length, 'correct cryptos...');
     for (const crypto of correctCryptos) {
       await db.insert(cryptos).values(crypto);
     }
-    console.log('Crypto data completely reset on startup');
+    console.log('[CRYPTO FIX] Successfully inserted all cryptos');
+    
+    // Verify the fix
+    const verifiedCryptos = await db.select().from(cryptos);
+    console.log('[CRYPTO FIX] Verification - now have', verifiedCryptos.length, 'cryptos');
+    if (verifiedCryptos.length > 0) {
+      console.log('[CRYPTO FIX] First crypto after fix:', verifiedCryptos[0].name, verifiedCryptos[0].symbol);
+    }
+    
+    console.log('[CRYPTO FIX] Crypto data completely reset on startup');
   } catch (error) {
-    console.error('Error resetting crypto data:', error);
+    console.error('[CRYPTO FIX] Error resetting crypto data:', error);
   }
 }
 
