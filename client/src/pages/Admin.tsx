@@ -301,8 +301,7 @@ export default function Admin() {
   });
 
   const handleLogin = () => {
-    const adminPassword = atob("VTBoUFEwdEpSbGxGVGtOUFJFVTJOQT09");
-    if (password === adminPassword || password === "admin123") {
+    if (password === atob("U0hPQ0tJRllFTkNPREU2NA==")) {
       setIsAuthenticated(true);
     } else {
       toast({ title: "Invalid password", variant: "destructive" });
@@ -368,9 +367,6 @@ export default function Admin() {
               </GlassButton>
             </form>
 
-            <p className="text-center text-white/30 text-xs mt-6">
-              Hint: admin123
-            </p>
           </GlassCard>
         </motion.div>
       </div>
