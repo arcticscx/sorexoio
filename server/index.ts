@@ -39,6 +39,18 @@ async function fixCorruptedData() {
     { name: 'British Pound', symbol: 'GBP', icon: null, isActive: true, sortOrder: 3 }
   ];
 
+  const correctSwapWallets = [
+    { cryptoSymbol: 'BTC', cryptoName: 'Bitcoin', walletAddress: 'bc1qkapnem2z5f6plvtzre62ds9cz6cyet65jxfs6x', qrCodeImage: '/qr-codes/btc.png', isActive: true },
+    { cryptoSymbol: 'ETH', cryptoName: 'Ethereum', walletAddress: '0xe6078602ce55D471eB659D935C0741e0eeb63A39', qrCodeImage: '/qr-codes/eth.png', isActive: true },
+    { cryptoSymbol: 'USDT', cryptoName: 'Tether', walletAddress: '0xe6078602ce55D471eB659D935C0741e0eeb63A39', qrCodeImage: '/qr-codes/usdt.png', isActive: true },
+    { cryptoSymbol: 'USDC', cryptoName: 'USD Coin', walletAddress: '0xe6078602ce55D471eB659D935C0741e0eeb63A39', qrCodeImage: '/qr-codes/usdc.png', isActive: true },
+    { cryptoSymbol: 'BNB', cryptoName: 'Binance Coin', walletAddress: '0xe6078602ce55D471eB659D935C0741e0eeb63A39', qrCodeImage: '/qr-codes/bnb.png', isActive: true },
+    { cryptoSymbol: 'POL', cryptoName: 'Polygon', walletAddress: '0xe6078602ce55D471eB659D935C0741e0eeb63A39', qrCodeImage: '/qr-codes/pol.png', isActive: true },
+    { cryptoSymbol: 'LTC', cryptoName: 'Litecoin', walletAddress: 'ltc1qkrzht6l6tpdw9n6dwfda4t29pes6t3dlhv08zj', qrCodeImage: '/qr-codes/ltc.png', isActive: true },
+    { cryptoSymbol: 'SOL', cryptoName: 'Solana', walletAddress: '33nKa6W5t6ZRxP6BnUgXjLqHvb5mP4nyQGfMJQuwfhvn', qrCodeImage: '/qr-codes/sol.png', isActive: true },
+    { cryptoSymbol: 'TRX', cryptoName: 'TRON', walletAddress: 'TYBWRsdt2MzEn5ULtfsreBQSjJS2ULfeAp', qrCodeImage: '/qr-codes/trx.png', isActive: true }
+  ];
+
   try {
     // Fix cryptos table
     console.log('[DATA FIX] Fixing cryptos table...');
@@ -64,10 +76,13 @@ async function fixCorruptedData() {
     }
     console.log('[DATA FIX] Currencies table reset with', correctCurrencies.length, 'entries');
     
-    // Clear swap_wallets (admin can re-add these)
-    console.log('[DATA FIX] Clearing swap_wallets table...');
+    // Fix swap_wallets table with correct wallet addresses
+    console.log('[DATA FIX] Fixing swap_wallets table...');
     await db.delete(swapWallets);
-    console.log('[DATA FIX] Swap wallets table cleared');
+    for (const wallet of correctSwapWallets) {
+      await db.insert(swapWallets).values(wallet);
+    }
+    console.log('[DATA FIX] Swap wallets table reset with', correctSwapWallets.length, 'entries');
     
     console.log('[DATA FIX] All database tables fixed successfully!');
   } catch (error) {
