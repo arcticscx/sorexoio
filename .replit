@@ -46,3 +46,6 @@ integrations = ["javascript_websocket:1.0.0", "javascript_database:1.0.0", "java
 [userenv.shared]
 SUMUP_MERCHANT_CODE = "MTH5C70Y"
 SUMUP_CURRENCY = "EUR"
+
+[userenv.production]
+SITE_URL = "https://zengoswap.com"
