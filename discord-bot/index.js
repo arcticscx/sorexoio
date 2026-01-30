@@ -647,7 +647,7 @@ async function ensureSlashCommands() {
       .toJSON(),
   ];
 
-  const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
+  const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_BOT_TOKEN);
   await rest.put(Routes.applicationGuildCommands(clientId, guildId), { body: commands });
 }
 
@@ -1283,10 +1283,10 @@ client.on(Events.InteractionCreate, async (interaction) => {
 });
 
 // Login
-if (!process.env.DISCORD_TOKEN) {
-  console.error('Missing DISCORD_TOKEN in environment.');
+if (!process.env.DISCORD_BOT_TOKEN) {
+  console.error('Missing DISCORD_BOT_TOKEN in environment.');
   process.exit(1);
 }
-client.login(process.env.DISCORD_TOKEN);
+client.login(process.env.DISCORD_BOT_TOKEN);
 
 

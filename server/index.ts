@@ -115,11 +115,11 @@ process.on('SIGINT', () => {
   if (botProcess) botProcess.kill();
 });
 
-// Only start bot if DISCORD_TOKEN is set
-if (process.env.DISCORD_TOKEN) {
+// Only start bot if DISCORD_BOT_TOKEN is set
+if (process.env.DISCORD_BOT_TOKEN) {
   startDiscordBot();
 } else {
-  console.log('DISCORD_TOKEN not set, bot disabled');
+  console.log('DISCORD_BOT_TOKEN not set, bot disabled');
 }
 const httpServer = createServer(app);
 

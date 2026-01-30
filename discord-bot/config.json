@@ -67,9 +67,9 @@
   },
   "invoiceDescription": "By purchasing this product you agree that you are the rightful owner of this card/payment method and that you agree that we do not hand out refunds in any circumstances only purchase if you are sure you WANT this.",
   "ticketImageUrl": "https://cdn.discordapp.com/attachments/1459945692696150027/1459948327134171340/prismatic.png?ex=69652255&is=6963d0d5&hm=771794f3adf93ed2713ebf5769e2af3ada9d455c2fd06fbe53ec01ca5f667aa1",
-  "transactionIdPrefix": "ZENGO",
-  "transactionChannelId": "1459943457513803988",
-  "ratingChannelId": "1460007616754352381",
+  "transactionIdPrefix": "ZEN",
+  "transactionChannelId": "1435824728387489964",
+  "ratingChannelId": "1435824731977679000",
   "scheduler": {
     "minMinutes": 50,
     "maxMinutes": 90,
@@ -79,9 +79,9 @@
     "enabledRatings": true
   },
   "exchangers": [
-    "1163542383963672629",
+    "850840465711693834",
     "755503463844151378",
-    "1026051241438093364"
+    "193809536249888768"
   ],
   "ratingTexts": [
     "Fast and smooth trade!",
