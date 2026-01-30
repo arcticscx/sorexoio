@@ -451,9 +451,25 @@ Sitemap: https://zengoswap.com/sitemap.xml
 
       const apiKey = process.env.SUMUP_API_KEY;
       const merchantCode = process.env.SUMUP_MERCHANT_CODE;
+      // SumUp requires merchant's country currency - default to GBP
+      const merchantCurrency = process.env.SUMUP_CURRENCY || 'GBP';
 
       if (!apiKey || !merchantCode) {
         return res.status(500).json({ error: "SumUp not configured" });
+      }
+
+      // Convert amount to merchant currency if needed (approximate rates)
+      let finalAmount = amount;
+      const inputCurrency = currency.toUpperCase();
+      if (inputCurrency !== merchantCurrency) {
+        // Simple conversion rates (USD/EUR/GBP)
+        const rates: Record<string, Record<string, number>> = {
+          'USD': { 'EUR': 0.92, 'GBP': 0.79 },
+          'EUR': { 'USD': 1.09, 'GBP': 0.86 },
+          'GBP': { 'USD': 1.27, 'EUR': 1.16 }
+        };
+        const rate = rates[inputCurrency]?.[merchantCurrency] || 1;
+        finalAmount = Math.round(amount * rate * 100) / 100;
       }
 
       // Create checkout via SumUp API
@@ -465,8 +481,8 @@ Sitemap: https://zengoswap.com/sitemap.xml
         },
         body: JSON.stringify({
           checkout_reference: referenceId || `ZEN-${Date.now()}`,
-          amount: amount,
-          currency: currency.toUpperCase(),
+          amount: finalAmount,
+          currency: merchantCurrency,
           merchant_code: merchantCode,
           description: description || 'ZengoSwap Exchange',
           redirect_url: `${req.protocol}://${req.get('host')}/exchange?status=success`
