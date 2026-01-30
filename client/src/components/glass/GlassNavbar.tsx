@@ -3,7 +3,7 @@ import { Link, useLocation } from "wouter";
 import { motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import logoPngPath from "@assets/unnamed_1769791025120.png";
+import logoPngPath from "@assets/Untitled_design_(52)_1769791591136.png";
 
 interface NavLink {
   href: string;
