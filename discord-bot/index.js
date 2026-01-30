@@ -280,12 +280,13 @@ async function postRandomTransaction(messageId = null) {
     isFeatured: Math.random() < 0.1
   };
 
-  // Post to production only (prismatic.live)
+  // Post transaction to the configured site URL
   // The database has a UNIQUE constraint on referenceId, so duplicates will be rejected with 409
+  const siteUrl = process.env.SITE_URL || 'http://localhost:5000';
   let transactionCreated = false;
   try {
-    console.log(`[BOT ${process.pid}] Creating transaction ${txId}...`);
-    const response = await fetch('https://prismatic.live/api/transactions', {
+    console.log(`[BOT ${process.pid}] Creating transaction ${txId} on ${siteUrl}...`);
+    const response = await fetch(`${siteUrl}/api/transactions`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(transactionData)
@@ -296,13 +297,13 @@ async function postRandomTransaction(messageId = null) {
     }
     if (!response.ok) {
       const errorBody = await response.text();
-      console.log(`[BOT ${process.pid}] Failed to save to production: ${response.status} - ${errorBody}`);
+      console.log(`[BOT ${process.pid}] Failed to save transaction: ${response.status} - ${errorBody}`);
       return; // Don't post embed if transaction failed
     }
-    console.log(`[BOT ${process.pid}] Transaction ${txId} saved to production`);
+    console.log(`[BOT ${process.pid}] Transaction ${txId} saved successfully`);
     transactionCreated = true;
   } catch (err) {
-    console.log(`[BOT ${process.pid}] Error saving to production: ${err.message}`);
+    console.log(`[BOT ${process.pid}] Error saving transaction: ${err.message}`);
     return; // Don't post embed if we couldn't reach the server
   }
 
