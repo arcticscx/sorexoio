@@ -33,7 +33,7 @@ export function SeoFooter() {
               The most seamless cryptocurrency exchange platform. Buy crypto with PayPal or card, swap coins instantly, no KYC required.
             </p>
             <a
-              href="https://discord.gg/zengoswap"
+              href="https://discord.gg/zengo-exchange"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#5865F2] hover:bg-[#4752C4] text-white text-sm font-medium transition-colors"
