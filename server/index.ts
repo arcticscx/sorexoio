@@ -42,13 +42,13 @@ async function fixCorruptedData() {
   const correctSwapWallets = [
     { cryptoSymbol: 'BTC', cryptoName: 'Bitcoin', walletAddress: 'bc1qkapnem2z5f6plvtzre62ds9cz6cyet65jxfs6x', qrCodeImage: '/qr-codes/btc.png', isActive: true },
     { cryptoSymbol: 'ETH', cryptoName: 'Ethereum', walletAddress: '0xe6078602ce55D471eB659D935C0741e0eeb63A39', qrCodeImage: '/qr-codes/eth.png', isActive: true },
+    { cryptoSymbol: 'LTC', cryptoName: 'Litecoin', walletAddress: 'ltc1qkrzht6l6tpdw9n6dwfda4t29pes6t3dlhv08zj', qrCodeImage: '/qr-codes/ltc.png', isActive: true },
+    { cryptoSymbol: 'SOL', cryptoName: 'Solana', walletAddress: '33nKa6W5t6ZRxP6BnUgXjLqHvb5mP4nyQGfMJQuwfhvn', qrCodeImage: '/qr-codes/sol.png', isActive: true },
     { cryptoSymbol: 'USDT', cryptoName: 'Tether', walletAddress: '0xe6078602ce55D471eB659D935C0741e0eeb63A39', qrCodeImage: '/qr-codes/usdt.png', isActive: true },
     { cryptoSymbol: 'USDC', cryptoName: 'USD Coin', walletAddress: '0xe6078602ce55D471eB659D935C0741e0eeb63A39', qrCodeImage: '/qr-codes/usdc.png', isActive: true },
     { cryptoSymbol: 'BNB', cryptoName: 'Binance Coin', walletAddress: '0xe6078602ce55D471eB659D935C0741e0eeb63A39', qrCodeImage: '/qr-codes/bnb.png', isActive: true },
-    { cryptoSymbol: 'POL', cryptoName: 'Polygon', walletAddress: '0xe6078602ce55D471eB659D935C0741e0eeb63A39', qrCodeImage: '/qr-codes/pol.png', isActive: true },
-    { cryptoSymbol: 'LTC', cryptoName: 'Litecoin', walletAddress: 'ltc1qkrzht6l6tpdw9n6dwfda4t29pes6t3dlhv08zj', qrCodeImage: '/qr-codes/ltc.png', isActive: true },
-    { cryptoSymbol: 'SOL', cryptoName: 'Solana', walletAddress: '33nKa6W5t6ZRxP6BnUgXjLqHvb5mP4nyQGfMJQuwfhvn', qrCodeImage: '/qr-codes/sol.png', isActive: true },
-    { cryptoSymbol: 'TRX', cryptoName: 'TRON', walletAddress: 'TYBWRsdt2MzEn5ULtfsreBQSjJS2ULfeAp', qrCodeImage: '/qr-codes/trx.png', isActive: true }
+    { cryptoSymbol: 'TRX', cryptoName: 'TRON', walletAddress: 'TYBWRsdt2MzEn5ULtfsreBQSjJS2ULfeAp', qrCodeImage: '/qr-codes/trx.png', isActive: true },
+    { cryptoSymbol: 'POL', cryptoName: 'Polygon', walletAddress: '0xe6078602ce55D471eB659D935C0741e0eeb63A39', qrCodeImage: '/qr-codes/pol.png', isActive: true }
   ];
 
   try {
