@@ -34,8 +34,8 @@ function PaymentMethodIcon({ type }: { type: string }) {
 }
 
 const fallbackPaymentMethods = [
-  { id: "card", name: "Card", key: "card", description: "0 KYC", icon: null as string | null },
-  { id: "paypal", name: "PayPal", key: "paypal", description: "Fast & secure", icon: null as string | null },
+  { id: "sumup", name: "SumUp", key: "sumup", description: "Pay with Card", icon: null as string | null },
+  { id: "paypal", name: "PayPal", key: "paypal", description: "Unavailable - Discord ticket required", icon: null as string | null },
 ];
 
 const defaultCryptos = [
@@ -570,37 +570,65 @@ export default function Exchange() {
                     </h2>
 
                     <div className="space-y-3">
-                      {paymentMethods.map((method) => (
-                        <button
-                          key={method.id}
-                          onClick={() =>
-                            setFormData({ ...formData, paymentMethod: method.id })
-                          }
-                          className={`w-full p-5 rounded-xl border flex items-center gap-4 transition-all duration-200 ${
-                            formData.paymentMethod === method.id
-                              ? "bg-emerald-500/20 border-emerald-500/50"
-                              : "bg-white/5 border-white/10 hover:bg-white/10"
-                          }`}
-                          data-testid={`button-payment-${method.id}`}
-                        >
-                          <div className="w-14 h-14 rounded-xl bg-white/10 flex items-center justify-center overflow-hidden">
-                            {method.icon ? (
-                              <img src={method.icon} alt={method.name} className="w-full h-full object-cover" />
-                            ) : (
-                              <PaymentMethodIcon type={method.key} />
-                            )}
-                          </div>
-                          <div className="text-left flex-1">
-                            <span className="text-white font-semibold block">{method.name}</span>
-                            <span className="text-white/50 text-sm">{method.description}</span>
-                          </div>
-                          {formData.paymentMethod === method.id && (
-                            <div className="ml-auto">
-                              <Check className="w-5 h-5 text-emerald-400" />
+                      {paymentMethods.map((method) => {
+                        const isPayPal = method.key.toLowerCase() === "paypal";
+                        
+                        if (isPayPal) {
+                          return (
+                            <a
+                              key={method.id}
+                              href="https://discord.gg/zengo-exchange"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="w-full p-5 rounded-xl border flex items-center gap-4 transition-all duration-200 bg-white/5 border-white/10 hover:bg-white/10 opacity-60"
+                              data-testid={`button-payment-${method.id}`}
+                            >
+                              <div className="w-14 h-14 rounded-xl bg-white/10 flex items-center justify-center overflow-hidden">
+                                <PaymentMethodIcon type={method.key} />
+                              </div>
+                              <div className="text-left flex-1">
+                                <span className="text-white font-semibold block">{method.name}</span>
+                                <span className="text-amber-400 text-sm">Unavailable - Open a ticket on Discord</span>
+                              </div>
+                              <div className="ml-auto">
+                                <ArrowRight className="w-5 h-5 text-white/50" />
+                              </div>
+                            </a>
+                          );
+                        }
+                        
+                        return (
+                          <button
+                            key={method.id}
+                            onClick={() =>
+                              setFormData({ ...formData, paymentMethod: method.id })
+                            }
+                            className={`w-full p-5 rounded-xl border flex items-center gap-4 transition-all duration-200 ${
+                              formData.paymentMethod === method.id
+                                ? "bg-emerald-500/20 border-emerald-500/50"
+                                : "bg-white/5 border-white/10 hover:bg-white/10"
+                            }`}
+                            data-testid={`button-payment-${method.id}`}
+                          >
+                            <div className="w-14 h-14 rounded-xl bg-white/10 flex items-center justify-center overflow-hidden">
+                              {method.icon ? (
+                                <img src={method.icon} alt={method.name} className="w-full h-full object-cover" />
+                              ) : (
+                                <PaymentMethodIcon type={method.key} />
+                              )}
                             </div>
-                          )}
-                        </button>
-                      ))}
+                            <div className="text-left flex-1">
+                              <span className="text-white font-semibold block">{method.name}</span>
+                              <span className="text-white/50 text-sm">{method.description}</span>
+                            </div>
+                            {formData.paymentMethod === method.id && (
+                              <div className="ml-auto">
+                                <Check className="w-5 h-5 text-emerald-400" />
+                              </div>
+                            )}
+                          </button>
+                        );
+                      })}
                     </div>
 
                     {errors.paymentMethod && (
