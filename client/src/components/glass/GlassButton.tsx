@@ -14,7 +14,7 @@ export const GlassButton = forwardRef<HTMLButtonElement, GlassButtonProps>(
     
     const variants = {
       default: "glass-button text-white",
-      primary: "liquid-glass-cta text-white",
+      primary: "liquid-glass-cta text-black font-bold",
       ghost: "bg-transparent hover:bg-white/10 text-white",
       outline: "bg-transparent border border-white/20 text-white hover:bg-white/10",
     };
@@ -39,7 +39,7 @@ export const GlassButton = forwardRef<HTMLButtonElement, GlassButtonProps>(
         whileTap={{ scale: 0.98 }}
         transition={{ type: "spring", stiffness: 400, damping: 25 }}
         disabled={disabled}
-        {...props}
+        {...(props as any)}
       >
         {shimmer && (
           <div 

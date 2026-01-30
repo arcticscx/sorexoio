@@ -91,7 +91,7 @@ export default function Home() {
 
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Link href="/exchange">
-                  <GlassButton variant="primary" size="lg" shimmer data-testid="button-hero-exchange" className="text-[#000000]">
+                  <GlassButton variant="primary" size="lg" shimmer data-testid="button-hero-exchange">
                     Start Exchange
                     <ArrowRight className="w-5 h-5" />
                   </GlassButton>
