@@ -1,16 +1,16 @@
-# Prismatic - Apple Liquid Glass Design Guidelines
+# ZengoSwap - Apple Liquid Glass Design Guidelines
 
 ## Design Philosophy
 Transform the exchange into a premium Apple-like experience with the "Liquid Glass" aesthetic - translucent frosted panels, background blur with saturation, soft inner highlights, subtle borders, and layered depth. Every interaction should feel smooth and refined, never cluttered.
 
 ## Brand Identity
 
-**Name:** Prismatic
+**Name:** ZengoSwap
 
-**Visual Theme:** Greenish gradient gem/prism aesthetic
-- Primary gradient: Emerald → Teal → Lime
-- Subtle spectral accents for depth
-- Premium, gemstone-inspired feel
+**Visual Theme:** Monochromatic elegance with white/gray on dark
+- Primary colors: White, light gray, dark backgrounds
+- Clean, minimal aesthetic with subtle depth
+- Premium, modern feel
 
 ## Liquid Glass Design System
 
@@ -62,8 +62,8 @@ Model after Apple's segmented controls:
 
 ## Background System
 
-**Prismatic Gradient Background:**
-- Slow moving gradient blobs (emerald, teal, lime)
+**ZengoSwap Gradient Background:**
+- Subtle dark gradient with minimal color variation
 - Noise texture overlay for depth
 - Optional mouse parallax on blobs (subtle, 10-20px movement)
 - Ensure text readability with contrast layers
@@ -72,10 +72,10 @@ Model after Apple's segmented controls:
 ## Color Strategy
 Focus on:
 - Glass transparency and blur effects
-- Prismatic gradient (emerald → teal → lime) as accent
+- Monochromatic palette (white/gray on dark) as accent
 - White/light content on glass for legibility
-- Subtle spectral highlights for premium feel
-- Avoid flat colors - embrace gradients and depth
+- Subtle highlights for premium feel
+- Embrace gradients and depth
 
 ## Page Layouts
 
@@ -84,7 +84,7 @@ Focus on:
 - Segmented control pills for time filters (Years/Months/All)
 - Clear value proposition with glass card treatment
 - Smooth scroll indicators
-- Hero image: Abstract prismatic/crystal visualization with gradient overlay
+- Hero image: Abstract visualization with gradient overlay
 
 ### Live Transactions Feed
 - Real-time scrolling feed in glass container
@@ -157,8 +157,8 @@ Focus on:
 ## Images
 
 **Hero Section:**
-- Large abstract prismatic/crystal visualization
-- Gradient overlay (emerald → teal) for text legibility
+- Large abstract visualization
+- Gradient overlay for text legibility
 - Buttons on hero use glass background with blur (no hover changes to blur)
 
 **Payment Icons:**

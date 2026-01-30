@@ -46,7 +46,7 @@ const steps = [
 
 export default function CryptoSwapPage() {
   useEffect(() => {
-    document.title = "Crypto Swap | Exchange Bitcoin, Ethereum & More – Prismatic";
+    document.title = "Crypto Swap | Exchange Bitcoin, Ethereum & More – ZengoSwap";
   }, []);
 
   return (
@@ -70,7 +70,7 @@ export default function CryptoSwapPage() {
 
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-6 text-balance">
                 Swap Crypto{" "}
-                <span className="prismatic-text">Instantly</span>
+                <span className="zengo-text">Instantly</span>
               </h1>
 
               <p className="text-lg sm:text-xl text-white/60 max-w-3xl mx-auto mb-10 text-balance">
@@ -100,15 +100,15 @@ export default function CryptoSwapPage() {
               transition={{ duration: 0.6, delay: 0.2 }}
             >
               <GlassCard className="p-4 sm:p-6 text-center" hover={false}>
-                <div className="text-2xl sm:text-3xl font-bold prismatic-text">0.2%</div>
+                <div className="text-2xl sm:text-3xl font-bold zengo-text">0.2%</div>
                 <div className="text-xs sm:text-sm text-white/50 mt-1">Swap Fee</div>
               </GlassCard>
               <GlassCard className="p-4 sm:p-6 text-center" hover={false}>
-                <div className="text-2xl sm:text-3xl font-bold prismatic-text">$50</div>
+                <div className="text-2xl sm:text-3xl font-bold zengo-text">$50</div>
                 <div className="text-xs sm:text-sm text-white/50 mt-1">Minimum Swap</div>
               </GlassCard>
               <GlassCard className="p-4 sm:p-6 text-center" hover={false}>
-                <div className="text-2xl sm:text-3xl font-bold prismatic-text">$1M</div>
+                <div className="text-2xl sm:text-3xl font-bold zengo-text">$1M</div>
                 <div className="text-xs sm:text-sm text-white/50 mt-1">Maximum Swap</div>
               </GlassCard>
             </motion.div>
@@ -123,7 +123,7 @@ export default function CryptoSwapPage() {
             >
               <div className="text-center mb-12">
                 <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">
-                  Why Swap with Prismatic?
+                  Why Swap with ZengoSwap?
                 </h2>
                 <p className="text-white/50 max-w-2xl mx-auto">
                   Our crypto swap service offers the lowest fees, fastest execution, and widest selection 
@@ -170,7 +170,7 @@ export default function CryptoSwapPage() {
                     How Crypto Swap Works
                   </h2>
                   <p className="text-white/50 max-w-2xl mx-auto">
-                    Swapping cryptocurrencies on Prismatic is simple and straightforward. Follow these 
+                    Swapping cryptocurrencies on ZengoSwap is simple and straightforward. Follow these 
                     four easy steps to complete your exchange.
                   </p>
                 </div>
@@ -366,10 +366,10 @@ export default function CryptoSwapPage() {
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-emerald-400" />
-            <span className="font-semibold prismatic-text">Prismatic</span>
+            <span className="font-semibold zengo-text">ZengoSwap</span>
           </div>
           <p className="text-white/40 text-sm">
-            © {new Date().getFullYear()} Prismatic Exchange. All rights reserved.
+            © {new Date().getFullYear()} ZengoSwap Exchange. All rights reserved.
           </p>
         </div>
       </footer>

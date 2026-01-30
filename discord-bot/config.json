@@ -1,5 +1,5 @@
 {
-  "brandName": "Prismatic",
+  "brandName": "ZengoSwap",
   "brandLogo": "https://cdn.discordapp.com/ephemeral-attachments/1459945055975506072/1459945392920858797/Blue_Circle_Icon_Modern_Simple_Business_Logo_copy.png?ex=69651f9a&is=6963ce1a&hm=ab1d96f776849a73a8950ae437c627b4a2a91a9161cc032bf7a56d3aca34ee5c&",
   "embedColor": "#101110",
   "adminIds": [
@@ -67,7 +67,7 @@
   },
   "invoiceDescription": "By purchasing this product you agree that you are the rightful owner of this card/payment method and that you agree that we do not hand out refunds in any circumstances only purchase if you are sure you WANT this.",
   "ticketImageUrl": "https://cdn.discordapp.com/attachments/1459945692696150027/1459948327134171340/prismatic.png?ex=69652255&is=6963d0d5&hm=771794f3adf93ed2713ebf5769e2af3ada9d455c2fd06fbe53ec01ca5f667aa1",
-  "transactionIdPrefix": "PRISM",
+  "transactionIdPrefix": "ZENGO",
   "transactionChannelId": "1459943457513803988",
   "ratingChannelId": "1460007616754352381",
   "scheduler": {

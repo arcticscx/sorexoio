@@ -23,7 +23,7 @@ const faqs = [
       },
       {
         q: "Which countries support PayPal purchases?",
-        a: "PayPal purchases are available in all countries where PayPal operates, which includes over 200 countries and territories. If you can send money with PayPal, you can buy crypto on Prismatic."
+        a: "PayPal purchases are available in all countries where PayPal operates, which includes over 200 countries and territories. If you can send money with PayPal, you can buy crypto on ZengoSwap."
       },
     ]
   },
@@ -53,7 +53,7 @@ const faqs = [
     questions: [
       {
         q: "Is KYC required?",
-        a: "No, KYC (Know Your Customer) verification is not required to use Prismatic. You can buy and swap cryptocurrency without submitting ID documents, selfies, or proof of address."
+        a: "No, KYC (Know Your Customer) verification is not required to use ZengoSwap. You can buy and swap cryptocurrency without submitting ID documents, selfies, or proof of address."
       },
       {
         q: "What information do you collect?",
@@ -64,8 +64,8 @@ const faqs = [
         a: "No, we never share your transaction data with marketing companies or data brokers. Payment information is only shared with payment processors as required to complete your transaction."
       },
       {
-        q: "Can I use Prismatic anonymously?",
-        a: "While you need an email to receive transaction updates, you can use any email address. Combined with cryptocurrency's pseudonymous nature, Prismatic offers a high level of privacy."
+        q: "Can I use ZengoSwap anonymously?",
+        a: "While you need an email to receive transaction updates, you can use any email address. Combined with cryptocurrency's pseudonymous nature, ZengoSwap offers a high level of privacy."
       },
     ]
   },
@@ -131,7 +131,7 @@ export default function Faq() {
   const [openQuestions, setOpenQuestions] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    document.title = "FAQ | Crypto Exchange Questions Answered – Prismatic";
+    document.title = "FAQ | Crypto Exchange Questions Answered – ZengoSwap";
   }, []);
 
   const toggleQuestion = (id: string) => {
@@ -175,7 +175,7 @@ export default function Faq() {
 
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-6 text-balance">
                 Frequently Asked{" "}
-                <span className="prismatic-text">Questions</span>
+                <span className="zengo-text">Questions</span>
               </h1>
 
               <p className="text-lg sm:text-xl text-white/60 max-w-3xl mx-auto mb-10 text-balance">
@@ -381,10 +381,10 @@ export default function Faq() {
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-emerald-400" />
-            <span className="font-semibold prismatic-text">Prismatic</span>
+            <span className="font-semibold zengo-text">ZengoSwap</span>
           </div>
           <p className="text-white/40 text-sm">
-            © {new Date().getFullYear()} Prismatic Exchange. All rights reserved.
+            © {new Date().getFullYear()} ZengoSwap Exchange. All rights reserved.
           </p>
         </div>
       </footer>

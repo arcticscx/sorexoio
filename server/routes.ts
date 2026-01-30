@@ -54,7 +54,7 @@ export async function registerRoutes(
   ];
 
   app.get("/sitemap.xml", (_req, res) => {
-    const baseUrl = "https://prismatic.live";
+    const baseUrl = "https://zengoswap.com";
     const lastmod = new Date().toISOString().split("T")[0];
     
     const urls = seoPages.map(page => `
@@ -82,9 +82,9 @@ export async function registerRoutes(
     const robotsTxt = `User-agent: *
 Allow: /
 
-Sitemap: https://prismatic.live/sitemap.xml
+Sitemap: https://zengoswap.com/sitemap.xml
 
-# Prismatic Crypto Exchange
+# ZengoSwap Crypto Exchange
 # Buy crypto with PayPal and Card - No KYC required
 `;
     res.header("Content-Type", "text/plain");

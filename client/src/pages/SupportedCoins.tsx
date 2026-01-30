@@ -71,7 +71,7 @@ const coins = [
 
 export default function SupportedCoins() {
   useEffect(() => {
-    document.title = "Supported Cryptocurrencies | BTC, ETH, SOL & More – Prismatic";
+    document.title = "Supported Cryptocurrencies | BTC, ETH, SOL & More – ZengoSwap";
   }, []);
 
   return (
@@ -95,7 +95,7 @@ export default function SupportedCoins() {
 
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-6 text-balance">
                 Supported{" "}
-                <span className="prismatic-text">Cryptocurrencies</span>
+                <span className="zengo-text">Cryptocurrencies</span>
               </h1>
 
               <p className="text-lg sm:text-xl text-white/60 max-w-3xl mx-auto mb-10 text-balance">
@@ -300,10 +300,10 @@ export default function SupportedCoins() {
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-emerald-400" />
-            <span className="font-semibold prismatic-text">Prismatic</span>
+            <span className="font-semibold zengo-text">ZengoSwap</span>
           </div>
           <p className="text-white/40 text-sm">
-            © {new Date().getFullYear()} Prismatic Exchange. All rights reserved.
+            © {new Date().getFullYear()} ZengoSwap Exchange. All rights reserved.
           </p>
         </div>
       </footer>

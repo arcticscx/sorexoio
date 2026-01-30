@@ -17,31 +17,31 @@
   --sidebar: 0 0% 5%;
   --sidebar-foreground: 0 0% 98%;
   --sidebar-border: 0 0% 12%;
-  --sidebar-primary: 162 85% 35%;
-  --sidebar-primary-foreground: 162 85% 98%;
+  --sidebar-primary: 0 0% 90%;
+  --sidebar-primary-foreground: 0 0% 5%;
   --sidebar-accent: 0 0% 12%;
   --sidebar-accent-foreground: 0 0% 98%;
-  --sidebar-ring: 162 75% 45%;
+  --sidebar-ring: 0 0% 70%;
   --popover: 0 0% 8%;
   --popover-foreground: 0 0% 98%;
   --popover-border: 0 0% 14%;
-  --primary: 162 85% 35%;
-  --primary-foreground: 0 0% 100%;
+  --primary: 0 0% 95%;
+  --primary-foreground: 0 0% 5%;
   --secondary: 0 0% 12%;
   --secondary-foreground: 0 0% 98%;
   --muted: 0 0% 15%;
   --muted-foreground: 0 0% 55%;
-  --accent: 162 70% 30%;
+  --accent: 0 0% 20%;
   --accent-foreground: 0 0% 98%;
   --destructive: 0 75% 45%;
   --destructive-foreground: 0 0% 100%;
   --input: 0 0% 15%;
-  --ring: 162 75% 45%;
-  --chart-1: 162 85% 45%;
-  --chart-2: 174 75% 42%;
-  --chart-3: 152 70% 45%;
-  --chart-4: 168 65% 48%;
-  --chart-5: 84 60% 52%;
+  --ring: 0 0% 70%;
+  --chart-1: 0 0% 85%;
+  --chart-2: 0 0% 70%;
+  --chart-3: 0 0% 55%;
+  --chart-4: 0 0% 40%;
+  --chart-5: 0 0% 25%;
   --font-sans: "Questrial", sans-serif;
   --font-serif: "Questrial", sans-serif;
   --font-mono: "Questrial", sans-serif;
@@ -151,8 +151,8 @@
 
   .glass-input:focus {
     outline: none;
-    border-color: rgba(16, 185, 129, 0.5);
-    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+    border-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.15);
   }
 
   /* Remove number input spinners */
@@ -199,14 +199,14 @@
   .nav-item-glass:hover {
     color: rgba(255, 255, 255, 0.95);
     background: rgba(255, 255, 255, 0.08);
-    box-shadow: 0 0 20px rgba(16, 185, 129, 0.15);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
   }
 
   .nav-item-glass-active {
     color: rgba(255, 255, 255, 1);
     background: rgba(255, 255, 255, 0.12);
     box-shadow: 
-      0 0 20px rgba(16, 185, 129, 0.2),
+      0 0 20px rgba(255, 255, 255, 0.15),
       inset 0 1px 0 rgba(255, 255, 255, 0.1);
   }
 
@@ -216,17 +216,18 @@
     position: relative;
     background: linear-gradient(
       135deg,
-      rgba(16, 185, 129, 0.85) 0%,
-      rgba(13, 148, 136, 0.8) 100%
+      rgba(255, 255, 255, 0.95) 0%,
+      rgba(220, 220, 220, 0.9) 100%
     );
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     box-shadow: 
-      inset 0 1px 1px rgba(255, 255, 255, 0.25),
+      inset 0 1px 1px rgba(255, 255, 255, 0.4),
       inset 0 -1px 2px rgba(0, 0, 0, 0.05),
-      0 4px 15px rgba(16, 185, 129, 0.25),
+      0 4px 15px rgba(255, 255, 255, 0.15),
       0 2px 6px rgba(0, 0, 0, 0.1);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
+    color: #000;
   }
 
   .liquid-glass-cta::before {
@@ -236,7 +237,7 @@
     border-radius: inherit;
     background: linear-gradient(
       180deg,
-      rgba(255, 255, 255, 0.15) 0%,
+      rgba(255, 255, 255, 0.25) 0%,
       transparent 40%,
       transparent 60%,
       rgba(0, 0, 0, 0.05) 100%
@@ -247,15 +248,15 @@
   .liquid-glass-cta:hover {
     background: linear-gradient(
       135deg,
-      rgba(16, 185, 129, 0.95) 0%,
-      rgba(13, 148, 136, 0.9) 100%
+      rgba(255, 255, 255, 1) 0%,
+      rgba(240, 240, 240, 0.95) 100%
     );
-    border-color: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
     box-shadow: 
-      inset 0 1px 1px rgba(255, 255, 255, 0.35),
+      inset 0 1px 1px rgba(255, 255, 255, 0.5),
       inset 0 -1px 2px rgba(0, 0, 0, 0.1),
-      0 6px 25px rgba(16, 185, 129, 0.35),
-      0 0 40px rgba(16, 185, 129, 0.15),
+      0 6px 25px rgba(255, 255, 255, 0.2),
+      0 0 40px rgba(255, 255, 255, 0.1),
       0 3px 10px rgba(0, 0, 0, 0.15);
     transform: translateY(-1.5px);
   }
@@ -264,7 +265,7 @@
     transform: translateY(0) scale(0.985);
     box-shadow: 
       inset 0 2px 4px rgba(0, 0, 0, 0.15),
-      0 2px 8px rgba(16, 185, 129, 0.2);
+      0 2px 8px rgba(255, 255, 255, 0.15);
   }
 
   @keyframes liquid-gradient-shift {
@@ -291,8 +292,8 @@
     border-color: rgba(255, 255, 255, 0.3);
     box-shadow: 
       inset 0 1px 0 rgba(255, 255, 255, 0.25),
-      0 4px 16px rgba(16, 185, 129, 0.25),
-      0 0 30px rgba(16, 185, 129, 0.15);
+      0 4px 16px rgba(255, 255, 255, 0.15),
+      0 0 30px rgba(255, 255, 255, 0.1);
     transform: translateY(-1px);
   }
 
@@ -307,20 +308,20 @@
     box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6);
   }
 
-  .prismatic-gradient {
+  .zengo-gradient {
     background: linear-gradient(135deg, 
       hsl(0 0% 0%) 0%, 
-      hsl(160 25% 1%) 35%, 
+      hsl(0 0% 3%) 35%, 
       hsl(0 0% 0%) 65%,
-      hsl(160 20% 1%) 100%
+      hsl(0 0% 2%) 100%
     );
   }
 
-  .prismatic-text {
+  .zengo-text {
     background: linear-gradient(135deg, 
-      hsl(162 85% 55%) 0%, 
-      hsl(174 75% 50%) 50%, 
-      hsl(84 65% 55%) 100%
+      hsl(0 0% 100%) 0%, 
+      hsl(0 0% 85%) 50%, 
+      hsl(0 0% 100%) 100%
     );
     -webkit-background-clip: text;
     background-clip: text;

@@ -1,8 +1,8 @@
-# Prismatic - Premium Crypto Exchange Platform
+# ZengoSwap - Premium Crypto Exchange Platform
 
 ## Overview
 
-Prismatic is a premium cryptocurrency exchange platform featuring an Apple-inspired "Liquid Glass" design aesthetic. The application provides a real-time transaction feed, multi-step exchange flow, and an admin dashboard for managing transactions, cryptocurrencies, and platform settings. The visual theme emphasizes translucent frosted panels, gradient backgrounds, and smooth animations.
+ZengoSwap is a premium cryptocurrency exchange platform featuring an Apple-inspired "Liquid Glass" design aesthetic. The application provides a real-time transaction feed, multi-step exchange flow, and an admin dashboard for managing transactions, cryptocurrencies, and platform settings. The visual theme emphasizes translucent frosted panels, gradient backgrounds, and smooth animations.
 
 ## User Preferences
 

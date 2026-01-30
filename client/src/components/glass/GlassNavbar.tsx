@@ -3,7 +3,7 @@ import { Link, useLocation } from "wouter";
 import { motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import logoPngPath from "@assets/Blue_Circle_Icon_Modern_Simple_Business_Logo_copy_1768165841720.png";
+import logoPngPath from "@assets/unnamed_1769791025120.png";
 
 interface NavLink {
   href: string;
@@ -52,9 +52,9 @@ export function GlassNavbar() {
               className="flex items-center gap-2 pr-4"
               data-testid="link-logo"
             >
-              <img src={logoPngPath} alt="Prismatic Logo" className="w-8 h-8 rounded-lg shadow-glow object-cover" />
-              <span className="text-base font-semibold prismatic-text hidden sm:block">
-                Prismatic
+              <img src={logoPngPath} alt="ZengoSwap Logo" className="w-8 h-8 rounded-lg shadow-glow object-cover" />
+              <span className="text-base font-semibold zengo-text hidden sm:block">
+                ZengoSwap
               </span>
             </Link>
 

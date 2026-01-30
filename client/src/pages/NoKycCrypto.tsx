@@ -54,7 +54,7 @@ const privacyFeatures = [
 
 export default function NoKycCrypto() {
   useEffect(() => {
-    document.title = "No KYC Crypto Exchange | Buy Crypto Anonymously – Prismatic";
+    document.title = "No KYC Crypto Exchange | Buy Crypto Anonymously – ZengoSwap";
   }, []);
 
   return (
@@ -78,7 +78,7 @@ export default function NoKycCrypto() {
 
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-6 text-balance">
                 No KYC{" "}
-                <span className="prismatic-text">Crypto Exchange</span>
+                <span className="zengo-text">Crypto Exchange</span>
               </h1>
 
               <p className="text-lg sm:text-xl text-white/60 max-w-3xl mx-auto mb-10 text-balance">
@@ -158,7 +158,7 @@ export default function NoKycCrypto() {
                     KYC vs No-KYC Comparison
                   </h2>
                   <p className="text-white/50 max-w-2xl mx-auto">
-                    See how Prismatic's no-KYC approach compares to traditional exchanges that require identity verification.
+                    See how ZengoSwap's no-KYC approach compares to traditional exchanges that require identity verification.
                   </p>
                 </div>
 
@@ -168,7 +168,7 @@ export default function NoKycCrypto() {
                       <tr className="border-b border-white/10">
                         <th className="text-left py-4 px-4 text-white font-semibold">Feature</th>
                         <th className="text-center py-4 px-4 text-white/60 font-medium">KYC Exchanges</th>
-                        <th className="text-center py-4 px-4 text-emerald-400 font-medium">Prismatic (No KYC)</th>
+                        <th className="text-center py-4 px-4 text-emerald-400 font-medium">ZengoSwap (No KYC)</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -198,7 +198,7 @@ export default function NoKycCrypto() {
                   Your Privacy Matters
                 </h2>
                 <p className="text-white/50 max-w-2xl mx-auto">
-                  We've built Prismatic with privacy as a core principle, not an afterthought.
+                  We've built ZengoSwap with privacy as a core principle, not an afterthought.
                 </p>
               </div>
 
@@ -353,10 +353,10 @@ export default function NoKycCrypto() {
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-emerald-400" />
-            <span className="font-semibold prismatic-text">Prismatic</span>
+            <span className="font-semibold zengo-text">ZengoSwap</span>
           </div>
           <p className="text-white/40 text-sm">
-            © {new Date().getFullYear()} Prismatic Exchange. All rights reserved.
+            © {new Date().getFullYear()} ZengoSwap Exchange. All rights reserved.
           </p>
         </div>
       </footer>

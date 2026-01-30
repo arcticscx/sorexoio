@@ -941,8 +941,8 @@ export default function Admin() {
                         </label>
                         <GlassInput
                           type="text"
-                          placeholder="Prismatic"
-                          defaultValue={getSetting("siteName", "Prismatic")}
+                          placeholder="ZengoSwap"
+                          defaultValue={getSetting("siteName", "ZengoSwap")}
                           onBlur={(e) => updateSetting.mutate({ key: "siteName", value: e.target.value })}
                           data-testid="input-site-name"
                         />

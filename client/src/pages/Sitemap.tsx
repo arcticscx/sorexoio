@@ -58,7 +58,7 @@ export default function Sitemap() {
               Sitemap
             </h1>
             <p className="text-white/60 text-lg max-w-2xl mx-auto">
-              Navigate to all pages on Prismatic. Find information about buying crypto, payment methods, and more.
+              Navigate to all pages on ZengoSwap. Find information about buying crypto, payment methods, and more.
             </p>
           </div>
 
@@ -94,7 +94,7 @@ export default function Sitemap() {
 
           <div className="mt-12 text-center">
             <p className="text-white/40 text-sm">
-              Prismatic - Buy Crypto with PayPal & Card | No KYC Required
+              ZengoSwap - Buy Crypto with PayPal & Card | No KYC Required
             </p>
           </div>
         </div>

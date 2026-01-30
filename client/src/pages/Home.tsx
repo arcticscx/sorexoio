@@ -82,7 +82,7 @@ export default function Home() {
 
               <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 text-balance">
                 Purchase Crypto with{" "}
-                <span className="prismatic-text">Crystal Clarity</span>
+                <span className="zengo-text">Crystal Clarity</span>
               </h1>
 
               <p className="text-lg sm:text-xl text-white/60 max-w-2xl mx-auto mb-10 text-balance">
@@ -112,19 +112,19 @@ export default function Home() {
               transition={{ duration: 0.6, delay: 0.2 }}
             >
               <GlassCard className="p-4 sm:p-6 text-center" hover={false}>
-                <div className="text-2xl sm:text-3xl font-bold prismatic-text">
+                <div className="text-2xl sm:text-3xl font-bold zengo-text">
                   ${(stats.totalVolume / 1000000).toFixed(1)}M
                 </div>
                 <div className="text-xs sm:text-sm text-white/50 mt-1">Volume (24h)</div>
               </GlassCard>
               <GlassCard className="p-4 sm:p-6 text-center" hover={false}>
-                <div className="text-2xl sm:text-3xl font-bold prismatic-text">
+                <div className="text-2xl sm:text-3xl font-bold zengo-text">
                   {stats.totalTransactions.toLocaleString()}
                 </div>
                 <div className="text-xs sm:text-sm text-white/50 mt-1">Transactions</div>
               </GlassCard>
               <GlassCard className="p-4 sm:p-6 text-center" hover={false}>
-                <div className="text-2xl sm:text-3xl font-bold prismatic-text">
+                <div className="text-2xl sm:text-3xl font-bold zengo-text">
                   {stats.activeUsers.toLocaleString()}
                 </div>
                 <div className="text-xs sm:text-sm text-white/50 mt-1">Active Users</div>
@@ -168,7 +168,7 @@ export default function Home() {
             >
               <div className="text-center mb-12">
                 <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">
-                  Why Choose Prismatic?
+                  Why Choose ZengoSwap?
                 </h2>
                 <p className="text-white/50 max-w-xl mx-auto">
                   Built with cutting-edge technology for the best trading experience
@@ -213,7 +213,7 @@ export default function Home() {
                   Ready to Start Trading?
                 </h2>
                 <p className="text-white/60 max-w-xl mx-auto mb-8">
-                  Join thousands of traders who trust Prismatic for their cryptocurrency exchanges.
+                  Join thousands of traders who trust ZengoSwap for their cryptocurrency exchanges.
                 </p>
                 <Link href="/exchange">
                   <GlassButton variant="primary" size="lg" shimmer data-testid="button-cta-exchange">

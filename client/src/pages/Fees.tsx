@@ -27,7 +27,7 @@ const feeStructure = [
 ];
 
 const comparison = [
-  { exchange: "Prismatic", cardFee: "5%", swapFee: "0.2%", kyc: "No", speed: "Instant" },
+  { exchange: "ZengoSwap", cardFee: "5%", swapFee: "0.2%", kyc: "No", speed: "Instant" },
   { exchange: "Competitor A", cardFee: "6-8%", swapFee: "0.5%", kyc: "Yes", speed: "1-3 days" },
   { exchange: "Competitor B", cardFee: "5.5%", swapFee: "0.3%", kyc: "Yes", speed: "Hours" },
   { exchange: "Competitor C", cardFee: "7%", swapFee: "0.4%", kyc: "Yes", speed: "1-7 days" },
@@ -58,7 +58,7 @@ const benefits = [
 
 export default function Fees() {
   useEffect(() => {
-    document.title = "Exchange Fees | Low-Cost Crypto Trading – Prismatic";
+    document.title = "Exchange Fees | Low-Cost Crypto Trading – ZengoSwap";
   }, []);
 
   return (
@@ -82,7 +82,7 @@ export default function Fees() {
 
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-6 text-balance">
                 Our{" "}
-                <span className="prismatic-text">Fees</span>
+                <span className="zengo-text">Fees</span>
               </h1>
 
               <p className="text-lg sm:text-xl text-white/60 max-w-3xl mx-auto mb-10 text-balance">
@@ -133,7 +133,7 @@ export default function Fees() {
                   >
                     <GlassCard className="p-6 h-full" variant="elevated" data-testid={`fee-card-${index}`}>
                       <div className="text-center mb-6">
-                        <div className="text-4xl font-bold prismatic-text mb-2">{item.fee}</div>
+                        <div className="text-4xl font-bold zengo-text mb-2">{item.fee}</div>
                         <h3 className="text-xl font-semibold text-white">{item.service}</h3>
                         <p className="text-white/50 text-sm mt-2">{item.description}</p>
                       </div>
@@ -207,7 +207,7 @@ export default function Fees() {
                     How We Compare
                   </h2>
                   <p className="text-white/50 max-w-2xl mx-auto">
-                    See how Prismatic stacks up against other cryptocurrency exchanges.
+                    See how ZengoSwap stacks up against other cryptocurrency exchanges.
                   </p>
                 </div>
 
@@ -365,10 +365,10 @@ export default function Fees() {
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-emerald-400" />
-            <span className="font-semibold prismatic-text">Prismatic</span>
+            <span className="font-semibold zengo-text">ZengoSwap</span>
           </div>
           <p className="text-white/40 text-sm">
-            © {new Date().getFullYear()} Prismatic Exchange. All rights reserved.
+            © {new Date().getFullYear()} ZengoSwap Exchange. All rights reserved.
           </p>
         </div>
       </footer>
