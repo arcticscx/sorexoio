@@ -81,8 +81,8 @@ export default function Home() {
               </div>
 
               <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 text-balance">
-                Purchase Crypto with{" "}
-                <span className="zengo-text">Crystal Clarity</span>
+                Purchase Crypto {" "}
+                <span className="zengo-text">Instantly!</span>
               </h1>
 
               <p className="text-lg sm:text-xl text-white/60 max-w-2xl mx-auto mb-10 text-balance">
