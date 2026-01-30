@@ -314,7 +314,7 @@ async function postRandomTransaction(messageId = null) {
     .setTimestamp(now)
     .setColor(config.embedColor)
     .setFooter({ text: footerText })
-    .setImage('https://cdn.discordapp.com/attachments/1459945692696150027/1459945902306234389/17.png?ex=69652013&is=6963ce93&hm=2386954abb7e7f2b12ec5739076f063a2d3b1145652b7f1867a13c61b33a4d40&')
+    .setImage('https://media.discordapp.net/attachments/1411264760686841888/1435973339217793085/Please_be_patient..._38.png?ex=697df963&is=697ca7e3&hm=6892efc518d074385d596e589302b904c3b75dc18c5e4bd90355cbfdf2af4979&=&format=webp&quality=lossless&width=2400&height=800')
     .addFields(
       { name: 'Crypto Exchanged', value: renderCrypto(crypto), inline: true },
       { name: 'Amount', value: `\`${amount} USD\``, inline: true },
@@ -325,7 +325,10 @@ async function postRandomTransaction(messageId = null) {
       { name: 'Exchange By', value: randomExchangerMention(), inline: true }
     );
 
-  await channel.send({ embeds: [embed] }).catch(() => {});
+  await channel.send({ 
+    content: `**New Transaction Detected!** \`${txId}\` exchanged \`${amount} USD\` for \`${crypto}\`.`,
+    embeds: [embed] 
+  }).catch(() => {});
 
   // 50% chance to also post a rating for this transaction
   if (Math.random() < 0.5) {
@@ -349,7 +352,7 @@ async function postRandomRating() {
     .setTimestamp(now)
     .setColor(config.embedColor)
     .setFooter({ text: footerText })
-    .setImage('https://cdn.discordapp.com/attachments/1459945692696150027/1459945896904097935/9.png?ex=69652012&is=6963ce92&hm=8a8ca43df5e832fc81b9e1a65de2a1e436881f7c65d5b34f832bfcafda783d79&')
+    .setImage('https://media.discordapp.net/attachments/1411264760686841888/1435973553030692966/Please_be_patient..._39.png?ex=697df996&is=697ca816&hm=bd1f97aa1f4c9a82aceaa81060003eeaaf317353d1377a9b61b42ee83bcdff84&=&format=webp&quality=lossless&width=2400&height=800')
     .addFields(
       { name: 'Rating', value: randomStars(), inline: true },
       { name: 'Amount', value: `\`${amount} USD\``, inline: true },

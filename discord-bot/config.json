@@ -69,7 +69,7 @@
   "ticketImageUrl": "https://cdn.discordapp.com/attachments/1459945692696150027/1459948327134171340/prismatic.png?ex=69652255&is=6963d0d5&hm=771794f3adf93ed2713ebf5769e2af3ada9d455c2fd06fbe53ec01ca5f667aa1",
   "transactionIdPrefix": "ZEN",
   "transactionChannelId": "1435824728387489964",
-  "ratingChannelId": "1435824731977679000",
+  "ratingChannelId": "1436010701687754893",
   "scheduler": {
     "minMinutes": 50,
     "maxMinutes": 90,
