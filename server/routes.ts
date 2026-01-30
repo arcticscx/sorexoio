@@ -431,6 +431,132 @@ Sitemap: https://zengoswap.com/sitemap.xml
     }
   });
 
+  // SumUp checkout validation schema
+  const sumupCheckoutSchema = z.object({
+    amount: z.union([z.string(), z.number()]).transform(val => parseFloat(String(val))),
+    currency: z.string().min(3).max(3),
+    description: z.string().optional(),
+    referenceId: z.string().optional()
+  });
+
+  // SumUp checkout endpoint
+  app.post("/api/sumup/checkout", async (req, res) => {
+    try {
+      const parsed = sumupCheckoutSchema.safeParse(req.body);
+      if (!parsed.success) {
+        return res.status(400).json({ error: "Invalid request data", details: parsed.error.errors });
+      }
+
+      const { amount, currency, description, referenceId } = parsed.data;
+
+      const apiKey = process.env.SUMUP_API_KEY;
+      const merchantCode = process.env.SUMUP_MERCHANT_CODE;
+
+      if (!apiKey || !merchantCode) {
+        return res.status(500).json({ error: "SumUp not configured" });
+      }
+
+      // Create checkout via SumUp API
+      const response = await fetch('https://api.sumup.com/v0.1/checkouts', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          checkout_reference: referenceId || `ZEN-${Date.now()}`,
+          amount: amount,
+          currency: currency.toUpperCase(),
+          merchant_code: merchantCode,
+          description: description || 'ZengoSwap Exchange',
+          redirect_url: `${req.protocol}://${req.get('host')}/exchange?status=success`
+        })
+      });
+
+      if (!response.ok) {
+        const errorBody = await response.text();
+        console.error('SumUp checkout error:', errorBody);
+        return res.status(500).json({ error: "Failed to create SumUp checkout" });
+      }
+
+      const checkout = await response.json();
+      res.json({ checkoutId: checkout.id, checkout });
+    } catch (error) {
+      console.error('SumUp checkout error:', error);
+      res.status(500).json({ error: "Failed to create SumUp checkout" });
+    }
+  });
+
+  // Get SumUp checkout status
+  app.get("/api/sumup/checkout/:id", async (req, res) => {
+    try {
+      const apiKey = process.env.SUMUP_API_KEY;
+
+      if (!apiKey) {
+        return res.status(500).json({ error: "SumUp not configured" });
+      }
+
+      const response = await fetch(`https://api.sumup.com/v0.1/checkouts/${req.params.id}`, {
+        headers: {
+          'Authorization': `Bearer ${apiKey}`
+        }
+      });
+
+      if (!response.ok) {
+        return res.status(404).json({ error: "Checkout not found" });
+      }
+
+      const checkout = await response.json();
+      res.json(checkout);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to get checkout status" });
+    }
+  });
+
+  // Verify SumUp payment and confirm it was successful
+  app.post("/api/sumup/verify", async (req, res) => {
+    try {
+      const { checkoutId } = req.body;
+      
+      if (!checkoutId) {
+        return res.status(400).json({ error: "Checkout ID is required" });
+      }
+
+      const apiKey = process.env.SUMUP_API_KEY;
+
+      if (!apiKey) {
+        return res.status(500).json({ error: "SumUp not configured" });
+      }
+
+      // Verify checkout status with SumUp API
+      const response = await fetch(`https://api.sumup.com/v0.1/checkouts/${checkoutId}`, {
+        headers: {
+          'Authorization': `Bearer ${apiKey}`
+        }
+      });
+
+      if (!response.ok) {
+        return res.status(404).json({ error: "Checkout not found", verified: false });
+      }
+
+      const checkout = await response.json();
+      
+      // Only return verified: true if payment was actually completed
+      const isPaid = checkout.status === 'PAID';
+      
+      res.json({ 
+        verified: isPaid, 
+        status: checkout.status,
+        amount: checkout.amount,
+        currency: checkout.currency,
+        reference: checkout.checkout_reference
+      });
+    } catch (error) {
+      console.error('SumUp verify error:', error);
+      res.status(500).json({ error: "Failed to verify payment", verified: false });
+    }
+  });
+
   // Generate payment link securely (credentials stored server-side)
   app.post("/api/payment-link", (req, res) => {
     try {

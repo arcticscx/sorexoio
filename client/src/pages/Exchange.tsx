@@ -13,7 +13,7 @@ import type { Crypto, PaymentMethod, Setting } from "@shared/schema";
 import cardIcon from "@assets/ARCTIC_1768071339190.png";
 import paypalIcon from "@assets/ARCTIC_1768071353413.png";
 
-type Step = "amount" | "payment" | "details" | "card_payment" | "paypal_payment" | "confirm" | "success";
+type Step = "amount" | "payment" | "details" | "card_payment" | "paypal_payment" | "sumup_payment" | "confirm" | "success";
 
 function PaymentMethodIcon({ type }: { type: string }) {
   const key = type.toLowerCase();
@@ -23,6 +23,9 @@ function PaymentMethodIcon({ type }: { type: string }) {
   }
   if (key === "paypal") {
     return <img src={paypalIcon} alt="PayPal" className="w-7 h-7 object-contain" />;
+  }
+  if (key === "sumup") {
+    return <img src={cardIcon} alt="SumUp" className="w-7 h-7 object-contain" />;
   }
   if (key === "bank") {
     return <Wallet className="w-7 h-7 text-emerald-400" />;
@@ -62,6 +65,7 @@ export default function Exchange() {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [paymentUrl, setPaymentUrl] = useState<string | null>(null);
+  const [sumupCheckoutId, setSumupCheckoutId] = useState<string | null>(null);
 
   const { data: cryptos } = useQuery<Crypto[]>({
     queryKey: ["/api/cryptos"],
@@ -119,6 +123,35 @@ export default function Exchange() {
     }
   }, [step, formData.amount, formData.email, toast]);
 
+  // Create SumUp checkout when entering sumup_payment step
+  useEffect(() => {
+    if (step === "sumup_payment" && formData.amount && formData.currency) {
+      fetch("/api/sumup/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          amount: formData.amount, 
+          currency: formData.currency,
+          description: `ZengoSwap - ${formData.cryptoType} Purchase`,
+          referenceId: referenceCode
+        }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.checkoutId) {
+            setSumupCheckoutId(data.checkoutId);
+          }
+        })
+        .catch(() => {
+          toast({
+            title: "Error",
+            description: "Failed to initialize SumUp payment. Please try again.",
+            variant: "destructive",
+          });
+        });
+    }
+  }, [step, formData.amount, formData.currency, formData.cryptoType, referenceCode, toast]);
+
   // Get price for selected crypto (with fallbacks)
   const getCryptoRate = (symbol: string) => {
     if (prices && prices[symbol]) {
@@ -173,6 +206,73 @@ export default function Exchange() {
     },
   });
 
+  // Verify SumUp payment on server before creating transaction
+  const verifySumUpPayment = async (checkoutId: string): Promise<boolean> => {
+    try {
+      const response = await fetch("/api/sumup/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ checkoutId }),
+      });
+      const data = await response.json();
+      return data.verified === true;
+    } catch {
+      return false;
+    }
+  };
+
+  // Load SumUp widget when checkout ID is ready
+  useEffect(() => {
+    if (sumupCheckoutId && step === "sumup_payment") {
+      const mountWidget = () => {
+        const win = window as any;
+        if (win.SumUpCard) {
+          const container = document.getElementById('sumup-card');
+          if (container) {
+            container.innerHTML = '';
+          }
+          
+          win.SumUpCard.mount({
+            id: 'sumup-card',
+            checkoutId: sumupCheckoutId,
+            onResponse: async (type: string, _body: any) => {
+              if (type === 'success') {
+                // Verify payment on server before creating transaction
+                const isVerified = await verifySumUpPayment(sumupCheckoutId);
+                if (isVerified) {
+                  createTransaction.mutate();
+                } else {
+                  toast({
+                    title: "Payment Verification Failed",
+                    description: "Could not verify your payment. Please contact support.",
+                    variant: "destructive",
+                  });
+                }
+              } else if (type === 'error') {
+                toast({
+                  title: "Payment Failed",
+                  description: "Your payment could not be processed. Please try again.",
+                  variant: "destructive",
+                });
+              }
+            }
+          });
+        }
+      };
+
+      const existingScript = document.querySelector('script[src*="sumup.com"]');
+      if (!existingScript) {
+        const script = document.createElement('script');
+        script.src = 'https://gateway.sumup.com/gateway/ecom/card/v2/sdk.js';
+        script.async = true;
+        script.onload = mountWidget;
+        document.body.appendChild(script);
+      } else {
+        mountWidget();
+      }
+    }
+  }, [sumupCheckoutId, step, createTransaction, toast]);
+
   const validateStep = (currentStep: Step): boolean => {
     const newErrors: Record<string, string> = {};
 
@@ -209,16 +309,19 @@ export default function Exchange() {
   const handleNext = () => {
     if (!validateStep(step)) return;
 
-    // Dynamic step flow - insert paypal_payment step if PayPal is selected
+    // Dynamic step flow - insert payment step based on selected method
     const paymentMethod = formData.paymentMethod.toLowerCase();
     const isPayPal = paymentMethod === "paypal";
     const isCard = paymentMethod === "card";
+    const isSumUp = paymentMethod === "sumup";
     
     let steps: Step[];
     if (isPayPal) {
       steps = ["amount", "payment", "details", "paypal_payment"];
     } else if (isCard) {
       steps = ["amount", "payment", "details", "card_payment"];
+    } else if (isSumUp) {
+      steps = ["amount", "payment", "details", "sumup_payment"];
     } else {
       steps = ["amount", "payment", "details", "confirm"];
     }
@@ -235,12 +338,15 @@ export default function Exchange() {
     const paymentMethod = formData.paymentMethod.toLowerCase();
     const isPayPal = paymentMethod === "paypal";
     const isCard = paymentMethod === "card";
+    const isSumUp = paymentMethod === "sumup";
     
     let steps: Step[];
     if (isPayPal) {
       steps = ["amount", "payment", "details", "paypal_payment"];
     } else if (isCard) {
       steps = ["amount", "payment", "details", "card_payment"];
+    } else if (isSumUp) {
+      steps = ["amount", "payment", "details", "sumup_payment"];
     } else {
       steps = ["amount", "payment", "details", "confirm"];
     }
@@ -268,6 +374,7 @@ export default function Exchange() {
   const selectedPaymentMethod = formData.paymentMethod.toLowerCase();
   const isPayPalSelected = selectedPaymentMethod === "paypal";
   const isCardSelected = selectedPaymentMethod === "card";
+  const isSumUpSelected = selectedPaymentMethod === "sumup";
   
   let steps;
   if (isPayPalSelected) {
@@ -283,6 +390,13 @@ export default function Exchange() {
       { id: "payment", label: "Payment", number: 2 },
       { id: "details", label: "Details", number: 3 },
       { id: "card_payment", label: "Pay", number: 4 },
+    ];
+  } else if (isSumUpSelected) {
+    steps = [
+      { id: "amount", label: "Amount", number: 1 },
+      { id: "payment", label: "Payment", number: 2 },
+      { id: "details", label: "Details", number: 3 },
+      { id: "sumup_payment", label: "Pay", number: 4 },
     ];
   } else {
     steps = [
@@ -645,6 +759,45 @@ export default function Exchange() {
                       <div className="flex items-center justify-center gap-3 p-5 rounded-xl bg-white/5 border border-white/10 mt-6" data-testid="status-pending">
                         <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" data-testid="spinner-pending" />
                         <span className="text-lg font-medium text-white" data-testid="text-pending">Pending</span>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+
+                {step === "sumup_payment" && (
+                  <motion.div
+                    key="sumup_payment"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <h2 className="text-xl font-semibold text-white mb-6">
+                      Complete SumUp Payment
+                    </h2>
+
+                    <div className="space-y-5">
+                      <div className="p-4 rounded-xl bg-white/5 border border-white/10">
+                        <div className="text-white/50 text-sm mb-2">Amount:</div>
+                        <div className="text-xl font-semibold text-white">
+                          ${parseFloat(formData.amount).toLocaleString()} {formData.currency}
+                        </div>
+                      </div>
+
+                      <div className="rounded-xl overflow-hidden border border-white/10 bg-white p-4" style={{ minHeight: "400px" }}>
+                        {sumupCheckoutId ? (
+                          <div id="sumup-card" className="w-full" style={{ minHeight: "350px" }} data-testid="sumup-widget" />
+                        ) : (
+                          <div className="flex items-center justify-center h-full min-h-[400px] text-gray-500 bg-white">
+                            <div className="w-6 h-6 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin mr-3" />
+                            Loading SumUp payment...
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex items-center justify-center gap-3 p-5 rounded-xl bg-white/5 border border-white/10" data-testid="status-sumup-pending">
+                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        <span className="text-lg font-medium text-white">Awaiting Payment</span>
                       </div>
                     </div>
                   </motion.div>
