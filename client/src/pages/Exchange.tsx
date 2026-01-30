@@ -13,7 +13,7 @@ import type { Crypto, PaymentMethod, Setting } from "@shared/schema";
 import cardIcon from "@assets/ARCTIC_1768071339190.png";
 import paypalIcon from "@assets/ARCTIC_1768071353413.png";
 
-type Step = "amount" | "payment" | "details" | "card_payment" | "paypal_payment" | "sumup_payment" | "confirm" | "success";
+type Step = "amount" | "payment" | "details" | "paypal_payment" | "sumup_payment" | "confirm" | "success";
 
 function PaymentMethodIcon({ type }: { type: string }) {
   const key = type.toLowerCase();
@@ -64,7 +64,6 @@ export default function Exchange() {
     walletAddress: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [paymentUrl, setPaymentUrl] = useState<string | null>(null);
   const [sumupCheckoutId, setSumupCheckoutId] = useState<string | null>(null);
 
   const { data: cryptos } = useQuery<Crypto[]>({
@@ -98,30 +97,6 @@ export default function Exchange() {
   };
 
   const [referenceCode] = useState(generateReferenceCode);
-
-  // Fetch payment URL from backend when entering card payment step
-  useEffect(() => {
-    if (step === "card_payment" && formData.amount && formData.email) {
-      fetch("/api/payment-link", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount: formData.amount, email: formData.email }),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.url) {
-            setPaymentUrl(data.url);
-          }
-        })
-        .catch(() => {
-          toast({
-            title: "Error",
-            description: "Failed to initialize payment. Please try again.",
-            variant: "destructive",
-          });
-        });
-    }
-  }, [step, formData.amount, formData.email, toast]);
 
   // Create SumUp checkout when entering sumup_payment step
   useEffect(() => {
@@ -311,16 +286,10 @@ export default function Exchange() {
 
     // Dynamic step flow - insert payment step based on selected method
     const paymentMethod = formData.paymentMethod.toLowerCase();
-    const isPayPal = paymentMethod === "paypal";
-    const isCard = paymentMethod === "card";
     const isSumUp = paymentMethod === "sumup";
     
     let steps: Step[];
-    if (isPayPal) {
-      steps = ["amount", "payment", "details", "paypal_payment"];
-    } else if (isCard) {
-      steps = ["amount", "payment", "details", "card_payment"];
-    } else if (isSumUp) {
+    if (isSumUp) {
       steps = ["amount", "payment", "details", "sumup_payment"];
     } else {
       steps = ["amount", "payment", "details", "confirm"];
@@ -336,16 +305,10 @@ export default function Exchange() {
 
   const handleBack = () => {
     const paymentMethod = formData.paymentMethod.toLowerCase();
-    const isPayPal = paymentMethod === "paypal";
-    const isCard = paymentMethod === "card";
     const isSumUp = paymentMethod === "sumup";
     
     let steps: Step[];
-    if (isPayPal) {
-      steps = ["amount", "payment", "details", "paypal_payment"];
-    } else if (isCard) {
-      steps = ["amount", "payment", "details", "card_payment"];
-    } else if (isSumUp) {
+    if (isSumUp) {
       steps = ["amount", "payment", "details", "sumup_payment"];
     } else {
       steps = ["amount", "payment", "details", "confirm"];
@@ -372,26 +335,10 @@ export default function Exchange() {
 
   // Dynamic step indicators based on payment method
   const selectedPaymentMethod = formData.paymentMethod.toLowerCase();
-  const isPayPalSelected = selectedPaymentMethod === "paypal";
-  const isCardSelected = selectedPaymentMethod === "card";
   const isSumUpSelected = selectedPaymentMethod === "sumup";
   
   let steps;
-  if (isPayPalSelected) {
-    steps = [
-      { id: "amount", label: "Amount", number: 1 },
-      { id: "payment", label: "Payment", number: 2 },
-      { id: "details", label: "Details", number: 3 },
-      { id: "paypal_payment", label: "Pay", number: 4 },
-    ];
-  } else if (isCardSelected) {
-    steps = [
-      { id: "amount", label: "Amount", number: 1 },
-      { id: "payment", label: "Payment", number: 2 },
-      { id: "details", label: "Details", number: 3 },
-      { id: "card_payment", label: "Pay", number: 4 },
-    ];
-  } else if (isSumUpSelected) {
+  if (isSumUpSelected) {
     steps = [
       { id: "amount", label: "Amount", number: 1 },
       { id: "payment", label: "Payment", number: 2 },
@@ -685,51 +632,6 @@ export default function Exchange() {
                   </motion.div>
                 )}
 
-                {step === "card_payment" && (
-                  <motion.div
-                    key="card_payment"
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <h2 className="text-xl font-semibold text-white mb-6">
-                      Complete Card Payment
-                    </h2>
-
-                    <div className="space-y-5">
-                      <div className="p-4 rounded-xl bg-white/5 border border-white/10">
-                        <div className="text-white/50 text-sm mb-2">Amount:</div>
-                        <div className="text-xl font-semibold text-white">
-                          ${parseFloat(formData.amount).toLocaleString()} {formData.currency}
-                        </div>
-                      </div>
-
-                      <div className="rounded-xl overflow-hidden border border-white/10" style={{ minHeight: "450px" }}>
-                        {paymentUrl ? (
-                          <iframe
-                            src={paymentUrl}
-                            className="w-full h-full"
-                            style={{ minHeight: "450px", border: "none" }}
-                            title="Card Payment"
-                            data-testid="iframe-card-payment"
-                          />
-                        ) : (
-                          <div className="flex items-center justify-center h-full min-h-[450px] text-white/50">
-                            <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin mr-3" />
-                            Loading payment...
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="flex items-center justify-center gap-3 p-5 rounded-xl bg-white/5 border border-white/10" data-testid="status-card-pending">
-                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                        <span className="text-lg font-medium text-white">Pending</span>
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-
                 {step === "paypal_payment" && (
                   <motion.div
                     key="paypal_payment"
@@ -933,7 +835,7 @@ export default function Exchange() {
                 )}
               </AnimatePresence>
 
-              {step !== "success" && step !== "paypal_payment" && step !== "card_payment" && (
+              {step !== "success" && step !== "paypal_payment" && step !== "sumup_payment" && (
                 <div className="flex items-center gap-4 mt-8 pt-6 border-t border-white/10">
                   {step !== "amount" && (
                     <GlassButton
