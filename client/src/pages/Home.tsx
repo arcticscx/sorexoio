@@ -87,7 +87,6 @@ export default function Home() {
 
               <p className="text-lg sm:text-xl text-white/60 max-w-2xl mx-auto mb-10 text-balance">
                 Experience the most seamless cryptocurrency exchange platform. 
-                Fast, secure, and beautifully designed for the modern trader.
               </p>
 
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">

@@ -30,7 +30,8 @@ async function fixCorruptedData() {
   
   const correctPaymentMethods = [
     { name: 'Card', key: 'card', icon: null, description: '0 KYC', isActive: true, sortOrder: 1 },
-    { name: 'PayPal', key: 'paypal', icon: null, description: 'Fast & secure', isActive: true, sortOrder: 2 }
+    { name: 'PayPal', key: 'paypal', icon: null, description: 'Fast & secure', isActive: true, sortOrder: 2 },
+    { name: 'SumUp', key: 'sumup', icon: null, description: 'Card via SumUp', isActive: true, sortOrder: 3 }
   ];
   
   const correctCurrencies = [
