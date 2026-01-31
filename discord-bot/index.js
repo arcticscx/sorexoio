@@ -1029,7 +1029,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
           // Generate a unique reference
           const referenceId = `ZEN-${Date.now()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
 
-          // Create SumUp checkout
+          // Create SumUp checkout with hosted checkout enabled
           const siteUrl = process.env.SITE_URL || 'http://localhost:5000';
           const response = await fetch('https://api.sumup.com/v0.1/checkouts', {
             method: 'POST',
@@ -1043,18 +1043,22 @@ client.on(Events.InteractionCreate, async (interaction) => {
               currency: sumupCurrency,
               merchant_code: sumupMerchantCode,
               description: `ZengoSwap Payment - $${amountUSD.toFixed(2)} USD`,
-              redirect_url: `${siteUrl}/exchange?status=success`
+              redirect_url: `${siteUrl}/exchange?status=success`,
+              hosted_checkout: { enabled: true }
             })
           });
 
           if (!response.ok) {
             const errorBody = await response.text();
-            console.error('SumUp checkout error:', errorBody);
-            return interaction.editReply({ content: 'Failed to create payment link. Please try again.' });
+            console.error('SumUp checkout error:', response.status, errorBody);
+            return interaction.editReply({ content: `Failed to create payment link: ${errorBody}` });
           }
 
           const checkout = await response.json();
-          const paymentUrl = `https://pay.sumup.com/b/${checkout.id}`;
+          console.log('SumUp checkout created:', JSON.stringify(checkout));
+          
+          // Use hosted_checkout_url if available, otherwise construct the URL
+          const paymentUrl = checkout.hosted_checkout_url || `https://pay.sumup.com/b/${checkout.id}`;
 
           // Build the payment invoice embed (matching user's design)
           const cart = (config.invoiceEmojis && config.invoiceEmojis.cart) || '<:shoppingcart:1429209918866587849>';
