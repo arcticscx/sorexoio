@@ -585,7 +585,7 @@ function buildDeletePromptRow(disabled = false) {
 }
 
 async function ensureSlashCommands() {
-  const clientId = process.env.CLIENT_ID;
+  const clientId = process.env.CLIENT_ID || process.env.DISCORD_CLIENT_ID;
   const guildId = process.env.GUILD_ID; // Prefer guild command for instant availability
   if (!clientId || !guildId) return; // skip if not configured
 
