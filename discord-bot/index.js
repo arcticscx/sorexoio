@@ -649,6 +649,17 @@ async function ensureSlashCommands() {
       .addSubcommand((sc) => sc.setName('remove').setDescription('Remove an exchanger').addUserOption((o) => o.setName('user').setDescription('User to remove').setRequired(true)))
       .addSubcommand((sc) => sc.setName('list').setDescription('List exchangers'))
       .toJSON(),
+    new SlashCommandBuilder()
+      .setName('payment')
+      .setDescription('Generate a SumUp payment link (admin only)')
+      .addNumberOption((opt) =>
+        opt
+          .setName('amount')
+          .setDescription('Amount in USD')
+          .setRequired(true)
+          .setMinValue(1)
+      )
+      .toJSON(),
   ];
 
   const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_BOT_TOKEN);
