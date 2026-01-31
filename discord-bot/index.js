@@ -1001,6 +1001,89 @@ client.on(Events.InteractionCreate, async (interaction) => {
           saveConfig({ ...config, exchangers: Array.from(set) });
           return interaction.reply({ content: `Removed <@${user.id}> from exchangers.`, flags: MessageFlags.Ephemeral });
         }
+      } else if (interaction.commandName === 'payment') {
+        // /payment - Generate SumUp payment link
+        if (!isAdmin(interaction.member)) {
+          return interaction.reply({ content: 'You do not have permission to use this command.', flags: MessageFlags.Ephemeral });
+        }
+
+        const amountUSD = interaction.options.getNumber('amount', true);
+        
+        // Convert USD to EUR (SumUp requires EUR)
+        const usdToEurRate = 0.92;
+        const amountEUR = Math.round(amountUSD * usdToEurRate * 100) / 100;
+
+        // Check if SumUp is configured
+        const sumupApiKey = process.env.SUMUP_API_KEY;
+        const sumupMerchantCode = process.env.SUMUP_MERCHANT_CODE || 'MTH5C70Y';
+        const sumupCurrency = process.env.SUMUP_CURRENCY || 'EUR';
+
+        if (!sumupApiKey) {
+          return interaction.reply({ content: 'SumUp is not configured. Please set SUMUP_API_KEY.', flags: MessageFlags.Ephemeral });
+        }
+
+        // Defer reply since API call may take time
+        await interaction.deferReply();
+
+        try {
+          // Generate a unique reference
+          const referenceId = `ZEN-${Date.now()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+
+          // Create SumUp checkout
+          const siteUrl = process.env.SITE_URL || 'http://localhost:5000';
+          const response = await fetch('https://api.sumup.com/v0.1/checkouts', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${sumupApiKey}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              checkout_reference: referenceId,
+              amount: amountEUR,
+              currency: sumupCurrency,
+              merchant_code: sumupMerchantCode,
+              description: `ZengoSwap Payment - $${amountUSD.toFixed(2)} USD`,
+              redirect_url: `${siteUrl}/exchange?status=success`
+            })
+          });
+
+          if (!response.ok) {
+            const errorBody = await response.text();
+            console.error('SumUp checkout error:', errorBody);
+            return interaction.editReply({ content: 'Failed to create payment link. Please try again.' });
+          }
+
+          const checkout = await response.json();
+          const paymentUrl = `https://pay.sumup.com/b/${checkout.id}`;
+
+          // Build the payment invoice embed (matching user's design)
+          const cart = (config.invoiceEmojis && config.invoiceEmojis.cart) || '<:shoppingcart:1429209918866587849>';
+          const loading = (config.invoiceEmojis && config.invoiceEmojis.loading) || '<a:loading:1435962278909444126>';
+
+          const paymentEmbed = new EmbedBuilder()
+            .setTitle(`${cart} __**Payment Invoice**__`)
+            .setColor(524293)
+            .setFooter({ text: 'This link will expire in 24 hours', iconURL: config.brandLogo })
+            .setImage('https://cdn.discordapp.com/attachments/1411264760686841888/1435968208879353876/Please_be_patient..._37.png')
+            .addFields(
+              { name: 'Amount', value: `\`$${amountUSD.toFixed(2)}\``, inline: true },
+              { name: 'Payment Link', value: `[\`\`Click here to pay\`\`](${paymentUrl})`, inline: true },
+              { name: 'Status', value: `${loading}  \`Not Complete\``, inline: true }
+            );
+
+          // Create Pay Now button
+          const payBtn = new ButtonBuilder()
+            .setStyle(ButtonStyle.Link)
+            .setLabel('Pay Now')
+            .setURL(paymentUrl);
+
+          const row = new ActionRowBuilder().addComponents(payBtn);
+
+          await interaction.editReply({ embeds: [paymentEmbed], components: [row] });
+        } catch (err) {
+          console.error('/payment error:', err);
+          return interaction.editReply({ content: 'Failed to create payment link. Please try again.' });
+        }
       }
       return;
     }
