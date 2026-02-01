@@ -1057,8 +1057,10 @@ client.on(Events.InteractionCreate, async (interaction) => {
           const checkout = await response.json();
           console.log('SumUp checkout created:', JSON.stringify(checkout));
           
-          // Use hosted_checkout_url if available, otherwise construct the URL
-          const paymentUrl = checkout.hosted_checkout_url || `https://pay.sumup.com/b/${checkout.id}`;
+          // Use hosted_checkout_url - SumUp returns this when hosted_checkout is enabled
+          // The URL format is https://pay.sumup.com/checkout/{id} for hosted checkouts
+          const paymentUrl = checkout.hosted_checkout_url || `https://pay.sumup.com/checkout/${checkout.id}`;
+          console.log('Payment URL:', paymentUrl);
 
           // Build the payment invoice embed (matching user's design)
           const cart = (config.invoiceEmojis && config.invoiceEmojis.cart) || '<:shoppingcart:1429209918866587849>';

@@ -255,8 +255,8 @@ export default function Exchange() {
       const amount = parseFloat(formData.amount);
       if (!formData.amount || isNaN(amount)) {
         newErrors.amount = "Please enter a valid amount";
-      } else if (amount < 1) {
-        newErrors.amount = "Minimum amount is $1";
+      } else if (amount < 25) {
+        newErrors.amount = "Minimum amount is $25";
       } else if (amount > 50000) {
         newErrors.amount = "Maximum amount is $50,000";
       }
