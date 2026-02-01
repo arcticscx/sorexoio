@@ -655,9 +655,9 @@ async function ensureSlashCommands() {
       .addNumberOption((opt) =>
         opt
           .setName('amount')
-          .setDescription('Amount in USD')
+          .setDescription('Amount in USD (minimum $25)')
           .setRequired(true)
-          .setMinValue(1)
+          .setMinValue(25)
       )
       .toJSON(),
   ];
