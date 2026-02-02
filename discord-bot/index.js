@@ -427,7 +427,7 @@ function buildRequestEmbed() {
     .setDescription(
       'You can request an exchange by selecting the appropriate option below for the payment type you\'ll be sending with. Follow the instructions and fill out the fields as requested.\n\n' +
       '**Reminder**\n <:info:1459942186966843476> Please read our Term Of Service before creating an Exchange.\n\n' +
-      '**Minimum Exchange Amount**\n <:tick:1459942171246333982> Our minimum exchange amount is $12.50 USD and is applicable on every deal and is non-negotiable.'
+      '**Minimum Exchange Amount**\n <:tick:1459942171246333982> Our minimum exchange amount is $50 USD and is applicable on every deal and is non-negotiable.'
     )
     .setThumbnail(config.brandLogo)
     .setImage('https://cdn.discordapp.com/attachments/1459945692696150027/1459945898548269086/12.png?ex=69652012&is=6963ce92&hm=b11d53e2744309cefa33dcde82c51ab6445ee73f19ec71118fa6dcecbbfbb958&') // ← embed image
@@ -655,9 +655,9 @@ async function ensureSlashCommands() {
       .addNumberOption((opt) =>
         opt
           .setName('amount')
-          .setDescription('Amount in USD (minimum $25)')
+          .setDescription('Amount in USD (minimum $50)')
           .setRequired(true)
-          .setMinValue(25)
+          .setMinValue(50)
       )
       .toJSON(),
   ];
@@ -1248,8 +1248,8 @@ client.on(Events.InteractionCreate, async (interaction) => {
       }
 
       // Enforce minimum
-      if (amount < 12.5) {
-        return interaction.reply({ content: 'Minimum exchange amount is $12.50 USD.', flags: MessageFlags.Ephemeral });
+      if (amount < 50) {
+        return interaction.reply({ content: 'Minimum exchange amount is $50 USD.', flags: MessageFlags.Ephemeral });
       }
 
       const sending = state.sendingMethod === 'Crypto' && state.sendingCrypto ? `${state.sendingCrypto}` : state.sendingMethod;
