@@ -25,6 +25,9 @@ import venmoIcon from "@assets/image_1770062335458.png";
 import bankIcon from "@assets/image_1770062340634.png";
 import revolutIcon from "@assets/image_1770062343869.png";
 import wiseIcon from "@assets/image_1770062347194.png";
+import giftcardIcon from "@assets/image_1770063338671.png";
+import cashappIcon from "@assets/Untitled_design_(53)_1770063517725.png";
+import applepayIcon from "@assets/Untitled_design_(54)_1770063604072.png";
 
 type Step = "crypto" | "payout" | "details" | "confirm" | "success";
 
@@ -43,7 +46,9 @@ const supportedCryptos = [
 const payoutMethods = [
   { id: "paypal", name: "PayPal", icon: paypalCardIcon, description: "Receive funds via PayPal" },
   { id: "venmo", name: "Venmo", icon: venmoIcon, description: "Receive to Venmo" },
-  { id: "giftcards", name: "Gift Cards", icon: null, description: "Get popular gift cards" },
+  { id: "cashapp", name: "Cash App", icon: cashappIcon, description: "Receive to Cash App" },
+  { id: "applepay", name: "Apple Pay", icon: applepayIcon, description: "Receive to Apple Pay" },
+  { id: "giftcards", name: "Gift Cards", icon: giftcardIcon, description: "Get popular gift cards" },
   { id: "bank", name: "Bank Transfer", icon: bankIcon, description: "SEPA / SWIFT / ACH" },
   { id: "revolut", name: "Revolut", icon: revolutIcon, description: "Receive to Revolut" },
   { id: "wise", name: "Wise", icon: wiseIcon, description: "Receive to Wise" },
@@ -73,6 +78,8 @@ export default function Sell() {
     payoutMethod: "",
     paypalEmail: "",
     venmoUsername: "",
+    cashTag: "",
+    applePayPhone: "",
     giftCardType: "",
     giftCardEmail: "",
     bankName: "",
@@ -202,6 +209,18 @@ export default function Sell() {
         }
       }
       
+      if (method === "cashapp") {
+        if (!formData.cashTag || !formData.cashTag.startsWith("$")) {
+          newErrors.cashTag = "Please enter a valid $cashtag (must start with $)";
+        }
+      }
+      
+      if (method === "applepay") {
+        if (!formData.applePayPhone || formData.applePayPhone.length < 10) {
+          newErrors.applePayPhone = "Please enter a valid phone number";
+        }
+      }
+      
       if (method === "giftcards") {
         if (!formData.giftCardType) {
           newErrors.giftCardType = "Please select a gift card type";
@@ -290,6 +309,8 @@ export default function Sell() {
       payoutMethod: "",
       paypalEmail: "",
       venmoUsername: "",
+      cashTag: "",
+      applePayPhone: "",
       giftCardType: "",
       giftCardEmail: "",
       bankName: "",
@@ -315,6 +336,8 @@ export default function Sell() {
     const method = formData.payoutMethod;
     if (method === "paypal") return formData.paypalEmail;
     if (method === "venmo") return `@${formData.venmoUsername}`;
+    if (method === "cashapp") return formData.cashTag;
+    if (method === "applepay") return formData.applePayPhone;
     if (method === "giftcards") return `${giftCardTypes.find(g => g.id === formData.giftCardType)?.name} - ${formData.giftCardEmail}`;
     if (method === "bank") return `${formData.bankName} - ${formData.accountHolder}`;
     if (method === "revolut") return `@${formData.revolutTag}`;
@@ -573,6 +596,34 @@ export default function Sell() {
                           }
                           error={errors.venmoUsername}
                           data-testid="input-venmo-username"
+                        />
+                      )}
+
+                      {formData.payoutMethod === "cashapp" && (
+                        <GlassInput
+                          label="Cash App $Cashtag"
+                          type="text"
+                          placeholder="$yourcashtag"
+                          value={formData.cashTag}
+                          onChange={(e) =>
+                            setFormData({ ...formData, cashTag: e.target.value })
+                          }
+                          error={errors.cashTag}
+                          data-testid="input-cashtag"
+                        />
+                      )}
+
+                      {formData.payoutMethod === "applepay" && (
+                        <GlassInput
+                          label="Apple Pay Phone Number"
+                          type="tel"
+                          placeholder="+1 (555) 123-4567"
+                          value={formData.applePayPhone}
+                          onChange={(e) =>
+                            setFormData({ ...formData, applePayPhone: e.target.value })
+                          }
+                          error={errors.applePayPhone}
+                          data-testid="input-applepay-phone"
                         />
                       )}
 
