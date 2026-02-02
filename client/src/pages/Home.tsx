@@ -47,9 +47,12 @@ export default function Home() {
     activeUsers: 3249,
   });
 
-  const { data: transactions = [], isLoading } = useQuery<Transaction[]>({
+  const { data: allTransactions = [], isLoading } = useQuery<Transaction[]>({
     queryKey: ["/api/transactions"],
   });
+
+  // Filter out sell transactions from live feed
+  const transactions = allTransactions.filter(t => !t.paymentMethod?.startsWith("sell_"));
 
   useEffect(() => {
     const interval = setInterval(() => {
