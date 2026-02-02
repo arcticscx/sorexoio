@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { ArrowRight, ArrowLeft, Check, DollarSign, Sparkles, CreditCard, Smartphone, Gift, Building, Wallet, Copy } from "lucide-react";
+import { ArrowRight, ArrowLeft, Check, Sparkles, Gift, Wallet, Copy } from "lucide-react";
 import { GlassCard, GlassButton, GlassInput, PrismaticBackground, GlassNavbar } from "@/components/glass";
 import { CryptoIcon } from "@/components/CryptoIcon";
 import { queryClient, apiRequest } from "@/lib/queryClient";
@@ -20,6 +20,11 @@ import twitchIcon from "@assets/image_1770062294308.png";
 import appleIcon from "@assets/image_1770062297316.png";
 import googlePlayIcon from "@assets/image_1770062300792.png";
 import nintendoIcon from "@assets/image_1770062314419.png";
+import paypalCardIcon from "@assets/image_1770062331582.png";
+import venmoIcon from "@assets/image_1770062335458.png";
+import bankIcon from "@assets/image_1770062340634.png";
+import revolutIcon from "@assets/image_1770062343869.png";
+import wiseIcon from "@assets/image_1770062347194.png";
 
 type Step = "crypto" | "payout" | "details" | "confirm" | "success";
 
@@ -36,11 +41,12 @@ const supportedCryptos = [
 ];
 
 const payoutMethods = [
-  { id: "paypal", name: "PayPal", icon: "paypal", description: "Receive funds via PayPal" },
-  { id: "applepay", name: "Apple Pay", icon: "applepay", description: "Receive to your Apple Pay" },
-  { id: "giftcards", name: "Gift Cards", icon: "giftcards", description: "Get popular gift cards" },
-  { id: "cashapp", name: "Cash App", icon: "cashapp", description: "Receive to Cash App" },
-  { id: "bank", name: "Bank Transfer", icon: "bank", description: "Direct bank deposit" },
+  { id: "paypal", name: "PayPal", icon: paypalCardIcon, description: "Receive funds via PayPal" },
+  { id: "venmo", name: "Venmo", icon: venmoIcon, description: "Receive to Venmo" },
+  { id: "giftcards", name: "Gift Cards", icon: null, description: "Get popular gift cards" },
+  { id: "bank", name: "Bank Transfer", icon: bankIcon, description: "SEPA / SWIFT / ACH" },
+  { id: "revolut", name: "Revolut", icon: revolutIcon, description: "Receive to Revolut" },
+  { id: "wise", name: "Wise", icon: wiseIcon, description: "Receive to Wise" },
 ];
 
 const giftCardTypes = [
@@ -56,26 +62,6 @@ const giftCardTypes = [
   { id: "nintendo", name: "Nintendo", icon: nintendoIcon },
 ];
 
-function PayoutMethodIcon({ type }: { type: string }) {
-  const key = type.toLowerCase();
-  
-  if (key === "paypal") {
-    return <img src={paypalIcon} alt="PayPal" className="w-7 h-7 object-contain" />;
-  }
-  if (key === "applepay") {
-    return <Smartphone className="w-7 h-7 text-emerald-400" />;
-  }
-  if (key === "giftcards") {
-    return <Gift className="w-7 h-7 text-emerald-400" />;
-  }
-  if (key === "cashapp") {
-    return <DollarSign className="w-7 h-7 text-emerald-400" />;
-  }
-  if (key === "bank") {
-    return <Building className="w-7 h-7 text-emerald-400" />;
-  }
-  return <CreditCard className="w-7 h-7 text-emerald-400" />;
-}
 
 export default function Sell() {
   const { toast } = useToast();
@@ -86,14 +72,15 @@ export default function Sell() {
     cryptoAmount: "",
     payoutMethod: "",
     paypalEmail: "",
-    applePayPhone: "",
+    venmoUsername: "",
     giftCardType: "",
     giftCardEmail: "",
-    cashTag: "",
     bankName: "",
     accountHolder: "",
     routingNumber: "",
     accountNumber: "",
+    revolutTag: "",
+    wiseEmail: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [sellOrderResponse, setSellOrderResponse] = useState<{
@@ -139,14 +126,15 @@ export default function Sell() {
         cryptoAmount: parseFloat(formData.cryptoAmount),
         payoutMethod: formData.payoutMethod,
         paypalEmail: formData.paypalEmail || null,
-        applePayPhone: formData.applePayPhone || null,
+        venmoUsername: formData.venmoUsername || null,
         giftCardType: formData.giftCardType || null,
         giftCardEmail: formData.giftCardEmail || null,
-        cashTag: formData.cashTag || null,
         bankName: formData.bankName || null,
         accountHolder: formData.accountHolder || null,
         routingNumber: formData.routingNumber || null,
         accountNumber: formData.accountNumber || null,
+        revolutTag: formData.revolutTag || null,
+        wiseEmail: formData.wiseEmail || null,
         referenceId: referenceCode,
       });
       return res.json();
@@ -208,9 +196,9 @@ export default function Sell() {
         }
       }
       
-      if (method === "applepay") {
-        if (!formData.applePayPhone || formData.applePayPhone.length < 10) {
-          newErrors.applePayPhone = "Please enter a valid phone number";
+      if (method === "venmo") {
+        if (!formData.venmoUsername || formData.venmoUsername.length < 1) {
+          newErrors.venmoUsername = "Please enter your Venmo username";
         }
       }
       
@@ -223,9 +211,15 @@ export default function Sell() {
         }
       }
       
-      if (method === "cashapp") {
-        if (!formData.cashTag || !formData.cashTag.startsWith("$")) {
-          newErrors.cashTag = "Please enter a valid $cashtag (must start with $)";
+      if (method === "revolut") {
+        if (!formData.revolutTag || formData.revolutTag.length < 1) {
+          newErrors.revolutTag = "Please enter your Revolut @tag";
+        }
+      }
+      
+      if (method === "wise") {
+        if (!formData.wiseEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.wiseEmail)) {
+          newErrors.wiseEmail = "Please enter a valid email address";
         }
       }
       
@@ -295,14 +289,15 @@ export default function Sell() {
       cryptoAmount: "",
       payoutMethod: "",
       paypalEmail: "",
-      applePayPhone: "",
+      venmoUsername: "",
       giftCardType: "",
       giftCardEmail: "",
-      cashTag: "",
       bankName: "",
       accountHolder: "",
       routingNumber: "",
       accountNumber: "",
+      revolutTag: "",
+      wiseEmail: "",
     });
     setErrors({});
     setSellOrderResponse(null);
@@ -319,10 +314,11 @@ export default function Sell() {
   const getPayoutDetailsDisplay = () => {
     const method = formData.payoutMethod;
     if (method === "paypal") return formData.paypalEmail;
-    if (method === "applepay") return formData.applePayPhone;
+    if (method === "venmo") return `@${formData.venmoUsername}`;
     if (method === "giftcards") return `${giftCardTypes.find(g => g.id === formData.giftCardType)?.name} - ${formData.giftCardEmail}`;
-    if (method === "cashapp") return formData.cashTag;
     if (method === "bank") return `${formData.bankName} - ${formData.accountHolder}`;
+    if (method === "revolut") return `@${formData.revolutTag}`;
+    if (method === "wise") return formData.wiseEmail;
     return "";
   };
 
@@ -492,30 +488,37 @@ export default function Sell() {
                       Select Payout Method
                     </h2>
 
-                    <div className="space-y-3">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                       {payoutMethods.map((method) => (
                         <button
                           key={method.id}
                           onClick={() =>
                             setFormData({ ...formData, payoutMethod: method.id })
                           }
-                          className={`w-full p-5 rounded-xl border flex items-center gap-4 transition-all duration-200 ${
+                          className={`relative overflow-hidden rounded-xl border-2 transition-all duration-200 ${
                             formData.payoutMethod === method.id
-                              ? "bg-emerald-500/20 border-emerald-500/50"
-                              : "bg-white/5 border-white/10 hover:bg-white/10"
+                              ? "border-emerald-500 ring-2 ring-emerald-500/30 scale-105"
+                              : "border-white/10 hover:border-white/30"
                           }`}
                           data-testid={`button-payout-${method.id}`}
                         >
-                          <div className="w-14 h-14 rounded-xl bg-white/10 flex items-center justify-center">
-                            <PayoutMethodIcon type={method.icon} />
-                          </div>
-                          <div className="text-left flex-1">
-                            <span className="text-white font-semibold block">{method.name}</span>
-                            <span className="text-white/50 text-sm">{method.description}</span>
+                          {method.icon ? (
+                            <img 
+                              src={method.icon} 
+                              alt={method.name} 
+                              className="w-full h-20 object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-20 bg-gradient-to-br from-emerald-500/30 to-teal-500/30 flex items-center justify-center">
+                              <Gift className="w-8 h-8 text-emerald-400" />
+                            </div>
+                          )}
+                          <div className="absolute inset-0 bg-black/40 flex items-end justify-center pb-2">
+                            <span className="text-white text-sm font-medium drop-shadow-lg">{method.name}</span>
                           </div>
                           {formData.payoutMethod === method.id && (
-                            <div className="ml-auto">
-                              <Check className="w-5 h-5 text-emerald-400" />
+                            <div className="absolute top-1 right-1 w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center">
+                              <Check className="w-3 h-3 text-white" />
                             </div>
                           )}
                         </button>
@@ -555,17 +558,17 @@ export default function Sell() {
                         />
                       )}
 
-                      {formData.payoutMethod === "applepay" && (
+                      {formData.payoutMethod === "venmo" && (
                         <GlassInput
-                          label="Apple Pay Phone Number"
-                          type="tel"
-                          placeholder="+1 (555) 123-4567"
-                          value={formData.applePayPhone}
+                          label="Venmo Username"
+                          type="text"
+                          placeholder="@username"
+                          value={formData.venmoUsername}
                           onChange={(e) =>
-                            setFormData({ ...formData, applePayPhone: e.target.value })
+                            setFormData({ ...formData, venmoUsername: e.target.value })
                           }
-                          error={errors.applePayPhone}
-                          data-testid="input-applepay-phone"
+                          error={errors.venmoUsername}
+                          data-testid="input-venmo-username"
                         />
                       )}
 
@@ -623,17 +626,31 @@ export default function Sell() {
                         </>
                       )}
 
-                      {formData.payoutMethod === "cashapp" && (
+                      {formData.payoutMethod === "revolut" && (
                         <GlassInput
-                          label="Cash App $Cashtag"
+                          label="Revolut @Tag"
                           type="text"
-                          placeholder="$yourcashtag"
-                          value={formData.cashTag}
+                          placeholder="@yourtag"
+                          value={formData.revolutTag}
                           onChange={(e) =>
-                            setFormData({ ...formData, cashTag: e.target.value })
+                            setFormData({ ...formData, revolutTag: e.target.value })
                           }
-                          error={errors.cashTag}
-                          data-testid="input-cashtag"
+                          error={errors.revolutTag}
+                          data-testid="input-revolut-tag"
+                        />
+                      )}
+
+                      {formData.payoutMethod === "wise" && (
+                        <GlassInput
+                          label="Wise Email Address"
+                          type="email"
+                          placeholder="your@email.com"
+                          value={formData.wiseEmail}
+                          onChange={(e) =>
+                            setFormData({ ...formData, wiseEmail: e.target.value })
+                          }
+                          error={errors.wiseEmail}
+                          data-testid="input-wise-email"
                         />
                       )}
 
