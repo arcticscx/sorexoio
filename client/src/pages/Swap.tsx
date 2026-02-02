@@ -508,6 +508,8 @@ export default function Swap() {
                             <img 
                               src={fromCrypto.qrCodeImage} 
                               alt={`${fromCrypto.cryptoSymbol} QR Code`}
+                              loading="eager"
+                              decoding="sync"
                               className="w-48 h-48 object-contain"
                             />
                           </motion.div>

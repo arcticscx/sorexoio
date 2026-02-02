@@ -19,13 +19,13 @@ function PaymentMethodIcon({ type }: { type: string }) {
   const key = type.toLowerCase();
   
   if (key === "card") {
-    return <img src={cardIcon} alt="Card" className="w-7 h-7 object-contain" />;
+    return <img src={cardIcon} alt="Card" loading="eager" decoding="sync" className="w-7 h-7 object-contain" />;
   }
   if (key === "paypal") {
-    return <img src={paypalIcon} alt="PayPal" className="w-7 h-7 object-contain" />;
+    return <img src={paypalIcon} alt="PayPal" loading="eager" decoding="sync" className="w-7 h-7 object-contain" />;
   }
   if (key === "sumup") {
-    return <img src={cardIcon} alt="SumUp" className="w-7 h-7 object-contain" />;
+    return <img src={cardIcon} alt="SumUp" loading="eager" decoding="sync" className="w-7 h-7 object-contain" />;
   }
   if (key === "bank") {
     return <Wallet className="w-7 h-7 text-emerald-400" />;
@@ -559,7 +559,7 @@ export default function Exchange() {
                           >
                             <div className="w-14 h-14 rounded-xl bg-white/10 flex items-center justify-center overflow-hidden">
                               {method.icon ? (
-                                <img src={method.icon} alt={method.name} className="w-full h-full object-cover" />
+                                <img src={method.icon} alt={method.name} loading="eager" decoding="sync" className="w-full h-full object-cover" />
                               ) : (
                                 <PaymentMethodIcon type={method.key} />
                               )}

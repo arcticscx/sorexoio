@@ -888,6 +888,8 @@ export default function Sell() {
                             <img 
                               src={selectedWallet.qrCodeImage} 
                               alt={`${formData.cryptoType} QR Code`}
+                              loading="eager"
+                              decoding="sync"
                               className="w-48 h-48 object-contain"
                             />
                           </motion.div>

@@ -659,7 +659,7 @@ export default function Admin() {
                             <div className="flex items-center gap-4">
                               <div className="w-12 h-12 rounded-full bg-gradient-to-br from-emerald-500/30 to-teal-500/30 flex items-center justify-center overflow-hidden">
                                 {c.icon ? (
-                                  <img src={c.icon} alt={c.name} className="w-full h-full object-cover" />
+                                  <img src={c.icon} alt={c.name} loading="eager" decoding="sync" className="w-full h-full object-cover" />
                                 ) : (
                                   <span className="font-bold text-white text-sm">{c.symbol.slice(0, 2)}</span>
                                 )}
@@ -762,7 +762,7 @@ export default function Admin() {
                           >
                             <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0 overflow-hidden">
                               {pm.icon ? (
-                                <img src={pm.icon} alt={pm.name} className="w-full h-full object-cover" />
+                                <img src={pm.icon} alt={pm.name} loading="eager" decoding="sync" className="w-full h-full object-cover" />
                               ) : (
                                 <CreditCard className="w-6 h-6 text-white/50" />
                               )}
@@ -865,7 +865,7 @@ export default function Admin() {
                           >
                             <div className="w-16 h-16 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0 overflow-hidden">
                               {sw.qrCodeImage ? (
-                                <img src={sw.qrCodeImage} alt={`${sw.cryptoSymbol} QR`} className="w-full h-full object-cover" />
+                                <img src={sw.qrCodeImage} alt={`${sw.cryptoSymbol} QR`} loading="eager" decoding="sync" className="w-full h-full object-cover" />
                               ) : (
                                 <span className="font-bold text-white/50 text-lg">{sw.cryptoSymbol}</span>
                               )}
@@ -1143,7 +1143,7 @@ export default function Admin() {
           {newCrypto.icon && (
             <div className="flex items-center gap-3 p-3 rounded-lg bg-white/5">
               <div className="w-10 h-10 rounded-full overflow-hidden bg-white/10">
-                <img src={newCrypto.icon} alt="Icon preview" className="w-full h-full object-cover" />
+                <img src={newCrypto.icon} alt="Icon preview" loading="eager" decoding="sync" className="w-full h-full object-cover" />
               </div>
               <span className="text-white/50 text-sm">Icon preview</span>
             </div>
@@ -1254,7 +1254,7 @@ export default function Admin() {
               {newPayment.icon && (
                 <div className="flex items-center gap-2">
                   <div className="w-10 h-10 rounded-lg overflow-hidden bg-white/10">
-                    <img src={newPayment.icon} alt="Icon preview" className="w-full h-full object-cover" />
+                    <img src={newPayment.icon} alt="Icon preview" loading="eager" decoding="sync" className="w-full h-full object-cover" />
                   </div>
                   <GlassButton
                     type="button"
@@ -1367,7 +1367,7 @@ export default function Admin() {
               {newSwapWallet.qrCodeImage && (
                 <div className="flex items-center gap-2">
                   <div className="w-16 h-16 rounded-lg overflow-hidden bg-white/10">
-                    <img src={newSwapWallet.qrCodeImage} alt="QR preview" className="w-full h-full object-cover" />
+                    <img src={newSwapWallet.qrCodeImage} alt="QR preview" loading="eager" decoding="sync" className="w-full h-full object-cover" />
                   </div>
                   <GlassButton
                     type="button"
