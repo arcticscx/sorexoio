@@ -26,7 +26,7 @@ import bankIcon from "@assets/image_1770062340634.png";
 import revolutIcon from "@assets/image_1770062343869.png";
 import wiseIcon from "@assets/image_1770062347194.png";
 import giftcardIcon from "@assets/image_1770063338671.png";
-import cashappIcon from "@assets/Untitled_design_(53)_1770063517725.png";
+import cashappIcon from "@assets/Untitled_design_(55)_1770063708007.png";
 import applepayIcon from "@assets/Untitled_design_(54)_1770063604072.png";
 
 type Step = "crypto" | "payout" | "details" | "confirm" | "success";
