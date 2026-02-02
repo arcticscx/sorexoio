@@ -8,6 +8,11 @@ import { CryptoIcon } from "@/components/CryptoIcon";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Seo } from "@/components/Seo";
+import type { SwapWallet } from "@shared/schema";
+
+const SELL_FEE = 0.005; // 0.5% fee
+const MIN_SELL_USD = 50;
+const MAX_SELL_USD = 50000;
 
 import paypalIcon from "@assets/ARCTIC_1768071353413.png";
 import amazonIcon from "@assets/image_1770062250834.png";
@@ -29,7 +34,7 @@ import giftcardIcon from "@assets/image_1770063338671.png";
 import cashappIcon from "@assets/Untitled_design_(55)_1770063708007.png";
 import applepayIcon from "@assets/Untitled_design_(54)_1770063604072.png";
 
-type Step = "crypto" | "payout" | "details" | "confirm" | "success";
+type Step = "crypto" | "payout" | "details" | "send";
 
 const supportedCryptos = [
   { symbol: "BTC", name: "Bitcoin" },
@@ -120,11 +125,20 @@ export default function Sell() {
     return fallbacks[symbol] || 1;
   };
 
+  // Fetch swap wallets for addresses and QR codes
+  const { data: swapWallets = [] } = useQuery<SwapWallet[]>({
+    queryKey: ["/api/swap-wallets"],
+  });
+
   const cryptoRate = getCryptoRate(formData.cryptoType);
   const cryptoAmount = parseFloat(formData.cryptoAmount) || 0;
   const usdValue = cryptoAmount * cryptoRate;
-  const userReceives = usdValue * 0.95;
-  const platformFee = usdValue * 0.05;
+  const userReceives = usdValue * (1 - SELL_FEE);
+  const platformFee = usdValue * SELL_FEE;
+  const [copied, setCopied] = useState(false);
+
+  // Get wallet for selected crypto
+  const selectedWallet = swapWallets.find(w => w.cryptoSymbol === formData.cryptoType && w.isActive);
 
   const createSellOrder = useMutation({
     mutationFn: async () => {
@@ -153,7 +167,7 @@ export default function Sell() {
         walletAddress: data.walletAddress,
       });
       queryClient.invalidateQueries({ queryKey: ["/api/transactions"] });
-      setStep("success");
+      setStep("send");
       toast({
         title: "Sell Order Created",
         description: "Please send your crypto to the provided wallet address.",
@@ -172,7 +186,6 @@ export default function Sell() {
     { id: "crypto", label: "Crypto", number: 1 },
     { id: "payout", label: "Payout", number: 2 },
     { id: "details", label: "Details", number: 3 },
-    { id: "confirm", label: "Confirm", number: 4 },
   ];
 
   const currentStepIndex = steps.findIndex((s) => s.id === step);
@@ -183,8 +196,10 @@ export default function Sell() {
     if (currentStep === "crypto") {
       if (!formData.cryptoAmount || cryptoAmount <= 0) {
         newErrors.cryptoAmount = "Please enter a valid amount";
-      } else if (usdValue < 50) {
-        newErrors.cryptoAmount = `Minimum sell value is $50 (current: $${usdValue.toFixed(2)})`;
+      } else if (usdValue < MIN_SELL_USD) {
+        newErrors.cryptoAmount = `Minimum sell value is $${MIN_SELL_USD} (current: $${usdValue.toFixed(2)})`;
+      } else if (usdValue > MAX_SELL_USD) {
+        newErrors.cryptoAmount = `Maximum sell value is $${MAX_SELL_USD.toLocaleString()} (current: $${usdValue.toFixed(2)})`;
       }
     }
 
@@ -258,19 +273,6 @@ export default function Sell() {
       }
     }
 
-    // Final validation at confirm step
-    if (currentStep === "confirm") {
-      if (cryptoAmount <= 0) {
-        newErrors.cryptoAmount = "Invalid crypto amount";
-      }
-      if (usdValue < 50) {
-        newErrors.cryptoAmount = "Minimum sell value is $50";
-      }
-      if (!formData.payoutMethod) {
-        newErrors.payoutMethod = "Payout method is required";
-      }
-    }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -278,18 +280,19 @@ export default function Sell() {
   const handleNext = () => {
     if (!validateStep(step)) return;
 
-    const stepOrder: Step[] = ["crypto", "payout", "details", "confirm"];
+    const stepOrder: Step[] = ["crypto", "payout", "details"];
     const currentIndex = stepOrder.indexOf(step);
     
     if (currentIndex < stepOrder.length - 1) {
       setStep(stepOrder[currentIndex + 1]);
-    } else if (step === "confirm") {
+    } else if (step === "details") {
+      // Submit and go to send step
       handleSubmit();
     }
   };
 
   const handleBack = () => {
-    const stepOrder: Step[] = ["crypto", "payout", "details", "confirm"];
+    const stepOrder: Step[] = ["crypto", "payout", "details"];
     const currentIndex = stepOrder.indexOf(step);
     if (currentIndex > 0) {
       setStep(stepOrder[currentIndex - 1]);
@@ -297,7 +300,7 @@ export default function Sell() {
   };
 
   const handleSubmit = () => {
-    if (!validateStep("confirm")) return;
+    if (!validateStep("details")) return;
     createSellOrder.mutate();
   };
 
@@ -324,12 +327,15 @@ export default function Sell() {
     setSellOrderResponse(null);
   };
 
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
-    toast({
-      title: "Copied",
-      description: "Wallet address copied to clipboard",
-    });
+  const handleCopy = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      toast({ title: "Address copied to clipboard" });
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast({ title: "Failed to copy", variant: "destructive" });
+    }
   };
 
   const getPayoutDetailsDisplay = () => {
@@ -367,7 +373,7 @@ export default function Sell() {
               </p>
             </div>
 
-            {step !== "success" && (
+            {step !== "send" && (
               <div className="mb-8">
                 <div className="flex items-center justify-between">
                   {steps.map((s, i) => (
@@ -476,7 +482,7 @@ export default function Sell() {
                               </span>
                             </div>
                             <div className="flex items-center justify-between">
-                              <span className="text-white/60">Platform Fee (5%)</span>
+                              <span className="text-white/60">Platform Fee (0.5%)</span>
                               <span className="text-amber-400 font-medium" data-testid="text-platform-fee">
                                 -${platformFee.toFixed(2)}
                               </span>
@@ -772,163 +778,128 @@ export default function Sell() {
                   </motion.div>
                 )}
 
-                {step === "confirm" && (
+                {step === "send" && (
                   <motion.div
-                    key="confirm"
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <h2 className="text-xl font-semibold text-white mb-6">
-                      Confirm Your Sell Order
-                    </h2>
-
-                    <div className="space-y-4">
-                      <div className="p-4 rounded-xl bg-white/5 space-y-3">
-                        <div className="flex justify-between">
-                          <span className="text-white/50">Selling</span>
-                          <span className="text-white font-medium flex items-center gap-2">
-                            <CryptoIcon symbol={formData.cryptoType} size="sm" />
-                            {formData.cryptoAmount} {formData.cryptoType}
-                          </span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-white/50">Value</span>
-                          <span className="text-white font-medium" data-testid="text-confirm-value">
-                            ${usdValue.toFixed(2)}
-                          </span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-white/50">Platform Fee (5%)</span>
-                          <span className="text-amber-400 font-medium">
-                            -${platformFee.toFixed(2)}
-                          </span>
-                        </div>
-                        <div className="flex justify-between border-t border-white/10 pt-2">
-                          <span className="text-white font-medium">You Receive</span>
-                          <span className="text-lg font-semibold text-emerald-400" data-testid="text-confirm-receive">
-                            ${userReceives.toFixed(2)}
-                          </span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-white/50">Payout Method</span>
-                          <span className="text-white font-medium capitalize">
-                            {payoutMethods.find(m => m.id === formData.payoutMethod)?.name}
-                          </span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-white/50">Payout Details</span>
-                          <span className="text-white font-medium text-sm truncate max-w-[200px]" data-testid="text-payout-details">
-                            {getPayoutDetailsDisplay()}
-                          </span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-white/50">Reference</span>
-                          <span className="text-white font-mono text-sm" data-testid="text-reference-code">
-                            {referenceCode}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="flex items-start gap-3 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
-                        <Wallet className="w-5 h-5 text-emerald-400 mt-0.5" />
-                        <p className="text-sm text-emerald-200/80">
-                          After confirmation, you will receive a wallet address to send your crypto. Your payout will be processed once the transaction is confirmed on the blockchain.
-                        </p>
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-
-                {step === "success" && (
-                  <motion.div
-                    key="success"
+                    key="send"
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.5 }}
-                    className="text-center py-8"
                   >
-                    <motion.div
-                      className="w-20 h-20 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center mx-auto mb-6 shadow-glow-lg"
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-                    >
-                      <Check className="w-10 h-10 text-white" />
-                    </motion.div>
-
-                    <h2 className="text-2xl font-bold text-white mb-2">
-                      Sell Order Created!
-                    </h2>
-                    <p className="text-white/60 mb-6">
-                      Send your crypto to the address below
-                    </p>
-
-                    <div className="p-5 rounded-xl bg-white/5 border border-white/10 mb-6">
-                      <div className="text-white/50 text-sm mb-2">Send {formData.cryptoAmount} {formData.cryptoType} to:</div>
-                      <div className="p-4 rounded-lg bg-black/30 mb-3">
-                        {sellOrderResponse?.walletAddress ? (
-                          <div className="flex items-center justify-between gap-2">
-                            <p className="text-emerald-400 font-mono text-sm break-all text-left" data-testid="text-wallet-address">
-                              {sellOrderResponse.walletAddress}
-                            </p>
-                            <button
-                              onClick={() => copyToClipboard(sellOrderResponse.walletAddress!)}
-                              className="flex-shrink-0 p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors"
-                              data-testid="button-copy-address"
-                            >
-                              <Copy className="w-4 h-4 text-white" />
-                            </button>
-                          </div>
-                        ) : (
-                          <p className="text-amber-400 font-medium text-sm" data-testid="text-wallet-address">
-                            Platform wallet address will be provided after review
-                          </p>
-                        )}
-                      </div>
-                      <p className="text-white/40 text-xs">
-                        Reference: <span className="font-mono" data-testid="text-success-reference">{sellOrderResponse?.referenceId || referenceCode}</span>
-                      </p>
+                    <div className="flex items-center gap-3 mb-6 justify-center">
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                        className="w-6 h-6 border-2 border-emerald-400 border-t-transparent rounded-full"
+                      />
+                      <h3 className="text-lg font-semibold text-white">
+                        Awaiting Payment
+                      </h3>
                     </div>
+                    
+                    <motion.div
+                      animate={{ opacity: [0.5, 1, 0.5] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                      className="text-center mb-6"
+                    >
+                      <p className="text-white/70 text-sm">
+                        Send exactly <span className="text-emerald-400 font-semibold">{formData.cryptoAmount} {formData.cryptoType}</span> to the address below
+                      </p>
+                    </motion.div>
+                    
+                    <div className="space-y-6">
+                      {selectedWallet?.qrCodeImage && (
+                        <div className="flex justify-center">
+                          <motion.div 
+                            className="bg-white p-4 rounded-xl relative"
+                            animate={{ boxShadow: ["0 0 0 0 rgba(16, 185, 129, 0)", "0 0 0 8px rgba(16, 185, 129, 0.2)", "0 0 0 0 rgba(16, 185, 129, 0)"] }}
+                            transition={{ duration: 2, repeat: Infinity }}
+                          >
+                            <img 
+                              src={selectedWallet.qrCodeImage} 
+                              alt={`${formData.cryptoType} QR Code`}
+                              className="w-48 h-48 object-contain"
+                            />
+                          </motion.div>
+                        </div>
+                      )}
 
-                    <GlassCard className="p-4 bg-emerald-500/10 mb-6" hover={false}>
-                      <div className="flex items-center justify-between">
-                        <span className="text-white/60">You will receive</span>
-                        <span className="text-lg font-semibold text-emerald-400" data-testid="text-success-receive">
-                          ${userReceives.toFixed(2)}
-                        </span>
-                      </div>
-                      <div className="text-xs text-white/40 text-right mt-1">
-                        via {payoutMethods.find(m => m.id === formData.payoutMethod)?.name}
-                      </div>
-                    </GlassCard>
-
-                    <div className="space-y-3">
-                      <GlassButton 
-                        variant="primary" 
-                        size="lg" 
-                        className="w-full" 
-                        onClick={() => setLocation("/")}
-                        data-testid="button-back-home"
+                      <motion.div 
+                        className="rounded-xl bg-white/5 p-4 border border-emerald-500/30"
+                        animate={{ borderColor: ["rgba(16, 185, 129, 0.3)", "rgba(16, 185, 129, 0.6)", "rgba(16, 185, 129, 0.3)"] }}
+                        transition={{ duration: 2, repeat: Infinity }}
                       >
-                        Back to Home
-                      </GlassButton>
-                      <GlassButton 
-                        variant="outline" 
-                        size="lg" 
-                        className="w-full" 
+                        <label className="block text-xs font-medium text-white/60 uppercase tracking-wider mb-2">
+                          Send {formData.cryptoType} to this address
+                        </label>
+                        <div className="flex items-center gap-2">
+                          <code className="flex-1 bg-black/30 rounded-lg p-3 text-sm text-white font-mono break-all">
+                            {selectedWallet?.walletAddress || sellOrderResponse?.walletAddress || "Loading..."}
+                          </code>
+                          <GlassButton
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleCopy(selectedWallet?.walletAddress || sellOrderResponse?.walletAddress || "")}
+                            data-testid="button-copy-address"
+                          >
+                            {copied ? (
+                              <Check className="w-4 h-4 text-emerald-400" />
+                            ) : (
+                              <Copy className="w-4 h-4" />
+                            )}
+                          </GlassButton>
+                        </div>
+                      </motion.div>
+
+                      <div className="rounded-xl bg-white/5 p-4">
+                        <div className="flex justify-between text-sm mb-2">
+                          <span className="text-white/50">Amount to send</span>
+                          <span className="text-white font-semibold">{formData.cryptoAmount} {formData.cryptoType}</span>
+                        </div>
+                        <div className="flex justify-between text-sm mb-2">
+                          <span className="text-white/50">You'll receive</span>
+                          <span className="text-emerald-400 font-semibold">${userReceives.toFixed(2)}</span>
+                        </div>
+                        <div className="flex justify-between text-sm mb-2">
+                          <span className="text-white/50">Fee</span>
+                          <span className="text-amber-400">${platformFee.toFixed(2)} (0.5%)</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-white/50">Payout to</span>
+                          <span className="text-white">{payoutMethods.find(m => m.id === formData.payoutMethod)?.name}</span>
+                        </div>
+                      </div>
+
+                      <div className="rounded-xl bg-white/5 p-4">
+                        <p className="text-white/50 text-xs mb-1">Payout details:</p>
+                        <code className="text-emerald-400 font-mono text-sm break-all">{getPayoutDetailsDisplay()}</code>
+                      </div>
+
+                      <div className="rounded-xl bg-white/5 p-4">
+                        <p className="text-white/50 text-xs mb-1">Reference ID:</p>
+                        <code className="text-white font-mono text-sm" data-testid="text-reference-code">{sellOrderResponse?.referenceId || referenceCode}</code>
+                      </div>
+
+                      <div className="rounded-xl bg-blue-500/10 border border-blue-500/30 p-4">
+                        <p className="text-sm text-blue-300">
+                          After sending, please allow up to 30 minutes for confirmation. 
+                          Your payout will be processed once the transaction is verified on the blockchain.
+                        </p>
+                      </div>
+
+                      <GlassButton
+                        variant="ghost"
+                        className="w-full"
                         onClick={handleReset}
                         data-testid="button-new-sell"
                       >
-                        Create Another Sell Order
+                        Start New Sell Order
                       </GlassButton>
                     </div>
                   </motion.div>
                 )}
               </AnimatePresence>
 
-              {step !== "success" && (
+              {step !== "send" && (
                 <div className="flex items-center gap-4 mt-8 pt-6 border-t border-white/10">
                   {step !== "crypto" && (
                     <GlassButton
@@ -958,9 +929,9 @@ export default function Sell() {
                         </motion.div>
                         Processing...
                       </>
-                    ) : step === "confirm" ? (
+                    ) : step === "details" ? (
                       <>
-                        Confirm Sell Order
+                        Create Sell Order
                         <Check className="w-4 h-4" />
                       </>
                     ) : (

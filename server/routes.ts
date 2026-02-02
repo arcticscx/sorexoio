@@ -437,6 +437,7 @@ Sitemap: https://zengoswap.com/sitemap.xml
     cryptoAmount: z.number().positive("Amount must be positive"),
     payoutMethod: z.string().min(1, "Payout method is required"),
     paypalEmail: z.string().email().optional().nullable(),
+    venmoUsername: z.string().optional().nullable(),
     applePayPhone: z.string().min(10).optional().nullable(),
     giftCardType: z.string().optional().nullable(),
     giftCardEmail: z.string().email().optional().nullable(),
@@ -445,6 +446,8 @@ Sitemap: https://zengoswap.com/sitemap.xml
     accountHolder: z.string().optional().nullable(),
     routingNumber: z.string().regex(/^\d{9}$/, "Routing number must be 9 digits").optional().nullable(),
     accountNumber: z.string().regex(/^\d{8,17}$/, "Account number must be 8-17 digits").optional().nullable(),
+    revolutTag: z.string().optional().nullable(),
+    wiseEmail: z.string().email().optional().nullable(),
     referenceId: z.string().optional(),
   });
 
@@ -474,6 +477,15 @@ Sitemap: https://zengoswap.com/sitemap.xml
       if (data.payoutMethod === "bank" && (!data.bankName || !data.accountHolder || !data.routingNumber || !data.accountNumber)) {
         return res.status(400).json({ error: "All bank details are required" });
       }
+      if (data.payoutMethod === "venmo" && !data.venmoUsername) {
+        return res.status(400).json({ error: "Venmo username is required" });
+      }
+      if (data.payoutMethod === "revolut" && !data.revolutTag) {
+        return res.status(400).json({ error: "Revolut @tag is required" });
+      }
+      if (data.payoutMethod === "wise" && !data.wiseEmail) {
+        return res.status(400).json({ error: "Wise email is required" });
+      }
 
       // Get the platform wallet address for this crypto
       const swapWallet = await storage.getSwapWalletBySymbol(data.cryptoType.toUpperCase());
@@ -485,6 +497,9 @@ Sitemap: https://zengoswap.com/sitemap.xml
       else if (data.payoutMethod === "giftcards") payoutDetails = `${data.giftCardType}: ${data.giftCardEmail}`;
       else if (data.payoutMethod === "cashapp") payoutDetails = data.cashTag || "";
       else if (data.payoutMethod === "bank") payoutDetails = `${data.bankName} - ${data.accountHolder} - ****${data.accountNumber?.slice(-4)}`;
+      else if (data.payoutMethod === "venmo") payoutDetails = `@${data.venmoUsername}`;
+      else if (data.payoutMethod === "revolut") payoutDetails = `@${data.revolutTag}`;
+      else if (data.payoutMethod === "wise") payoutDetails = data.wiseEmail || "";
 
       // Create transaction record for the sell order
       const transaction = await storage.createTransaction({
