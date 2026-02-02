@@ -97,6 +97,8 @@ export default function Sell() {
     wiseEmail: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [inputMode, setInputMode] = useState<"crypto" | "usd">("crypto");
+  const [usdInput, setUsdInput] = useState("");
   const [sellOrderResponse, setSellOrderResponse] = useState<{
     transactionId: string;
     referenceId: string;
@@ -341,6 +343,8 @@ export default function Sell() {
       wiseEmail: "",
     });
     setErrors({});
+    setInputMode("crypto");
+    setUsdInput("");
     setSellOrderResponse(null);
   };
 
@@ -477,22 +481,94 @@ export default function Sell() {
                         </div>
                       </div>
 
-                      <div className="relative">
-                        <GlassInput
-                          label={`Amount (${formData.cryptoType})`}
-                          type="number"
-                          placeholder="0.00"
-                          value={formData.cryptoAmount}
-                          onChange={(e) =>
-                            setFormData({ ...formData, cryptoAmount: e.target.value })
-                          }
-                          error={errors.cryptoAmount}
-                          data-testid="input-crypto-amount"
-                        />
-                        <div className="absolute right-4 top-9 text-white/50 text-sm">
-                          {formData.cryptoType}
+                      <div className="mb-4">
+                        <label className="block text-xs font-medium text-white/60 uppercase tracking-wider mb-2">
+                          Enter Amount In
+                        </label>
+                        <div className="flex gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setInputMode("crypto")}
+                            className={`flex-1 py-3 px-4 rounded-xl border transition-all ${
+                              inputMode === "crypto"
+                                ? "bg-emerald-500/20 border-emerald-500 text-white"
+                                : "bg-white/5 border-white/10 text-white/60 hover:bg-white/10"
+                            }`}
+                            data-testid="button-input-mode-crypto"
+                          >
+                            {formData.cryptoType}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setInputMode("usd")}
+                            className={`flex-1 py-3 px-4 rounded-xl border transition-all ${
+                              inputMode === "usd"
+                                ? "bg-emerald-500/20 border-emerald-500 text-white"
+                                : "bg-white/5 border-white/10 text-white/60 hover:bg-white/10"
+                            }`}
+                            data-testid="button-input-mode-usd"
+                          >
+                            USD
+                          </button>
                         </div>
                       </div>
+
+                      <div className="relative">
+                        {inputMode === "crypto" ? (
+                          <>
+                            <GlassInput
+                              label={`Amount (${formData.cryptoType})`}
+                              type="number"
+                              placeholder="0.00"
+                              value={formData.cryptoAmount}
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                setFormData({ ...formData, cryptoAmount: value });
+                                if (value && cryptoRate > 0) {
+                                  setUsdInput((parseFloat(value) * cryptoRate).toFixed(2));
+                                } else {
+                                  setUsdInput("");
+                                }
+                              }}
+                              error={errors.cryptoAmount}
+                              data-testid="input-crypto-amount"
+                            />
+                            <div className="absolute right-4 top-9 text-white/50 text-sm">
+                              {formData.cryptoType}
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <GlassInput
+                              label="Amount (USD)"
+                              type="number"
+                              placeholder="0.00"
+                              value={usdInput}
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                setUsdInput(value);
+                                if (value && cryptoRate > 0) {
+                                  const cryptoValue = parseFloat(value) / cryptoRate;
+                                  setFormData({ ...formData, cryptoAmount: cryptoValue.toFixed(8) });
+                                } else {
+                                  setFormData({ ...formData, cryptoAmount: "" });
+                                }
+                              }}
+                              error={errors.cryptoAmount}
+                              data-testid="input-usd-amount"
+                            />
+                            <div className="absolute right-4 top-9 text-white/50 text-sm">
+                              USD
+                            </div>
+                          </>
+                        )}
+                      </div>
+
+                      {inputMode === "usd" && formData.cryptoAmount && (
+                        <div className="text-sm text-white/50 mt-1">
+                          ≈ {formData.cryptoAmount} {formData.cryptoType}
+                        </div>
+                      )}
 
                       {formData.cryptoAmount && cryptoAmount > 0 && (
                         <GlassCard className="p-4 bg-emerald-500/10" hover={false}>
