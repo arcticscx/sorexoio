@@ -10,6 +10,16 @@ import { useToast } from "@/hooks/use-toast";
 import { Seo } from "@/components/Seo";
 
 import paypalIcon from "@assets/ARCTIC_1768071353413.png";
+import amazonIcon from "@assets/image_1770062250834.png";
+import spotifyIcon from "@assets/image_1770062259498.png";
+import fortniteIcon from "@assets/image_1770062268743.png";
+import xboxIcon from "@assets/image_1770062274785.png";
+import steamIcon from "@assets/image_1770062278808.png";
+import playstationIcon from "@assets/image_1770062282872.png";
+import twitchIcon from "@assets/image_1770062294308.png";
+import appleIcon from "@assets/image_1770062297316.png";
+import googlePlayIcon from "@assets/image_1770062300792.png";
+import nintendoIcon from "@assets/image_1770062314419.png";
 
 type Step = "crypto" | "payout" | "details" | "confirm" | "success";
 
@@ -34,12 +44,16 @@ const payoutMethods = [
 ];
 
 const giftCardTypes = [
-  { id: "amazon", name: "Amazon" },
-  { id: "steam", name: "Steam" },
-  { id: "apple", name: "Apple" },
-  { id: "googleplay", name: "Google Play" },
-  { id: "xbox", name: "Xbox" },
-  { id: "playstation", name: "PlayStation" },
+  { id: "amazon", name: "Amazon", icon: amazonIcon },
+  { id: "steam", name: "Steam", icon: steamIcon },
+  { id: "apple", name: "Apple", icon: appleIcon },
+  { id: "googleplay", name: "Google Play", icon: googlePlayIcon },
+  { id: "xbox", name: "Xbox", icon: xboxIcon },
+  { id: "playstation", name: "PlayStation", icon: playstationIcon },
+  { id: "spotify", name: "Spotify", icon: spotifyIcon },
+  { id: "fortnite", name: "Fortnite", icon: fortniteIcon },
+  { id: "twitch", name: "Twitch", icon: twitchIcon },
+  { id: "nintendo", name: "Nintendo", icon: nintendoIcon },
 ];
 
 function PayoutMethodIcon({ type }: { type: string }) {
@@ -561,21 +575,33 @@ export default function Sell() {
                             <label className="block text-xs font-medium text-white/60 uppercase tracking-wider mb-2">
                               Select Gift Card Type
                             </label>
-                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                            <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
                               {giftCardTypes.map((card) => (
                                 <button
                                   key={card.id}
                                   onClick={() =>
                                     setFormData({ ...formData, giftCardType: card.id })
                                   }
-                                  className={`p-3 rounded-xl border transition-all duration-200 text-center ${
+                                  className={`relative overflow-hidden rounded-xl border-2 transition-all duration-200 ${
                                     formData.giftCardType === card.id
-                                      ? "bg-emerald-500/20 border-emerald-500/50 text-white"
-                                      : "bg-white/5 border-white/10 text-white/60 hover:bg-white/10"
+                                      ? "border-emerald-500 ring-2 ring-emerald-500/30 scale-105"
+                                      : "border-white/10 hover:border-white/30"
                                   }`}
                                   data-testid={`select-giftcard-${card.id}`}
                                 >
-                                  <span className="font-medium text-sm">{card.name}</span>
+                                  <img 
+                                    src={card.icon} 
+                                    alt={card.name} 
+                                    className="w-full h-16 object-cover"
+                                  />
+                                  <div className="absolute inset-0 bg-black/40 flex items-end justify-center pb-1">
+                                    <span className="text-white text-xs font-medium drop-shadow-lg">{card.name}</span>
+                                  </div>
+                                  {formData.giftCardType === card.id && (
+                                    <div className="absolute top-1 right-1 w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center">
+                                      <Check className="w-3 h-3 text-white" />
+                                    </div>
+                                  )}
                                 </button>
                               ))}
                             </div>
