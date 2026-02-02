@@ -507,7 +507,9 @@ export default function Sell() {
                               <img 
                                 src={method.icon} 
                                 alt={method.name} 
-                                className="w-full h-full object-cover brightness-110"
+                                loading="eager"
+                                decoding="sync"
+                                className="w-full h-full object-cover brightness-110 bg-white/5"
                               />
                             ) : (
                               <div className="w-full h-full bg-gradient-to-br from-emerald-500/30 to-teal-500/30 flex items-center justify-center">
@@ -598,7 +600,9 @@ export default function Sell() {
                                     <img 
                                       src={card.icon} 
                                       alt={card.name} 
-                                      className="w-full h-full object-cover brightness-110"
+                                      loading="eager"
+                                      decoding="sync"
+                                      className="w-full h-full object-cover brightness-110 bg-white/5"
                                     />
                                     {formData.giftCardType === card.id && (
                                       <div className="absolute top-2 right-2 w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center">
