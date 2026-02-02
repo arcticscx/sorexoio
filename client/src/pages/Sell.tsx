@@ -91,6 +91,8 @@ export default function Sell() {
     accountHolder: "",
     routingNumber: "",
     accountNumber: "",
+    iban: "",
+    bankType: "us" as "us" | "iban",
     revolutTag: "",
     wiseEmail: "",
   });
@@ -148,12 +150,16 @@ export default function Sell() {
         payoutMethod: formData.payoutMethod,
         paypalEmail: formData.paypalEmail || null,
         venmoUsername: formData.venmoUsername || null,
+        cashTag: formData.cashTag || null,
+        applePayPhone: formData.applePayPhone || null,
         giftCardType: formData.giftCardType || null,
         giftCardEmail: formData.giftCardEmail || null,
         bankName: formData.bankName || null,
         accountHolder: formData.accountHolder || null,
         routingNumber: formData.routingNumber || null,
         accountNumber: formData.accountNumber || null,
+        iban: formData.iban || null,
+        bankType: formData.bankType || null,
         revolutTag: formData.revolutTag || null,
         wiseEmail: formData.wiseEmail || null,
         referenceId: referenceCode,
@@ -258,17 +264,26 @@ export default function Sell() {
       }
       
       if (method === "bank") {
-        if (!formData.bankName || formData.bankName.length < 2) {
-          newErrors.bankName = "Please enter your bank name";
-        }
         if (!formData.accountHolder || formData.accountHolder.length < 2) {
           newErrors.accountHolder = "Please enter account holder name";
         }
-        if (!formData.routingNumber || !/^\d{9}$/.test(formData.routingNumber)) {
-          newErrors.routingNumber = "Routing number must be exactly 9 digits (numeric only)";
-        }
-        if (!formData.accountNumber || !/^\d{8,17}$/.test(formData.accountNumber)) {
-          newErrors.accountNumber = "Account number must be 8-17 digits (numeric only)";
+        
+        if (formData.bankType === "iban") {
+          // IBAN validation (2 letters + 2 digits + up to 30 alphanumeric)
+          if (!formData.iban || !/^[A-Z]{2}[0-9]{2}[A-Z0-9]{11,30}$/.test(formData.iban.toUpperCase().replace(/\s/g, ''))) {
+            newErrors.iban = "Please enter a valid IBAN";
+          }
+        } else {
+          // US Bank validation
+          if (!formData.bankName || formData.bankName.length < 2) {
+            newErrors.bankName = "Please enter your bank name";
+          }
+          if (!formData.routingNumber || !/^\d{9}$/.test(formData.routingNumber)) {
+            newErrors.routingNumber = "Routing number must be exactly 9 digits (numeric only)";
+          }
+          if (!formData.accountNumber || !/^\d{8,17}$/.test(formData.accountNumber)) {
+            newErrors.accountNumber = "Account number must be 8-17 digits (numeric only)";
+          }
         }
       }
     }
@@ -320,6 +335,8 @@ export default function Sell() {
       accountHolder: "",
       routingNumber: "",
       accountNumber: "",
+      iban: "",
+      bankType: "us",
       revolutTag: "",
       wiseEmail: "",
     });
@@ -345,7 +362,12 @@ export default function Sell() {
     if (method === "cashapp") return formData.cashTag;
     if (method === "applepay") return formData.applePayPhone;
     if (method === "giftcards") return `${giftCardTypes.find(g => g.id === formData.giftCardType)?.name} - ${formData.giftCardEmail}`;
-    if (method === "bank") return `${formData.bankName} - ${formData.accountHolder}`;
+    if (method === "bank") {
+      if (formData.bankType === "iban") {
+        return `IBAN: ${formData.iban} - ${formData.accountHolder}`;
+      }
+      return `${formData.bankName} - ${formData.accountHolder}`;
+    }
     if (method === "revolut") return `@${formData.revolutTag}`;
     if (method === "wise") return formData.wiseEmail;
     return "";
@@ -721,17 +743,38 @@ export default function Sell() {
 
                       {formData.payoutMethod === "bank" && (
                         <>
-                          <GlassInput
-                            label="Bank Name"
-                            type="text"
-                            placeholder="e.g., Chase, Bank of America"
-                            value={formData.bankName}
-                            onChange={(e) =>
-                              setFormData({ ...formData, bankName: e.target.value })
-                            }
-                            error={errors.bankName}
-                            data-testid="input-bank-name"
-                          />
+                          <div className="mb-4">
+                            <label className="block text-xs font-medium text-white/60 uppercase tracking-wider mb-2">
+                              Bank Type
+                            </label>
+                            <div className="flex gap-2">
+                              <button
+                                type="button"
+                                onClick={() => setFormData({ ...formData, bankType: "us" })}
+                                className={`flex-1 py-3 px-4 rounded-xl border transition-all ${
+                                  formData.bankType === "us"
+                                    ? "bg-emerald-500/20 border-emerald-500 text-white"
+                                    : "bg-white/5 border-white/10 text-white/60 hover:bg-white/10"
+                                }`}
+                                data-testid="button-bank-type-us"
+                              >
+                                US Bank (ACH)
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setFormData({ ...formData, bankType: "iban" })}
+                                className={`flex-1 py-3 px-4 rounded-xl border transition-all ${
+                                  formData.bankType === "iban"
+                                    ? "bg-emerald-500/20 border-emerald-500 text-white"
+                                    : "bg-white/5 border-white/10 text-white/60 hover:bg-white/10"
+                                }`}
+                                data-testid="button-bank-type-iban"
+                              >
+                                IBAN (International)
+                              </button>
+                            </div>
+                          </div>
+
                           <GlassInput
                             label="Account Holder Name"
                             type="text"
@@ -743,28 +786,56 @@ export default function Sell() {
                             error={errors.accountHolder}
                             data-testid="input-account-holder"
                           />
-                          <GlassInput
-                            label="Routing Number"
-                            type="text"
-                            placeholder="9-digit routing number"
-                            value={formData.routingNumber}
-                            onChange={(e) =>
-                              setFormData({ ...formData, routingNumber: e.target.value.replace(/\D/g, "").slice(0, 9) })
-                            }
-                            error={errors.routingNumber}
-                            data-testid="input-routing-number"
-                          />
-                          <GlassInput
-                            label="Account Number"
-                            type="text"
-                            placeholder="Your account number"
-                            value={formData.accountNumber}
-                            onChange={(e) =>
-                              setFormData({ ...formData, accountNumber: e.target.value.replace(/\D/g, "") })
-                            }
-                            error={errors.accountNumber}
-                            data-testid="input-account-number"
-                          />
+
+                          {formData.bankType === "us" ? (
+                            <>
+                              <GlassInput
+                                label="Bank Name"
+                                type="text"
+                                placeholder="e.g., Chase, Bank of America"
+                                value={formData.bankName}
+                                onChange={(e) =>
+                                  setFormData({ ...formData, bankName: e.target.value })
+                                }
+                                error={errors.bankName}
+                                data-testid="input-bank-name"
+                              />
+                              <GlassInput
+                                label="Routing Number"
+                                type="text"
+                                placeholder="9-digit routing number"
+                                value={formData.routingNumber}
+                                onChange={(e) =>
+                                  setFormData({ ...formData, routingNumber: e.target.value.replace(/\D/g, "").slice(0, 9) })
+                                }
+                                error={errors.routingNumber}
+                                data-testid="input-routing-number"
+                              />
+                              <GlassInput
+                                label="Account Number"
+                                type="text"
+                                placeholder="Your account number"
+                                value={formData.accountNumber}
+                                onChange={(e) =>
+                                  setFormData({ ...formData, accountNumber: e.target.value.replace(/\D/g, "") })
+                                }
+                                error={errors.accountNumber}
+                                data-testid="input-account-number"
+                              />
+                            </>
+                          ) : (
+                            <GlassInput
+                              label="IBAN"
+                              type="text"
+                              placeholder="e.g., DE89370400440532013000"
+                              value={formData.iban}
+                              onChange={(e) =>
+                                setFormData({ ...formData, iban: e.target.value.toUpperCase().replace(/\s/g, '') })
+                              }
+                              error={errors.iban}
+                              data-testid="input-iban"
+                            />
+                          )}
                         </>
                       )}
 

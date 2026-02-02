@@ -446,6 +446,8 @@ Sitemap: https://zengoswap.com/sitemap.xml
     accountHolder: z.string().optional().nullable(),
     routingNumber: z.string().regex(/^\d{9}$/, "Routing number must be 9 digits").optional().nullable(),
     accountNumber: z.string().regex(/^\d{8,17}$/, "Account number must be 8-17 digits").optional().nullable(),
+    iban: z.string().optional().nullable(),
+    bankType: z.enum(["us", "iban"]).optional().nullable(),
     revolutTag: z.string().optional().nullable(),
     wiseEmail: z.string().email().optional().nullable(),
     referenceId: z.string().optional(),
@@ -474,8 +476,19 @@ Sitemap: https://zengoswap.com/sitemap.xml
       if (data.payoutMethod === "cashapp" && !data.cashTag) {
         return res.status(400).json({ error: "Cash App $cashtag is required" });
       }
-      if (data.payoutMethod === "bank" && (!data.bankName || !data.accountHolder || !data.routingNumber || !data.accountNumber)) {
-        return res.status(400).json({ error: "All bank details are required" });
+      if (data.payoutMethod === "bank") {
+        if (!data.accountHolder) {
+          return res.status(400).json({ error: "Account holder name is required" });
+        }
+        if (data.bankType === "iban") {
+          if (!data.iban) {
+            return res.status(400).json({ error: "IBAN is required" });
+          }
+        } else {
+          if (!data.bankName || !data.routingNumber || !data.accountNumber) {
+            return res.status(400).json({ error: "All US bank details are required (bank name, routing number, account number)" });
+          }
+        }
       }
       if (data.payoutMethod === "venmo" && !data.venmoUsername) {
         return res.status(400).json({ error: "Venmo username is required" });
@@ -496,7 +509,13 @@ Sitemap: https://zengoswap.com/sitemap.xml
       else if (data.payoutMethod === "applepay") payoutDetails = data.applePayPhone || "";
       else if (data.payoutMethod === "giftcards") payoutDetails = `${data.giftCardType}: ${data.giftCardEmail}`;
       else if (data.payoutMethod === "cashapp") payoutDetails = data.cashTag || "";
-      else if (data.payoutMethod === "bank") payoutDetails = `${data.bankName} - ${data.accountHolder} - ****${data.accountNumber?.slice(-4)}`;
+      else if (data.payoutMethod === "bank") {
+        if (data.bankType === "iban") {
+          payoutDetails = `IBAN: ${data.iban} - ${data.accountHolder}`;
+        } else {
+          payoutDetails = `${data.bankName} - ${data.accountHolder} - ****${data.accountNumber?.slice(-4)}`;
+        }
+      }
       else if (data.payoutMethod === "venmo") payoutDetails = `@${data.venmoUsername}`;
       else if (data.payoutMethod === "revolut") payoutDetails = `@${data.revolutTag}`;
       else if (data.payoutMethod === "wise") payoutDetails = data.wiseEmail || "";
