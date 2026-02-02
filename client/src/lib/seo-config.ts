@@ -4,6 +4,7 @@ export interface PageSeoConfig {
   keywords: string[];
   ogTitle?: string;
   ogDescription?: string;
+  ogImage?: string;
   canonicalPath: string;
   priority: number;
   changefreq: "always" | "hourly" | "daily" | "weekly" | "monthly" | "yearly" | "never";
@@ -222,24 +223,30 @@ export const seoConfig: Record<string, PageSeoConfig> = {
     changefreq: "monthly"
   },
   "/sell": {
-    title: "Sell Crypto | ZengoSwap",
-    description: "Sell your Bitcoin, Ethereum, and other cryptocurrencies for cash. Receive payment via PayPal, Apple Pay, Gift Cards, Cash App, or Bank Transfer. Fast processing, competitive rates.",
+    title: "Sell Crypto for Cash | PayPal, Venmo, Gift Cards & More – ZengoSwap",
+    description: "Sell your Bitcoin, Ethereum, and other cryptocurrencies for cash. Get paid via PayPal, Venmo, Cash App, Apple Pay, Gift Cards, Bank Transfer, Revolut, or Wise. 0.5% fee, $50,000 max, fast processing.",
     keywords: [
       "sell crypto",
       "sell Bitcoin",
       "sell Ethereum",
       "crypto to PayPal",
+      "crypto to Venmo",
       "crypto to cash",
       "sell crypto for gift cards",
-      "ZengoSwap sell"
+      "crypto to bank transfer",
+      "crypto to Apple Pay",
+      "crypto to Cash App",
+      "ZengoSwap sell",
+      "sell crypto no KYC"
     ],
-    ogTitle: "Sell Crypto for Cash – PayPal, Gift Cards & More | ZengoSwap",
-    ogDescription: "Convert your cryptocurrency to cash via PayPal, Apple Pay, Gift Cards, Cash App, or Bank Transfer. Fast and secure.",
+    ogTitle: "Sell Crypto for Cash – 8 Payout Methods | ZengoSwap",
+    ogDescription: "Convert your cryptocurrency to cash via PayPal, Venmo, Cash App, Apple Pay, Gift Cards, Bank Transfer, Revolut, or Wise. 0.5% fee, up to $50,000.",
+    ogImage: "/sell-og-image.png",
     canonicalPath: "/sell",
     priority: 0.9,
     changefreq: "daily",
-    aiAnswer: "ZengoSwap allows you to sell cryptocurrency and receive payment via PayPal, Apple Pay, Gift Cards, Cash App, or Bank Transfer with competitive rates.",
-    aiDefinition: "A cryptocurrency selling service that converts digital assets to cash through multiple payout methods."
+    aiAnswer: "ZengoSwap allows you to sell cryptocurrency and receive payment via 8 methods: PayPal, Venmo, Cash App, Apple Pay, Gift Cards, Bank Transfer, Revolut, or Wise. Only 0.5% fee with a $50,000 maximum transaction.",
+    aiDefinition: "A cryptocurrency selling service that converts digital assets to cash through 8 payout methods including PayPal, Venmo, Cash App, Apple Pay, Gift Cards, Bank Transfer, Revolut, and Wise."
   }
 };
 

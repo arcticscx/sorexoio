@@ -16,6 +16,7 @@ export function Seo({ path }: SeoProps) {
   const ogTitle = seo.ogTitle || seo.title;
   const ogDescription = seo.ogDescription || seo.description;
   const canonicalUrl = `${BASE_URL}${seo.canonicalPath}`;
+  const ogImage = seo.ogImage ? `${BASE_URL}${seo.ogImage}` : `${BASE_URL}/og-image.png`;
 
   return (
     <Helmet>
@@ -35,17 +36,17 @@ export function Seo({ path }: SeoProps) {
       <meta property="og:url" content={canonicalUrl} />
       <meta property="og:site_name" content="ZengoSwap" />
       <meta property="og:type" content="website" />
-      <meta property="og:image" content={`${BASE_URL}/og-image.png`} />
+      <meta property="og:image" content={ogImage} />
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="630" />
-      <meta property="og:image:alt" content="ZengoSwap - Buy Crypto with PayPal & Card" />
+      <meta property="og:image:alt" content={ogTitle} />
       <meta property="og:locale" content="en_US" />
       
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={ogTitle} />
       <meta name="twitter:description" content={ogDescription} />
-      <meta name="twitter:image" content={`${BASE_URL}/og-image.png`} />
-      <meta name="twitter:image:alt" content="ZengoSwap Crypto Exchange" />
+      <meta name="twitter:image" content={ogImage} />
+      <meta name="twitter:image:alt" content={ogTitle} />
       <meta name="twitter:site" content="@zengoswap" />
       
       {seo.aiAnswer && (
