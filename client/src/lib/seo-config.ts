@@ -220,6 +220,26 @@ export const seoConfig: Record<string, PageSeoConfig> = {
     canonicalPath: "/sitemap",
     priority: 0.3,
     changefreq: "monthly"
+  },
+  "/sell": {
+    title: "Sell Crypto | ZengoSwap",
+    description: "Sell your Bitcoin, Ethereum, and other cryptocurrencies for cash. Receive payment via PayPal, Apple Pay, Gift Cards, Cash App, or Bank Transfer. Fast processing, competitive rates.",
+    keywords: [
+      "sell crypto",
+      "sell Bitcoin",
+      "sell Ethereum",
+      "crypto to PayPal",
+      "crypto to cash",
+      "sell crypto for gift cards",
+      "ZengoSwap sell"
+    ],
+    ogTitle: "Sell Crypto for Cash – PayPal, Gift Cards & More | ZengoSwap",
+    ogDescription: "Convert your cryptocurrency to cash via PayPal, Apple Pay, Gift Cards, Cash App, or Bank Transfer. Fast and secure.",
+    canonicalPath: "/sell",
+    priority: 0.9,
+    changefreq: "daily",
+    aiAnswer: "ZengoSwap allows you to sell cryptocurrency and receive payment via PayPal, Apple Pay, Gift Cards, Cash App, or Bank Transfer with competitive rates.",
+    aiDefinition: "A cryptocurrency selling service that converts digital assets to cash through multiple payout methods."
   }
 };
 

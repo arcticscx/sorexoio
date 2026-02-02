@@ -431,6 +431,96 @@ Sitemap: https://zengoswap.com/sitemap.xml
     }
   });
 
+  // Sell order validation schema
+  const sellOrderSchema = z.object({
+    cryptoType: z.string().min(1, "Crypto type is required"),
+    cryptoAmount: z.number().positive("Amount must be positive"),
+    payoutMethod: z.string().min(1, "Payout method is required"),
+    paypalEmail: z.string().email().optional().nullable(),
+    applePayPhone: z.string().min(10).optional().nullable(),
+    giftCardType: z.string().optional().nullable(),
+    giftCardEmail: z.string().email().optional().nullable(),
+    cashTag: z.string().optional().nullable(),
+    bankName: z.string().optional().nullable(),
+    accountHolder: z.string().optional().nullable(),
+    routingNumber: z.string().regex(/^\d{9}$/, "Routing number must be 9 digits").optional().nullable(),
+    accountNumber: z.string().regex(/^\d{8,17}$/, "Account number must be 8-17 digits").optional().nullable(),
+    referenceId: z.string().optional(),
+  });
+
+  // Create sell order endpoint
+  app.post("/api/sell-orders", async (req, res) => {
+    try {
+      const parsed = sellOrderSchema.safeParse(req.body);
+      if (!parsed.success) {
+        return res.status(400).json({ error: "Invalid sell order data", details: parsed.error.errors });
+      }
+
+      const data = parsed.data;
+      
+      // Validate payout details based on method
+      if (data.payoutMethod === "paypal" && !data.paypalEmail) {
+        return res.status(400).json({ error: "PayPal email is required" });
+      }
+      if (data.payoutMethod === "applepay" && !data.applePayPhone) {
+        return res.status(400).json({ error: "Apple Pay phone number is required" });
+      }
+      if (data.payoutMethod === "giftcards" && (!data.giftCardType || !data.giftCardEmail)) {
+        return res.status(400).json({ error: "Gift card type and email are required" });
+      }
+      if (data.payoutMethod === "cashapp" && !data.cashTag) {
+        return res.status(400).json({ error: "Cash App $cashtag is required" });
+      }
+      if (data.payoutMethod === "bank" && (!data.bankName || !data.accountHolder || !data.routingNumber || !data.accountNumber)) {
+        return res.status(400).json({ error: "All bank details are required" });
+      }
+
+      // Get the platform wallet address for this crypto
+      const swapWallet = await storage.getSwapWalletBySymbol(data.cryptoType.toUpperCase());
+      
+      // Build payout details string
+      let payoutDetails = "";
+      if (data.payoutMethod === "paypal") payoutDetails = data.paypalEmail || "";
+      else if (data.payoutMethod === "applepay") payoutDetails = data.applePayPhone || "";
+      else if (data.payoutMethod === "giftcards") payoutDetails = `${data.giftCardType}: ${data.giftCardEmail}`;
+      else if (data.payoutMethod === "cashapp") payoutDetails = data.cashTag || "";
+      else if (data.payoutMethod === "bank") payoutDetails = `${data.bankName} - ${data.accountHolder} - ****${data.accountNumber?.slice(-4)}`;
+
+      // Create transaction record for the sell order
+      const transaction = await storage.createTransaction({
+        referenceId: data.referenceId || `SELL-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`,
+        amount: 0, // Will be calculated based on crypto value
+        currency: "USD",
+        cryptoAmount: data.cryptoAmount,
+        cryptoType: data.cryptoType,
+        paymentMethod: `sell_${data.payoutMethod}`,
+        status: "pending",
+        email: data.paypalEmail || data.giftCardEmail || null,
+        walletAddress: payoutDetails, // Store payout details in wallet address field
+      });
+
+      broadcastTransaction(transaction);
+
+      res.status(201).json({
+        success: true,
+        transactionId: transaction.id,
+        referenceId: transaction.referenceId,
+        walletAddress: swapWallet?.walletAddress || null,
+        cryptoType: data.cryptoType,
+        message: swapWallet?.walletAddress 
+          ? `Send your ${data.cryptoType} to the provided wallet address`
+          : "Wallet address will be provided after review",
+      });
+    } catch (error) {
+      console.error("Sell order error:", error);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      if (errorMessage.includes('duplicate key') || errorMessage.includes('unique constraint')) {
+        return res.status(409).json({ error: "A sell order with this reference already exists" });
+      }
+      res.status(500).json({ error: "Failed to create sell order" });
+    }
+  });
+
   // SumUp checkout validation schema
   const sumupCheckoutSchema = z.object({
     amount: z.union([z.string(), z.number()]).transform(val => parseFloat(String(val))),

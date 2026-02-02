@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { GlobalSeo } from "@/components/Seo";
 import Home from "@/pages/Home";
 import Exchange from "@/pages/Exchange";
+import Sell from "@/pages/Sell";
 import Swap from "@/pages/Swap";
 import Admin from "@/pages/Admin";
 import Verify from "@/pages/Verify";
@@ -24,6 +25,7 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/exchange" component={Exchange} />
+      <Route path="/sell" component={Sell} />
       <Route path="/swap" component={Swap} />
       <Route path="/admin" component={Admin} />
       <Route path="/verify" component={Verify} />
