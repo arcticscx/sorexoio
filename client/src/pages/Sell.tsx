@@ -488,39 +488,41 @@ export default function Sell() {
                       Select Payout Method
                     </h2>
 
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
                       {payoutMethods.map((method) => (
                         <button
                           key={method.id}
                           onClick={() =>
                             setFormData({ ...formData, payoutMethod: method.id })
                           }
-                          className={`relative overflow-hidden rounded-xl border-2 transition-all duration-200 ${
-                            formData.payoutMethod === method.id
-                              ? "border-emerald-500 ring-2 ring-emerald-500/30 scale-105"
-                              : "border-white/10 hover:border-white/30"
-                          }`}
+                          className="flex flex-col items-center gap-2 group"
                           data-testid={`button-payout-${method.id}`}
                         >
-                          {method.icon ? (
-                            <img 
-                              src={method.icon} 
-                              alt={method.name} 
-                              className="w-full h-20 object-cover"
-                            />
-                          ) : (
-                            <div className="w-full h-20 bg-gradient-to-br from-emerald-500/30 to-teal-500/30 flex items-center justify-center">
-                              <Gift className="w-8 h-8 text-emerald-400" />
-                            </div>
-                          )}
-                          <div className="absolute inset-0 bg-black/40 flex items-end justify-center pb-2">
-                            <span className="text-white text-sm font-medium drop-shadow-lg">{method.name}</span>
+                          <div className={`relative w-full aspect-[16/10] overflow-hidden rounded-xl border-2 transition-all duration-200 ${
+                            formData.payoutMethod === method.id
+                              ? "border-emerald-500 ring-2 ring-emerald-500/30 scale-105"
+                              : "border-white/10 group-hover:border-white/30"
+                          }`}>
+                            {method.icon ? (
+                              <img 
+                                src={method.icon} 
+                                alt={method.name} 
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div className="w-full h-full bg-gradient-to-br from-emerald-500/30 to-teal-500/30 flex items-center justify-center">
+                                <Gift className="w-10 h-10 text-emerald-400" />
+                              </div>
+                            )}
+                            {formData.payoutMethod === method.id && (
+                              <div className="absolute top-2 right-2 w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center">
+                                <Check className="w-4 h-4 text-white" />
+                              </div>
+                            )}
                           </div>
-                          {formData.payoutMethod === method.id && (
-                            <div className="absolute top-1 right-1 w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center">
-                              <Check className="w-3 h-3 text-white" />
-                            </div>
-                          )}
+                          <span className={`text-sm font-medium transition-colors ${
+                            formData.payoutMethod === method.id ? "text-white" : "text-white/60 group-hover:text-white"
+                          }`}>{method.name}</span>
                         </button>
                       ))}
                     </div>
@@ -578,33 +580,35 @@ export default function Sell() {
                             <label className="block text-xs font-medium text-white/60 uppercase tracking-wider mb-2">
                               Select Gift Card Type
                             </label>
-                            <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
                               {giftCardTypes.map((card) => (
                                 <button
                                   key={card.id}
                                   onClick={() =>
                                     setFormData({ ...formData, giftCardType: card.id })
                                   }
-                                  className={`relative overflow-hidden rounded-xl border-2 transition-all duration-200 ${
-                                    formData.giftCardType === card.id
-                                      ? "border-emerald-500 ring-2 ring-emerald-500/30 scale-105"
-                                      : "border-white/10 hover:border-white/30"
-                                  }`}
+                                  className="flex flex-col items-center gap-2 group"
                                   data-testid={`select-giftcard-${card.id}`}
                                 >
-                                  <img 
-                                    src={card.icon} 
-                                    alt={card.name} 
-                                    className="w-full h-16 object-cover"
-                                  />
-                                  <div className="absolute inset-0 bg-black/40 flex items-end justify-center pb-1">
-                                    <span className="text-white text-xs font-medium drop-shadow-lg">{card.name}</span>
+                                  <div className={`relative w-full aspect-[16/10] overflow-hidden rounded-xl border-2 transition-all duration-200 ${
+                                    formData.giftCardType === card.id
+                                      ? "border-emerald-500 ring-2 ring-emerald-500/30 scale-105"
+                                      : "border-white/10 group-hover:border-white/30"
+                                  }`}>
+                                    <img 
+                                      src={card.icon} 
+                                      alt={card.name} 
+                                      className="w-full h-full object-cover"
+                                    />
+                                    {formData.giftCardType === card.id && (
+                                      <div className="absolute top-2 right-2 w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center">
+                                        <Check className="w-4 h-4 text-white" />
+                                      </div>
+                                    )}
                                   </div>
-                                  {formData.giftCardType === card.id && (
-                                    <div className="absolute top-1 right-1 w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center">
-                                      <Check className="w-3 h-3 text-white" />
-                                    </div>
-                                  )}
+                                  <span className={`text-sm font-medium transition-colors ${
+                                    formData.giftCardType === card.id ? "text-white" : "text-white/60 group-hover:text-white"
+                                  }`}>{card.name}</span>
                                 </button>
                               ))}
                             </div>
