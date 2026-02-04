@@ -741,7 +741,9 @@ Sitemap: https://zengoswap.com/sitemap.xml
             currency: currency.toLowerCase(),
             initial_price: amount,
             plan_type: "one_time",
-            visibility: "hidden"
+            visibility: "hidden",
+            collect_tax: false,
+            tax_type: "inclusive"
           },
           redirect_url: `${req.protocol}://${req.get('host')}/exchange?whop_status=success&ref=${referenceId || ''}`,
           metadata: {
