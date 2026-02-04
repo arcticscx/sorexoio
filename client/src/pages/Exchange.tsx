@@ -277,7 +277,7 @@ export default function Exchange() {
   };
 
   // Handle Whop checkout completion callback
-  const handleWhopComplete = useCallback(async (planId: string, receiptId: string) => {
+  const handleWhopComplete = useCallback(async (planId: string, receiptId?: string) => {
     console.log('Whop checkout complete:', planId, receiptId);
     
     // Create the transaction
@@ -804,8 +804,18 @@ export default function Exchange() {
                               )}
                             </div>
                             <div className="text-left flex-1">
-                              <span className="text-white font-semibold block">{method.name}</span>
-                              <span className="text-white/50 text-sm">{method.description}</span>
+                              {method.key === "sumup" || method.key === "card" ? (
+                                <>
+                                  <span className="text-white font-semibold block">Credit / Debit Card</span>
+                                  <span className="text-white/50 text-sm block">(Apple Pay, CashApp, Google Pay)</span>
+                                  <span className="text-white/40 text-xs">Powered by Whop</span>
+                                </>
+                              ) : (
+                                <>
+                                  <span className="text-white font-semibold block">{method.name}</span>
+                                  <span className="text-white/50 text-sm">{method.description}</span>
+                                </>
+                              )}
                             </div>
                             {formData.paymentMethod === method.id && (
                               <div className="ml-auto">
