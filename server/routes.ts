@@ -697,6 +697,169 @@ Sitemap: https://zengoswap.com/sitemap.xml
     }
   });
 
+  // Whop checkout validation schema
+  const whopCheckoutSchema = z.object({
+    amount: z.union([z.string(), z.number()]).transform(val => parseFloat(String(val))),
+    currency: z.string().min(3).max(3).default("usd"),
+    description: z.string().optional(),
+    referenceId: z.string().optional(),
+    metadata: z.record(z.string()).optional()
+  });
+
+  // Whop checkout endpoint - creates a dynamic checkout configuration
+  app.post("/api/whop/checkout", async (req, res) => {
+    try {
+      const parsed = whopCheckoutSchema.safeParse(req.body);
+      if (!parsed.success) {
+        return res.status(400).json({ error: "Invalid request data", details: parsed.error.errors });
+      }
+
+      const { amount, currency, description, referenceId, metadata } = parsed.data;
+
+      // Get Whop settings from database
+      const settings = await storage.getSettings();
+      const getSettingValue = (key: string) => settings.find(s => s.key === key)?.value;
+      
+      const apiKey = getSettingValue("whopApiKey");
+      const companyId = getSettingValue("whopCompanyId");
+      const productId = getSettingValue("whopProductId");
+
+      if (!apiKey || !companyId) {
+        return res.status(500).json({ error: "Whop not configured. Please set API key and Company ID in admin settings." });
+      }
+
+      // Create checkout configuration via Whop API
+      const response = await fetch('https://api.whop.com/api/v1/checkout_configurations', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          plan: {
+            company_id: companyId,
+            currency: currency.toLowerCase(),
+            initial_price: amount,
+            plan_type: "one_time",
+            visibility: "hidden"
+          },
+          redirect_url: `${req.protocol}://${req.get('host')}/exchange?whop_status=success&ref=${referenceId || ''}`,
+          metadata: {
+            ...metadata,
+            reference_id: referenceId || `ZEN-${Date.now()}`,
+            description: description || 'ZengoSwap Exchange'
+          }
+        })
+      });
+
+      if (!response.ok) {
+        const errorBody = await response.text();
+        console.error('Whop checkout error:', errorBody);
+        return res.status(500).json({ error: "Failed to create Whop checkout" });
+      }
+
+      const checkout = await response.json();
+      res.json({ 
+        checkoutId: checkout.id, 
+        purchaseUrl: checkout.purchase_url,
+        checkout 
+      });
+    } catch (error) {
+      console.error('Whop checkout error:', error);
+      res.status(500).json({ error: "Failed to create Whop checkout" });
+    }
+  });
+
+  // Get Whop checkout configuration status
+  app.get("/api/whop/checkout/:id", async (req, res) => {
+    try {
+      const settings = await storage.getSettings();
+      const apiKey = settings.find(s => s.key === "whopApiKey")?.value;
+
+      if (!apiKey) {
+        return res.status(500).json({ error: "Whop not configured" });
+      }
+
+      const response = await fetch(`https://api.whop.com/api/v1/checkout_configurations/${req.params.id}`, {
+        headers: {
+          'Authorization': `Bearer ${apiKey}`
+        }
+      });
+
+      if (!response.ok) {
+        return res.status(404).json({ error: "Checkout not found" });
+      }
+
+      const checkout = await response.json();
+      res.json(checkout);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to get checkout status" });
+    }
+  });
+
+  // Verify Whop payment status by checking memberships/payments
+  app.post("/api/whop/verify", async (req, res) => {
+    try {
+      const { checkoutId, referenceId } = req.body;
+      
+      if (!checkoutId && !referenceId) {
+        return res.status(400).json({ error: "Checkout ID or Reference ID is required" });
+      }
+
+      const settings = await storage.getSettings();
+      const apiKey = settings.find(s => s.key === "whopApiKey")?.value;
+      const companyId = settings.find(s => s.key === "whopCompanyId")?.value;
+
+      if (!apiKey || !companyId) {
+        return res.status(500).json({ error: "Whop not configured" });
+      }
+
+      // Check payments for this company to find matching payment
+      const response = await fetch(`https://api.whop.com/api/v1/payments?company_id=${companyId}&limit=50`, {
+        headers: {
+          'Authorization': `Bearer ${apiKey}`
+        }
+      });
+
+      if (!response.ok) {
+        return res.status(500).json({ error: "Failed to verify Whop payment", verified: false });
+      }
+
+      const data = await response.json();
+      const payments = data.data || [];
+      
+      // Find a payment matching our reference
+      const matchingPayment = payments.find((p: any) => 
+        p.metadata?.reference_id === referenceId || 
+        p.id === checkoutId
+      );
+
+      const isPaid = matchingPayment?.status === 'paid';
+      
+      res.json({ 
+        verified: isPaid,
+        status: matchingPayment?.status || 'not_found',
+        amount: matchingPayment?.total,
+        currency: matchingPayment?.currency,
+        reference: referenceId
+      });
+    } catch (error) {
+      console.error('Whop verify error:', error);
+      res.status(500).json({ error: "Failed to verify payment", verified: false });
+    }
+  });
+
+  // Get current payment processor setting
+  app.get("/api/payment-processor", async (_req, res) => {
+    try {
+      const settings = await storage.getSettings();
+      const processor = settings.find(s => s.key === "paymentProcessor")?.value || "sumup";
+      res.json({ processor });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to get payment processor", processor: "sumup" });
+    }
+  });
+
   // Generate payment link securely (credentials stored server-side)
   app.post("/api/payment-link", (req, res) => {
     try {

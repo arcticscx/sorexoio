@@ -1012,6 +1012,101 @@ export default function Admin() {
                   </GlassCard>
 
                   <GlassCard className="p-6" hover={false}>
+                    <h3 className="text-lg font-semibold text-white mb-6">Payment Processor Settings</h3>
+                    
+                    <div className="space-y-6">
+                      <div>
+                        <label className="block text-xs font-medium text-white/60 uppercase tracking-wider mb-3">
+                          Active Payment Processor
+                        </label>
+                        <div className="flex gap-3">
+                          <button
+                            onClick={() => updateSetting.mutate({ key: "paymentProcessor", value: "sumup" })}
+                            className={cn(
+                              "flex-1 p-4 rounded-xl border transition-all",
+                              getSetting("paymentProcessor", "sumup") === "sumup"
+                                ? "bg-emerald-500/20 border-emerald-500 text-white"
+                                : "bg-white/5 border-white/10 text-white/60 hover:bg-white/10"
+                            )}
+                            data-testid="button-processor-sumup"
+                          >
+                            <div className="font-semibold">SumUp</div>
+                            <div className="text-xs mt-1 opacity-60">Credit/Debit Card</div>
+                          </button>
+                          <button
+                            onClick={() => updateSetting.mutate({ key: "paymentProcessor", value: "whop" })}
+                            className={cn(
+                              "flex-1 p-4 rounded-xl border transition-all",
+                              getSetting("paymentProcessor", "sumup") === "whop"
+                                ? "bg-emerald-500/20 border-emerald-500 text-white"
+                                : "bg-white/5 border-white/10 text-white/60 hover:bg-white/10"
+                            )}
+                            data-testid="button-processor-whop"
+                          >
+                            <div className="font-semibold">Whop</div>
+                            <div className="text-xs mt-1 opacity-60">Multiple Payment Methods</div>
+                          </button>
+                        </div>
+                        <p className="text-white/40 text-sm mt-2">
+                          Select which payment processor to use for buying crypto
+                        </p>
+                      </div>
+
+                      {getSetting("paymentProcessor", "sumup") === "whop" && (
+                        <div className="space-y-4 pt-4 border-t border-white/10">
+                          <div>
+                            <label className="block text-xs font-medium text-white/60 uppercase tracking-wider mb-2">
+                              Whop API Key
+                            </label>
+                            <GlassInput
+                              type="password"
+                              placeholder="Enter your Whop API key"
+                              defaultValue={getSetting("whopApiKey", "")}
+                              onBlur={(e) => updateSetting.mutate({ key: "whopApiKey", value: e.target.value })}
+                              data-testid="input-whop-api-key"
+                            />
+                            <p className="text-white/40 text-sm mt-1">
+                              Get this from your Whop Developer Dashboard
+                            </p>
+                          </div>
+
+                          <div>
+                            <label className="block text-xs font-medium text-white/60 uppercase tracking-wider mb-2">
+                              Whop Company ID
+                            </label>
+                            <GlassInput
+                              type="text"
+                              placeholder="biz_xxxxxxxxxxxxxx"
+                              defaultValue={getSetting("whopCompanyId", "")}
+                              onBlur={(e) => updateSetting.mutate({ key: "whopCompanyId", value: e.target.value })}
+                              data-testid="input-whop-company-id"
+                            />
+                            <p className="text-white/40 text-sm mt-1">
+                              Your Whop business ID (starts with biz_)
+                            </p>
+                          </div>
+
+                          <div>
+                            <label className="block text-xs font-medium text-white/60 uppercase tracking-wider mb-2">
+                              Whop Product ID
+                            </label>
+                            <GlassInput
+                              type="text"
+                              placeholder="prod_xxxxxxxxxxxxxx"
+                              defaultValue={getSetting("whopProductId", "")}
+                              onBlur={(e) => updateSetting.mutate({ key: "whopProductId", value: e.target.value })}
+                              data-testid="input-whop-product-id"
+                            />
+                            <p className="text-white/40 text-sm mt-1">
+                              Product ID for crypto purchases (starts with prod_)
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </GlassCard>
+
+                  <GlassCard className="p-6" hover={false}>
                     <h3 className="text-lg font-semibold text-white mb-6">Animation Settings</h3>
                     
                     <div>

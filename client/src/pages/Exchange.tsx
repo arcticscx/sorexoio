@@ -13,7 +13,7 @@ import type { Crypto, PaymentMethod, Setting } from "@shared/schema";
 import cardIcon from "@assets/ARCTIC_1768071339190.png";
 import paypalIcon from "@assets/ARCTIC_1768071353413.png";
 
-type Step = "amount" | "payment" | "details" | "paypal_payment" | "sumup_payment" | "confirm" | "success";
+type Step = "amount" | "payment" | "details" | "paypal_payment" | "sumup_payment" | "whop_payment" | "confirm" | "success";
 
 function PaymentMethodIcon({ type }: { type: string }) {
   const key = type.toLowerCase();
@@ -65,6 +65,90 @@ export default function Exchange() {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [sumupCheckoutId, setSumupCheckoutId] = useState<string | null>(null);
+  const [whopPurchaseUrl, setWhopPurchaseUrl] = useState<string | null>(null);
+  const [isCreatingWhopCheckout, setIsCreatingWhopCheckout] = useState(false);
+  const [isVerifyingWhopPayment, setIsVerifyingWhopPayment] = useState(false);
+
+  // Handle Whop payment return - check URL parameters on mount
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const whopStatus = urlParams.get('whop_status');
+    const refId = urlParams.get('ref');
+    
+    if (whopStatus === 'success' && refId && !isVerifyingWhopPayment) {
+      setIsVerifyingWhopPayment(true);
+      
+      // Retrieve stored form data from sessionStorage
+      const storedData = sessionStorage.getItem(`whop_tx_${refId}`);
+      const txData = storedData ? JSON.parse(storedData) : null;
+      
+      // Verify the Whop payment
+      fetch("/api/whop/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ referenceId: refId }),
+      })
+        .then((res) => res.json())
+        .then(async (data) => {
+          if (data.verified && txData) {
+            // Payment verified - create the transaction
+            try {
+              await apiRequest("POST", "/api/transactions", {
+                amount: txData.amount,
+                currency: txData.currency,
+                cryptoType: txData.cryptoType,
+                cryptoAmount: txData.cryptoAmount,
+                paymentMethod: "whop",
+                email: txData.email,
+                walletAddress: txData.walletAddress,
+                status: "pending",
+              });
+              
+              queryClient.invalidateQueries({ queryKey: ["/api/transactions"] });
+              
+              toast({
+                title: "Payment Successful!",
+                description: "Your transaction has been created. We'll process your order shortly.",
+              });
+              setStep("success");
+              
+              // Clear stored data
+              sessionStorage.removeItem(`whop_tx_${refId}`);
+            } catch {
+              toast({
+                title: "Transaction Error",
+                description: "Payment received but failed to create transaction. Please contact support.",
+                variant: "destructive",
+              });
+            }
+            // Clear URL parameters
+            window.history.replaceState({}, '', '/exchange');
+          } else if (data.verified) {
+            // Payment verified but no stored data
+            toast({
+              title: "Payment Successful!",
+              description: "Your payment was received. Please contact support with reference: " + refId,
+            });
+            setStep("success");
+            window.history.replaceState({}, '', '/exchange');
+          } else {
+            toast({
+              title: "Payment Pending",
+              description: "We're waiting for payment confirmation. Please check your email.",
+            });
+          }
+          setIsVerifyingWhopPayment(false);
+        })
+        .catch(() => {
+          toast({
+            title: "Verification Error",
+            description: "Could not verify payment. Please contact support with reference: " + refId,
+            variant: "destructive",
+          });
+          setIsVerifyingWhopPayment(false);
+        });
+    }
+  }, [toast, isVerifyingWhopPayment]);
 
   const { data: cryptos } = useQuery<Crypto[]>({
     queryKey: ["/api/cryptos"],
@@ -88,6 +172,9 @@ export default function Exchange() {
     const setting = settings.find((s) => s.key === key);
     return setting?.value || defaultValue;
   };
+
+  // Get the active payment processor from settings
+  const activeProcessor = getSetting("paymentProcessor", "sumup");
 
   // Generate a unique reference code for the transaction
   const generateReferenceCode = () => {
@@ -126,6 +213,49 @@ export default function Exchange() {
         });
     }
   }, [step, formData.amount, formData.currency, formData.cryptoType, referenceCode, toast]);
+
+  // Create Whop checkout when entering whop_payment step
+  useEffect(() => {
+    if (step === "whop_payment" && formData.amount && formData.currency && !whopPurchaseUrl && !isCreatingWhopCheckout) {
+      setIsCreatingWhopCheckout(true);
+      fetch("/api/whop/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          amount: parseFloat(formData.amount), 
+          currency: formData.currency.toLowerCase(),
+          description: `ZengoSwap - ${formData.cryptoType} Purchase`,
+          referenceId: referenceCode,
+          metadata: {
+            crypto_type: formData.cryptoType,
+            wallet_address: formData.walletAddress,
+            email: formData.email
+          }
+        }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.purchaseUrl) {
+            setWhopPurchaseUrl(data.purchaseUrl);
+          } else if (data.error) {
+            toast({
+              title: "Error",
+              description: data.error,
+              variant: "destructive",
+            });
+          }
+          setIsCreatingWhopCheckout(false);
+        })
+        .catch(() => {
+          toast({
+            title: "Error",
+            description: "Failed to initialize Whop payment. Please try again.",
+            variant: "destructive",
+          });
+          setIsCreatingWhopCheckout(false);
+        });
+    }
+  }, [step, formData.amount, formData.currency, formData.cryptoType, formData.walletAddress, formData.email, referenceCode, toast, whopPurchaseUrl, isCreatingWhopCheckout]);
 
   // Get price for selected crypto (with fallbacks)
   const getCryptoRate = (symbol: string) => {
@@ -284,13 +414,15 @@ export default function Exchange() {
   const handleNext = () => {
     if (!validateStep(step)) return;
 
-    // Dynamic step flow - insert payment step based on selected method
+    // Dynamic step flow - insert payment step based on selected method and processor
     const paymentMethod = formData.paymentMethod.toLowerCase();
-    const isSumUp = paymentMethod === "sumup";
+    const isCardPayment = paymentMethod === "sumup";
     
     let steps: Step[];
-    if (isSumUp) {
-      steps = ["amount", "payment", "details", "sumup_payment"];
+    if (isCardPayment) {
+      // Use Whop or SumUp based on active processor setting
+      const paymentStep: Step = activeProcessor === "whop" ? "whop_payment" : "sumup_payment";
+      steps = ["amount", "payment", "details", paymentStep];
     } else {
       steps = ["amount", "payment", "details", "confirm"];
     }
@@ -305,11 +437,12 @@ export default function Exchange() {
 
   const handleBack = () => {
     const paymentMethod = formData.paymentMethod.toLowerCase();
-    const isSumUp = paymentMethod === "sumup";
+    const isCardPayment = paymentMethod === "sumup";
     
     let steps: Step[];
-    if (isSumUp) {
-      steps = ["amount", "payment", "details", "sumup_payment"];
+    if (isCardPayment) {
+      const paymentStep: Step = activeProcessor === "whop" ? "whop_payment" : "sumup_payment";
+      steps = ["amount", "payment", "details", paymentStep];
     } else {
       steps = ["amount", "payment", "details", "confirm"];
     }
@@ -331,19 +464,22 @@ export default function Exchange() {
       walletAddress: "",
     });
     setErrors({});
+    setWhopPurchaseUrl(null);
+    setIsCreatingWhopCheckout(false);
   };
 
-  // Dynamic step indicators based on payment method
+  // Dynamic step indicators based on payment method and processor
   const selectedPaymentMethod = formData.paymentMethod.toLowerCase();
-  const isSumUpSelected = selectedPaymentMethod === "sumup";
+  const isCardPaymentSelected = selectedPaymentMethod === "sumup";
   
   let steps;
-  if (isSumUpSelected) {
+  if (isCardPaymentSelected) {
+    const paymentStepId = activeProcessor === "whop" ? "whop_payment" : "sumup_payment";
     steps = [
       { id: "amount", label: "Amount", number: 1 },
       { id: "payment", label: "Payment", number: 2 },
       { id: "details", label: "Details", number: 3 },
-      { id: "sumup_payment", label: "Pay", number: 4 },
+      { id: paymentStepId, label: "Pay", number: 4 },
     ];
   } else {
     steps = [
@@ -733,6 +869,86 @@ export default function Exchange() {
                   </motion.div>
                 )}
 
+                {step === "whop_payment" && (
+                  <motion.div
+                    key="whop_payment"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <h2 className="text-xl font-semibold text-white mb-6">
+                      Complete Payment via Whop
+                    </h2>
+
+                    <div className="space-y-5">
+                      <div className="p-4 rounded-xl bg-white/5 border border-white/10">
+                        <div className="text-white/50 text-sm mb-2">Amount:</div>
+                        <div className="text-xl font-semibold text-white">
+                          ${parseFloat(formData.amount).toLocaleString()} {formData.currency}
+                        </div>
+                      </div>
+
+                      <div className="p-4 rounded-xl bg-white/5 border border-white/10">
+                        <div className="text-white/50 text-sm mb-2">You Will Receive:</div>
+                        <div className="text-xl font-semibold text-emerald-400">
+                          {estimatedCrypto} {formData.cryptoType}
+                        </div>
+                      </div>
+
+                      <div className="p-6 rounded-xl bg-gradient-to-br from-purple-500/20 to-blue-500/20 border border-purple-500/30">
+                        {whopPurchaseUrl ? (
+                          <div className="text-center space-y-4">
+                            <p className="text-white/70">
+                              Click the button below to complete your payment securely through Whop.
+                            </p>
+                            <button
+                              onClick={() => {
+                                // Store transaction data in sessionStorage before redirect
+                                const rate = getCryptoRate(formData.cryptoType);
+                                const cryptoAmount = (parseFloat(formData.amount) * 0.95) / rate;
+                                const txData = {
+                                  amount: parseFloat(formData.amount),
+                                  currency: formData.currency,
+                                  cryptoType: formData.cryptoType,
+                                  cryptoAmount,
+                                  email: formData.email,
+                                  walletAddress: formData.walletAddress,
+                                };
+                                sessionStorage.setItem(`whop_tx_${referenceCode}`, JSON.stringify(txData));
+                                // Navigate to Whop payment page in same tab
+                                window.location.href = whopPurchaseUrl;
+                              }}
+                              className="inline-flex items-center justify-center gap-2 w-full py-4 px-6 rounded-xl bg-gradient-to-r from-purple-500 to-blue-500 text-white font-semibold text-lg hover:opacity-90 transition-opacity"
+                              data-testid="button-whop-pay"
+                            >
+                              <Wallet className="w-5 h-5" />
+                              Pay with Whop
+                            </button>
+                            <p className="text-white/50 text-sm">
+                              You will be redirected to Whop's secure payment page. After payment, you'll return here automatically.
+                            </p>
+                          </div>
+                        ) : (
+                          <div className="flex items-center justify-center py-8">
+                            <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin mr-3" />
+                            <span className="text-white">Preparing secure checkout...</span>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex items-center justify-center gap-3 p-5 rounded-xl bg-white/5 border border-white/10" data-testid="status-whop-pending">
+                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        <span className="text-lg font-medium text-white">Awaiting Payment Confirmation</span>
+                      </div>
+
+                      <p className="text-white/40 text-sm text-center">
+                        After completing payment, you'll return here and your transaction will be created automatically.
+                      </p>
+                    </div>
+                  </motion.div>
+                )}
+
                 {step === "confirm" && (
                   <motion.div
                     key="confirm"
@@ -835,7 +1051,7 @@ export default function Exchange() {
                 )}
               </AnimatePresence>
 
-              {step !== "success" && step !== "paypal_payment" && step !== "sumup_payment" && (
+              {step !== "success" && step !== "paypal_payment" && step !== "sumup_payment" && step !== "whop_payment" && (
                 <div className="flex items-center gap-4 mt-8 pt-6 border-t border-white/10">
                   {step !== "amount" && (
                     <GlassButton

@@ -46,6 +46,15 @@ Preferred communication style: Simple, everyday language.
 - Settings key-value store (`/api/settings`)
 - Swap wallets CRUD (`/api/swap-wallets`) - Manage crypto addresses for swaps
 - Live crypto prices (`/api/prices`) - Fetches BTC, ETH, SOL, USDT, LTC, XRP, BNB, BCH, USDC, TRX prices from CoinGecko with 5-minute caching
+- SumUp checkout (`/api/sumup/checkout`, `/api/sumup/verify`) - Card payment processing
+- Whop checkout (`/api/whop/checkout`, `/api/whop/verify`) - Alternative payment processor with dynamic checkout creation
+- Payment processor status (`/api/payment-processor`) - Returns the active payment processor (sumup or whop)
+
+**Payment Processors:**
+- **SumUp** - Default card payment processor, uses embedded widget
+- **Whop** - Alternative processor, uses Whop API to create dynamic checkout links
+- Admin can toggle between processors in Settings > Payment Processor Settings
+- Whop requires: API Key, Company ID, and Product ID (configured in admin panel)
 
 **Real-time Updates:** WebSocket server at `/ws` path broadcasts new transactions to connected clients
 
