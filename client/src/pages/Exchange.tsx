@@ -257,6 +257,19 @@ export default function Exchange() {
     }
   }, [step, formData.amount, formData.currency, formData.cryptoType, formData.walletAddress, formData.email, referenceCode, toast, whopPurchaseUrl, isCreatingWhopCheckout]);
 
+  // Get price for selected crypto (with fallbacks)
+  const getCryptoRate = (symbol: string) => {
+    if (prices && prices[symbol]) {
+      return prices[symbol];
+    }
+    // Fallback prices if API fails
+    const fallbacks: Record<string, number> = { 
+      BTC: 97000, ETH: 3300, SOL: 180, USDT: 1, LTC: 100, XRP: 2.5, 
+      BNB: 600, BCH: 400, USDC: 1, TRX: 0.25 
+    };
+    return fallbacks[symbol] || 1;
+  };
+
   // Poll for Whop payment completion while on whop_payment step
   useEffect(() => {
     if (step !== "whop_payment" || !referenceCode) return;
@@ -303,19 +316,6 @@ export default function Exchange() {
 
     return () => clearInterval(pollInterval);
   }, [step, referenceCode, formData, toast]);
-
-  // Get price for selected crypto (with fallbacks)
-  const getCryptoRate = (symbol: string) => {
-    if (prices && prices[symbol]) {
-      return prices[symbol];
-    }
-    // Fallback prices if API fails
-    const fallbacks: Record<string, number> = { 
-      BTC: 97000, ETH: 3300, SOL: 180, USDT: 1, LTC: 100, XRP: 2.5, 
-      BNB: 600, BCH: 400, USDC: 1, TRX: 0.25 
-    };
-    return fallbacks[symbol] || 1;
-  };
 
   const paymentMethods = (dbPaymentMethods && dbPaymentMethods.length > 0) 
     ? dbPaymentMethods.filter(pm => pm.isActive).map(pm => ({
