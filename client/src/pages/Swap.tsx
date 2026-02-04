@@ -17,7 +17,7 @@ interface PriceData {
 }
 
 const SWAP_FEE = 0.002; // 0.2% fee
-const MIN_SWAP_USD = 50; // Minimum $50 swap
+const MIN_SWAP_USD = 30; // Minimum $30 swap
 const MAX_SWAP_USD = 1000000; // Maximum $1,000,000 swap
 
 export default function Swap() {
