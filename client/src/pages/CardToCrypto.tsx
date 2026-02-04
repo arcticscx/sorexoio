@@ -226,7 +226,7 @@ export default function CardToCrypto() {
                     <div className="flex items-start gap-4">
                       <Globe className="w-5 h-5 text-emerald-400 mt-1" />
                       <div>
-                        <h3 className="text-white font-medium">$10 - $50,000 Limits</h3>
+                        <h3 className="text-white font-medium">$30 - $50,000 Limits</h3>
                         <p className="text-white/50 text-sm">Flexible purchase limits for all needs</p>
                       </div>
                     </div>

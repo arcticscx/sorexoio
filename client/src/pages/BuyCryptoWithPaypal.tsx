@@ -273,7 +273,7 @@ export default function BuyCryptoWithPaypal() {
                   <div>
                     <h3 className="text-lg font-semibold text-white mb-2">What are the limits for PayPal purchases?</h3>
                     <p className="text-white/60">
-                      You can purchase between $10 and $50,000 worth of cryptocurrency per transaction using PayPal. 
+                      You can purchase between $30 and $50,000 worth of cryptocurrency per transaction using PayPal. 
                       There are no daily limits on the number of transactions you can make.
                     </p>
                   </div>
