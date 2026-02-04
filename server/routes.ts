@@ -720,9 +720,9 @@ Sitemap: https://zengoswap.com/sitemap.xml
       const settings = await storage.getSettings();
       const getSettingValue = (key: string) => settings.find(s => s.key === key)?.value;
       
-      const apiKey = getSettingValue("whopApiKey");
-      const companyId = getSettingValue("whopCompanyId");
-      const productId = getSettingValue("whopProductId");
+      const apiKey = getSettingValue("whop_api_key");
+      const companyId = getSettingValue("whop_company_id");
+      const productId = getSettingValue("whop_product_id");
 
       if (!apiKey || !companyId) {
         return res.status(500).json({ error: "Whop not configured. Please set API key and Company ID in admin settings." });
@@ -774,7 +774,7 @@ Sitemap: https://zengoswap.com/sitemap.xml
   app.get("/api/whop/checkout/:id", async (req, res) => {
     try {
       const settings = await storage.getSettings();
-      const apiKey = settings.find(s => s.key === "whopApiKey")?.value;
+      const apiKey = settings.find(s => s.key === "whop_api_key")?.value;
 
       if (!apiKey) {
         return res.status(500).json({ error: "Whop not configured" });
@@ -807,8 +807,8 @@ Sitemap: https://zengoswap.com/sitemap.xml
       }
 
       const settings = await storage.getSettings();
-      const apiKey = settings.find(s => s.key === "whopApiKey")?.value;
-      const companyId = settings.find(s => s.key === "whopCompanyId")?.value;
+      const apiKey = settings.find(s => s.key === "whop_api_key")?.value;
+      const companyId = settings.find(s => s.key === "whop_company_id")?.value;
 
       if (!apiKey || !companyId) {
         return res.status(500).json({ error: "Whop not configured" });
@@ -853,7 +853,7 @@ Sitemap: https://zengoswap.com/sitemap.xml
   app.get("/api/payment-processor", async (_req, res) => {
     try {
       const settings = await storage.getSettings();
-      const processor = settings.find(s => s.key === "paymentProcessor")?.value || "sumup";
+      const processor = settings.find(s => s.key === "payment_processor")?.value || "sumup";
       res.json({ processor });
     } catch (error) {
       res.status(500).json({ error: "Failed to get payment processor", processor: "sumup" });
