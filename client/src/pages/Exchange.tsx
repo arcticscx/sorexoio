@@ -174,7 +174,7 @@ export default function Exchange() {
   };
 
   // Get the active payment processor from settings
-  const activeProcessor = getSetting("paymentProcessor", "sumup");
+  const activeProcessor = getSetting("payment_processor", "sumup");
 
   // Generate a unique reference code for the transaction
   const generateReferenceCode = () => {
