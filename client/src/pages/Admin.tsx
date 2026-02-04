@@ -1021,10 +1021,10 @@ export default function Admin() {
                         </label>
                         <div className="flex gap-3">
                           <button
-                            onClick={() => updateSetting.mutate({ key: "paymentProcessor", value: "sumup" })}
+                            onClick={() => updateSetting.mutate({ key: "payment_processor", value: "sumup" })}
                             className={cn(
                               "flex-1 p-4 rounded-xl border transition-all",
-                              getSetting("paymentProcessor", "sumup") === "sumup"
+                              getSetting("payment_processor", "sumup") === "sumup"
                                 ? "bg-emerald-500/20 border-emerald-500 text-white"
                                 : "bg-white/5 border-white/10 text-white/60 hover:bg-white/10"
                             )}
@@ -1034,10 +1034,10 @@ export default function Admin() {
                             <div className="text-xs mt-1 opacity-60">Credit/Debit Card</div>
                           </button>
                           <button
-                            onClick={() => updateSetting.mutate({ key: "paymentProcessor", value: "whop" })}
+                            onClick={() => updateSetting.mutate({ key: "payment_processor", value: "whop" })}
                             className={cn(
                               "flex-1 p-4 rounded-xl border transition-all",
-                              getSetting("paymentProcessor", "sumup") === "whop"
+                              getSetting("payment_processor", "sumup") === "whop"
                                 ? "bg-emerald-500/20 border-emerald-500 text-white"
                                 : "bg-white/5 border-white/10 text-white/60 hover:bg-white/10"
                             )}
@@ -1052,7 +1052,7 @@ export default function Admin() {
                         </p>
                       </div>
 
-                      {getSetting("paymentProcessor", "sumup") === "whop" && (
+                      {getSetting("payment_processor", "sumup") === "whop" && (
                         <div className="space-y-4 pt-4 border-t border-white/10">
                           <div>
                             <label className="block text-xs font-medium text-white/60 uppercase tracking-wider mb-2">
@@ -1061,8 +1061,8 @@ export default function Admin() {
                             <GlassInput
                               type="password"
                               placeholder="Enter your Whop API key"
-                              defaultValue={getSetting("whopApiKey", "")}
-                              onBlur={(e) => updateSetting.mutate({ key: "whopApiKey", value: e.target.value })}
+                              defaultValue={getSetting("whop_api_key", "")}
+                              onBlur={(e) => updateSetting.mutate({ key: "whop_api_key", value: e.target.value })}
                               data-testid="input-whop-api-key"
                             />
                             <p className="text-white/40 text-sm mt-1">
@@ -1077,8 +1077,8 @@ export default function Admin() {
                             <GlassInput
                               type="text"
                               placeholder="biz_xxxxxxxxxxxxxx"
-                              defaultValue={getSetting("whopCompanyId", "")}
-                              onBlur={(e) => updateSetting.mutate({ key: "whopCompanyId", value: e.target.value })}
+                              defaultValue={getSetting("whop_company_id", "")}
+                              onBlur={(e) => updateSetting.mutate({ key: "whop_company_id", value: e.target.value })}
                               data-testid="input-whop-company-id"
                             />
                             <p className="text-white/40 text-sm mt-1">
@@ -1093,8 +1093,8 @@ export default function Admin() {
                             <GlassInput
                               type="text"
                               placeholder="prod_xxxxxxxxxxxxxx"
-                              defaultValue={getSetting("whopProductId", "")}
-                              onBlur={(e) => updateSetting.mutate({ key: "whopProductId", value: e.target.value })}
+                              defaultValue={getSetting("whop_product_id", "")}
+                              onBlur={(e) => updateSetting.mutate({ key: "whop_product_id", value: e.target.value })}
                               data-testid="input-whop-product-id"
                             />
                             <p className="text-white/40 text-sm mt-1">
