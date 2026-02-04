@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { ArrowRight, ArrowLeft, Check, Wallet, Mail, ArrowDownUp, Sparkles, DollarSign } from "lucide-react";
+import { ArrowRight, ArrowLeft, Check, Wallet, Mail, ArrowDownUp, Sparkles, DollarSign, CreditCard } from "lucide-react";
 import { GlassCard, GlassButton, GlassInput, PrismaticBackground, GlassNavbar } from "@/components/glass";
 import { CryptoIcon } from "@/components/CryptoIcon";
 import { queryClient, apiRequest } from "@/lib/queryClient";
@@ -955,31 +955,44 @@ export default function Exchange() {
                         </div>
                       </div>
 
-                      <div className="rounded-xl overflow-hidden border border-white/10 bg-white" style={{ minHeight: "500px" }}>
+                      <div className="rounded-xl overflow-hidden border border-white/10 bg-white/5 p-8">
                         {whopPurchaseUrl ? (
-                          <iframe
-                            src={whopPurchaseUrl}
-                            className="w-full border-0"
-                            style={{ minHeight: "500px", height: "100%" }}
-                            title="Whop Payment"
-                            allow="payment"
-                            data-testid="whop-iframe"
-                          />
+                          <div className="text-center space-y-6">
+                            <div className="w-16 h-16 mx-auto rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center">
+                              <Wallet className="w-8 h-8 text-white" />
+                            </div>
+                            <div>
+                              <h3 className="text-lg font-semibold text-white mb-2">Secure Checkout Ready</h3>
+                              <p className="text-white/60 text-sm">
+                                Click below to complete your payment. You'll return here automatically after paying.
+                              </p>
+                            </div>
+                            <button
+                              onClick={() => {
+                                window.open(whopPurchaseUrl, '_blank');
+                              }}
+                              className="inline-flex items-center justify-center gap-2 w-full py-4 px-6 rounded-xl bg-gradient-to-r from-purple-500 to-blue-500 text-white font-semibold text-lg hover:opacity-90 transition-opacity"
+                              data-testid="button-whop-pay"
+                            >
+                              <CreditCard className="w-5 h-5" />
+                              Pay ${parseFloat(formData.amount).toLocaleString()}
+                            </button>
+                          </div>
                         ) : (
-                          <div className="flex items-center justify-center h-full min-h-[500px] text-gray-500 bg-white">
-                            <div className="w-6 h-6 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin mr-3" />
-                            Loading Whop payment...
+                          <div className="flex items-center justify-center py-12 text-white/60">
+                            <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin mr-3" />
+                            Preparing secure checkout...
                           </div>
                         )}
                       </div>
 
                       <div className="flex items-center justify-center gap-3 p-5 rounded-xl bg-white/5 border border-white/10" data-testid="status-whop-pending">
                         <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                        <span className="text-lg font-medium text-white">Complete payment above</span>
+                        <span className="text-lg font-medium text-white">Waiting for payment...</span>
                       </div>
 
                       <p className="text-white/40 text-sm text-center">
-                        Enter your payment details in the secure form above. Your transaction will be created after payment.
+                        After completing payment, this page will update automatically within a few seconds.
                       </p>
                     </div>
                   </motion.div>
