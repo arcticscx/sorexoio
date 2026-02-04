@@ -11,7 +11,7 @@ import { Seo } from "@/components/Seo";
 import type { SwapWallet } from "@shared/schema";
 
 const SELL_FEE = 0.005; // 0.5% fee
-const MIN_SELL_USD = 50;
+const MIN_SELL_USD = 30;
 const MAX_SELL_USD = 50000;
 
 import paypalIcon from "@assets/ARCTIC_1768071353413.png";

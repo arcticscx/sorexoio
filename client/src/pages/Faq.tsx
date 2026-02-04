@@ -116,7 +116,7 @@ const faqs = [
       },
       {
         q: "What are the purchase limits?",
-        a: "Minimum purchase is $10 USD, and maximum is $50,000 USD per transaction. For larger amounts, please contact our support team for assistance."
+        a: "Minimum purchase is $30 USD, and maximum is $50,000 USD per transaction. For larger amounts, please contact our support team for assistance."
       },
       {
         q: "Are network fees included?",
