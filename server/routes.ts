@@ -728,7 +728,11 @@ Sitemap: https://zengoswap.com/sitemap.xml
         return res.status(500).json({ error: "Whop not configured. Please set API key and Company ID in admin settings." });
       }
 
-      // Create checkout configuration via Whop API
+      // Convert USD to EUR (simple fixed rate conversion)
+      const USD_TO_EUR_RATE = 0.92;
+      const eurAmount = Math.round(amount * USD_TO_EUR_RATE * 100) / 100;
+      
+      // Create checkout configuration via Whop API (always use EUR)
       const response = await fetch('https://api.whop.com/api/v1/checkout_configurations', {
         method: 'POST',
         headers: {
@@ -738,8 +742,8 @@ Sitemap: https://zengoswap.com/sitemap.xml
         body: JSON.stringify({
           plan: {
             company_id: companyId,
-            currency: currency.toLowerCase(),
-            initial_price: amount,
+            currency: "eur",
+            initial_price: eurAmount,
             plan_type: "one_time",
             visibility: "hidden"
           },
