@@ -257,6 +257,53 @@ export default function Exchange() {
     }
   }, [step, formData.amount, formData.currency, formData.cryptoType, formData.walletAddress, formData.email, referenceCode, toast, whopPurchaseUrl, isCreatingWhopCheckout]);
 
+  // Poll for Whop payment completion while on whop_payment step
+  useEffect(() => {
+    if (step !== "whop_payment" || !referenceCode) return;
+
+    const pollInterval = setInterval(async () => {
+      try {
+        const res = await fetch("/api/whop/verify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ referenceId: referenceCode }),
+        });
+        const data = await res.json();
+        
+        if (data.verified) {
+          clearInterval(pollInterval);
+          
+          // Create the transaction
+          const rate = getCryptoRate(formData.cryptoType);
+          const cryptoAmount = (parseFloat(formData.amount) * 0.95) / rate;
+          
+          await apiRequest("POST", "/api/transactions", {
+            amount: parseFloat(formData.amount),
+            currency: formData.currency,
+            cryptoType: formData.cryptoType,
+            cryptoAmount,
+            paymentMethod: "whop",
+            email: formData.email,
+            walletAddress: formData.walletAddress,
+            status: "pending",
+          });
+          
+          queryClient.invalidateQueries({ queryKey: ["/api/transactions"] });
+          
+          toast({
+            title: "Payment Successful!",
+            description: "Your transaction has been created. We'll process your order shortly.",
+          });
+          setStep("success");
+        }
+      } catch {
+        // Silently continue polling
+      }
+    }, 5000); // Poll every 5 seconds
+
+    return () => clearInterval(pollInterval);
+  }, [step, referenceCode, formData, toast]);
+
   // Get price for selected crypto (with fallbacks)
   const getCryptoRate = (symbol: string) => {
     if (prices && prices[symbol]) {
@@ -908,54 +955,31 @@ export default function Exchange() {
                         </div>
                       </div>
 
-                      <div className="p-6 rounded-xl bg-gradient-to-br from-purple-500/20 to-blue-500/20 border border-purple-500/30">
+                      <div className="rounded-xl overflow-hidden border border-white/10 bg-white" style={{ minHeight: "500px" }}>
                         {whopPurchaseUrl ? (
-                          <div className="text-center space-y-4">
-                            <p className="text-white/70">
-                              Click the button below to complete your payment securely through Whop.
-                            </p>
-                            <button
-                              onClick={() => {
-                                // Store transaction data in sessionStorage before redirect
-                                const rate = getCryptoRate(formData.cryptoType);
-                                const cryptoAmount = (parseFloat(formData.amount) * 0.95) / rate;
-                                const txData = {
-                                  amount: parseFloat(formData.amount),
-                                  currency: formData.currency,
-                                  cryptoType: formData.cryptoType,
-                                  cryptoAmount,
-                                  email: formData.email,
-                                  walletAddress: formData.walletAddress,
-                                };
-                                sessionStorage.setItem(`whop_tx_${referenceCode}`, JSON.stringify(txData));
-                                // Navigate to Whop payment page in same tab
-                                window.location.href = whopPurchaseUrl;
-                              }}
-                              className="inline-flex items-center justify-center gap-2 w-full py-4 px-6 rounded-xl bg-gradient-to-r from-purple-500 to-blue-500 text-white font-semibold text-lg hover:opacity-90 transition-opacity"
-                              data-testid="button-whop-pay"
-                            >
-                              <Wallet className="w-5 h-5" />
-                              Pay with Whop
-                            </button>
-                            <p className="text-white/50 text-sm">
-                              You will be redirected to Whop's secure payment page. After payment, you'll return here automatically.
-                            </p>
-                          </div>
+                          <iframe
+                            src={whopPurchaseUrl}
+                            className="w-full border-0"
+                            style={{ minHeight: "500px", height: "100%" }}
+                            title="Whop Payment"
+                            allow="payment"
+                            data-testid="whop-iframe"
+                          />
                         ) : (
-                          <div className="flex items-center justify-center py-8">
-                            <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin mr-3" />
-                            <span className="text-white">Preparing secure checkout...</span>
+                          <div className="flex items-center justify-center h-full min-h-[500px] text-gray-500 bg-white">
+                            <div className="w-6 h-6 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin mr-3" />
+                            Loading Whop payment...
                           </div>
                         )}
                       </div>
 
                       <div className="flex items-center justify-center gap-3 p-5 rounded-xl bg-white/5 border border-white/10" data-testid="status-whop-pending">
                         <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                        <span className="text-lg font-medium text-white">Awaiting Payment Confirmation</span>
+                        <span className="text-lg font-medium text-white">Complete payment above</span>
                       </div>
 
                       <p className="text-white/40 text-sm text-center">
-                        After completing payment, you'll return here and your transaction will be created automatically.
+                        Enter your payment details in the secure form above. Your transaction will be created after payment.
                       </p>
                     </div>
                   </motion.div>
