@@ -280,6 +280,18 @@ export default function Exchange() {
       }))
     : fallbackPaymentMethods;
 
+  // Transform payment methods based on active processor
+  const displayPaymentMethods = paymentMethods.map(method => {
+    if (method.key === "sumup") {
+      return {
+        ...method,
+        name: activeProcessor === "whop" ? "Whop" : "SumUp",
+        description: "Pay with Card"
+      };
+    }
+    return method;
+  });
+
   const createTransaction = useMutation({
     mutationFn: async () => {
       // Use live crypto rate with 5% fee
@@ -653,7 +665,7 @@ export default function Exchange() {
                     </h2>
 
                     <div className="space-y-3">
-                      {paymentMethods.map((method) => {
+                      {displayPaymentMethods.map((method) => {
                         const isPayPal = method.key.toLowerCase() === "paypal";
                         
                         if (isPayPal) {
