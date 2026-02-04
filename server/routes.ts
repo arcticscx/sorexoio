@@ -759,8 +759,14 @@ Sitemap: https://zengoswap.com/sitemap.xml
       }
 
       const checkout = await response.json();
+      console.log('Whop checkout response:', JSON.stringify(checkout, null, 2));
+      
+      // Extract plan ID from the response (nested in plan object or as plan_id)
+      const planId = checkout.plan?.id || checkout.plan_id;
+      
       res.json({ 
         checkoutId: checkout.id, 
+        planId: planId,
         purchaseUrl: checkout.purchase_url,
         checkout 
       });

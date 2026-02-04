@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link, useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -8,6 +8,7 @@ import { CryptoIcon } from "@/components/CryptoIcon";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Seo } from "@/components/Seo";
+import { WhopCheckoutEmbed } from "@whop/checkout/react";
 import type { Crypto, PaymentMethod, Setting } from "@shared/schema";
 
 import cardIcon from "@assets/ARCTIC_1768071339190.png";
@@ -66,6 +67,7 @@ export default function Exchange() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [sumupCheckoutId, setSumupCheckoutId] = useState<string | null>(null);
   const [whopPurchaseUrl, setWhopPurchaseUrl] = useState<string | null>(null);
+  const [whopPlanId, setWhopPlanId] = useState<string | null>(null);
   const [isCreatingWhopCheckout, setIsCreatingWhopCheckout] = useState(false);
   const [isVerifyingWhopPayment, setIsVerifyingWhopPayment] = useState(false);
 
@@ -237,7 +239,11 @@ export default function Exchange() {
         .then((data) => {
           if (data.purchaseUrl) {
             setWhopPurchaseUrl(data.purchaseUrl);
-          } else if (data.error) {
+          }
+          if (data.planId) {
+            setWhopPlanId(data.planId);
+          }
+          if (data.error) {
             toast({
               title: "Error",
               description: data.error,
@@ -270,7 +276,45 @@ export default function Exchange() {
     return fallbacks[symbol] || 1;
   };
 
-  // Poll for Whop payment completion while on whop_payment step
+  // Handle Whop checkout completion callback
+  const handleWhopComplete = useCallback(async (planId: string, receiptId: string) => {
+    console.log('Whop checkout complete:', planId, receiptId);
+    
+    // Create the transaction
+    const rate = getCryptoRate(formData.cryptoType);
+    const cryptoAmount = (parseFloat(formData.amount) * 0.95) / rate;
+    
+    try {
+      await apiRequest("POST", "/api/transactions", {
+        amount: parseFloat(formData.amount),
+        currency: formData.currency,
+        cryptoType: formData.cryptoType,
+        cryptoAmount,
+        paymentMethod: "whop",
+        email: formData.email,
+        walletAddress: formData.walletAddress,
+        status: "pending",
+        referenceId: referenceCode,
+      });
+      
+      queryClient.invalidateQueries({ queryKey: ["/api/transactions"] });
+      
+      toast({
+        title: "Payment Successful!",
+        description: "Your transaction has been created. We'll process your order shortly.",
+      });
+      setStep("success");
+    } catch (error) {
+      console.error("Failed to create transaction:", error);
+      toast({
+        title: "Error",
+        description: "Payment received but failed to create transaction. Please contact support.",
+        variant: "destructive",
+      });
+    }
+  }, [formData, referenceCode, toast]);
+
+  // Poll for Whop payment completion while on whop_payment step (backup for embed)
   useEffect(() => {
     if (step !== "whop_payment" || !referenceCode) return;
 
@@ -955,16 +999,23 @@ export default function Exchange() {
                         </div>
                       </div>
 
-                      <div className="rounded-xl overflow-hidden border border-white/10 bg-white/5 p-8">
-                        {whopPurchaseUrl ? (
-                          <div className="text-center space-y-6">
+                      <div className="rounded-xl overflow-hidden border border-white/10 bg-white" style={{ minHeight: "400px" }}>
+                        {whopPlanId ? (
+                          <WhopCheckoutEmbed
+                            planId={whopPlanId}
+                            theme="light"
+                            onComplete={handleWhopComplete}
+                            skipRedirect={true}
+                          />
+                        ) : whopPurchaseUrl ? (
+                          <div className="text-center space-y-6 p-8 bg-white/5">
                             <div className="w-16 h-16 mx-auto rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center">
                               <Wallet className="w-8 h-8 text-white" />
                             </div>
                             <div>
                               <h3 className="text-lg font-semibold text-white mb-2">Secure Checkout Ready</h3>
                               <p className="text-white/60 text-sm">
-                                Click below to complete your payment. You'll return here automatically after paying.
+                                Click below to complete your payment.
                               </p>
                             </div>
                             <button
@@ -979,20 +1030,22 @@ export default function Exchange() {
                             </button>
                           </div>
                         ) : (
-                          <div className="flex items-center justify-center py-12 text-white/60">
-                            <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin mr-3" />
+                          <div className="flex items-center justify-center py-12 text-gray-500">
+                            <div className="w-6 h-6 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin mr-3" />
                             Preparing secure checkout...
                           </div>
                         )}
                       </div>
 
-                      <div className="flex items-center justify-center gap-3 p-5 rounded-xl bg-white/5 border border-white/10" data-testid="status-whop-pending">
-                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                        <span className="text-lg font-medium text-white">Waiting for payment...</span>
-                      </div>
+                      {!whopPlanId && (
+                        <div className="flex items-center justify-center gap-3 p-5 rounded-xl bg-white/5 border border-white/10" data-testid="status-whop-pending">
+                          <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          <span className="text-lg font-medium text-white">Waiting for payment...</span>
+                        </div>
+                      )}
 
                       <p className="text-white/40 text-sm text-center">
-                        After completing payment, this page will update automatically within a few seconds.
+                        Complete payment above. This page updates automatically after payment.
                       </p>
                     </div>
                   </motion.div>
