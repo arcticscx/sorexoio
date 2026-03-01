@@ -46,7 +46,7 @@ const steps = [
 
 export default function CryptoSwapPage() {
   useEffect(() => {
-    document.title = "Crypto Swap | Exchange Bitcoin, Ethereum & More – ZengoSwap";
+    document.title = "Crypto Swap | Exchange Bitcoin, Ethereum & More – Sorexo";
   }, []);
 
   return (
@@ -64,13 +64,13 @@ export default function CryptoSwapPage() {
               transition={{ duration: 0.6 }}
             >
               <div className="inline-flex items-center gap-2 px-4 py-2 glass-pill mb-6">
-                <ArrowDownUp className="w-4 h-4 text-emerald-400" />
+                <ArrowDownUp className="w-4 h-4 text-orange-400" />
                 <span className="text-sm text-white/80">0.2% Fee Only</span>
               </div>
 
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-6 text-balance">
                 Swap Crypto{" "}
-                <span className="zengo-text">Instantly</span>
+                <span className="sorexo-text">Instantly</span>
               </h1>
 
               <p className="text-lg sm:text-xl text-white/60 max-w-3xl mx-auto mb-10 text-balance">
@@ -100,15 +100,15 @@ export default function CryptoSwapPage() {
               transition={{ duration: 0.6, delay: 0.2 }}
             >
               <GlassCard className="p-4 sm:p-6 text-center" hover={false}>
-                <div className="text-2xl sm:text-3xl font-bold zengo-text">0.2%</div>
+                <div className="text-2xl sm:text-3xl font-bold sorexo-text">0.2%</div>
                 <div className="text-xs sm:text-sm text-white/50 mt-1">Swap Fee</div>
               </GlassCard>
               <GlassCard className="p-4 sm:p-6 text-center" hover={false}>
-                <div className="text-2xl sm:text-3xl font-bold zengo-text">$50</div>
+                <div className="text-2xl sm:text-3xl font-bold sorexo-text">$50</div>
                 <div className="text-xs sm:text-sm text-white/50 mt-1">Minimum Swap</div>
               </GlassCard>
               <GlassCard className="p-4 sm:p-6 text-center" hover={false}>
-                <div className="text-2xl sm:text-3xl font-bold zengo-text">$1M</div>
+                <div className="text-2xl sm:text-3xl font-bold sorexo-text">$1M</div>
                 <div className="text-xs sm:text-sm text-white/50 mt-1">Maximum Swap</div>
               </GlassCard>
             </motion.div>
@@ -123,7 +123,7 @@ export default function CryptoSwapPage() {
             >
               <div className="text-center mb-12">
                 <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">
-                  Why Swap with ZengoSwap?
+                  Why Swap with Sorexo?
                 </h2>
                 <p className="text-white/50 max-w-2xl mx-auto">
                   Our crypto swap service offers the lowest fees, fastest execution, and widest selection 
@@ -141,8 +141,8 @@ export default function CryptoSwapPage() {
                     transition={{ duration: 0.4, delay: index * 0.1 }}
                   >
                     <GlassCard className="p-6 h-full" data-testid={`benefit-card-${index}`}>
-                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20 flex items-center justify-center mb-4">
-                        <benefit.icon className="w-6 h-6 text-emerald-400" />
+                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500/20 to-purple-500/20 flex items-center justify-center mb-4">
+                        <benefit.icon className="w-6 h-6 text-orange-400" />
                       </div>
                       <h3 className="text-lg font-semibold text-white mb-2">
                         {benefit.title}
@@ -170,7 +170,7 @@ export default function CryptoSwapPage() {
                     How Crypto Swap Works
                   </h2>
                   <p className="text-white/50 max-w-2xl mx-auto">
-                    Swapping cryptocurrencies on ZengoSwap is simple and straightforward. Follow these 
+                    Swapping cryptocurrencies on Sorexo is simple and straightforward. Follow these 
                     four easy steps to complete your exchange.
                   </p>
                 </div>
@@ -185,7 +185,7 @@ export default function CryptoSwapPage() {
                       transition={{ duration: 0.4, delay: index * 0.1 }}
                       className="text-center"
                     >
-                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center mx-auto mb-4">
+                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-orange-500 to-purple-500 flex items-center justify-center mx-auto mb-4">
                         <span className="text-white font-bold text-lg">{item.step}</span>
                       </div>
                       <h3 className="text-lg font-semibold text-white mb-2">{item.title}</h3>
@@ -227,7 +227,7 @@ export default function CryptoSwapPage() {
                         <div className="flex items-center gap-3">
                           <div className="flex items-center gap-1">
                             <span className="text-white font-bold">{pair.from}</span>
-                            <ArrowRight className="w-4 h-4 text-emerald-400" />
+                            <ArrowRight className="w-4 h-4 text-orange-400" />
                             <span className="text-white font-bold">{pair.to}</span>
                           </div>
                         </div>
@@ -268,7 +268,7 @@ export default function CryptoSwapPage() {
                     </div>
                     <div className="flex justify-between items-center p-3 rounded-lg bg-white/5">
                       <span className="text-white/60">Swap Fee</span>
-                      <span className="text-emerald-400 font-medium">0.2% only</span>
+                      <span className="text-orange-400 font-medium">0.2% only</span>
                     </div>
                     <div className="flex justify-between items-center p-3 rounded-lg bg-white/5">
                       <span className="text-white/60">Network Fees</span>
@@ -283,28 +283,28 @@ export default function CryptoSwapPage() {
                   </h2>
                   <div className="space-y-4">
                     <div className="flex items-start gap-4">
-                      <CheckCircle className="w-5 h-5 text-emerald-400 mt-1" />
+                      <CheckCircle className="w-5 h-5 text-orange-400 mt-1" />
                       <div>
                         <h3 className="text-white font-medium">No Account Required</h3>
                         <p className="text-white/50 text-sm">Start swapping immediately without registration</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-4">
-                      <CheckCircle className="w-5 h-5 text-emerald-400 mt-1" />
+                      <CheckCircle className="w-5 h-5 text-orange-400 mt-1" />
                       <div>
                         <h3 className="text-white font-medium">Fixed Rates Available</h3>
                         <p className="text-white/50 text-sm">Lock in your rate for 15 minutes</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-4">
-                      <CheckCircle className="w-5 h-5 text-emerald-400 mt-1" />
+                      <CheckCircle className="w-5 h-5 text-orange-400 mt-1" />
                       <div>
                         <h3 className="text-white font-medium">10+ Cryptocurrencies</h3>
                         <p className="text-white/50 text-sm">Swap between all major cryptocurrencies</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-4">
-                      <CheckCircle className="w-5 h-5 text-emerald-400 mt-1" />
+                      <CheckCircle className="w-5 h-5 text-orange-400 mt-1" />
                       <div>
                         <h3 className="text-white font-medium">24/7 Availability</h3>
                         <p className="text-white/50 text-sm">Swap anytime, anywhere in the world</p>
@@ -365,11 +365,11 @@ export default function CryptoSwapPage() {
       <footer className="border-t border-white/10 py-8 px-4">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-emerald-400" />
-            <span className="font-semibold zengo-text">ZengoSwap</span>
+            <Sparkles className="w-5 h-5 text-orange-400" />
+            <span className="font-semibold sorexo-text">Sorexo</span>
           </div>
           <p className="text-white/40 text-sm">
-            © {new Date().getFullYear()} ZengoSwap Exchange. All rights reserved.
+            © {new Date().getFullYear()} Sorexo Exchange. All rights reserved.
           </p>
         </div>
       </footer>

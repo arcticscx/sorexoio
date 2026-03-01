@@ -1,11 +1,11 @@
 import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { 
-  LayoutDashboard, 
-  Activity, 
-  Settings, 
-  Coins, 
+import {
+  LayoutDashboard,
+  Activity,
+  Settings,
+  Coins,
   Wallet,
   Plus,
   Edit3,
@@ -321,7 +321,7 @@ export default function Admin() {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
         <PrismaticBackground intensity="low" enableParallax={false} />
-        
+
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -329,7 +329,7 @@ export default function Admin() {
         >
           <GlassCard className="p-8 w-full max-w-md" hover={false}>
             <div className="text-center mb-8">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center mx-auto mb-4 shadow-glow">
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-purple-500 flex items-center justify-center mx-auto mb-4 shadow-glow">
                 <Lock className="w-8 h-8 text-white" />
               </div>
               <h1 className="text-2xl font-bold text-white mb-2">Admin Access</h1>
@@ -428,8 +428,8 @@ export default function Admin() {
                   <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <GlassCard className="p-6" hover={false}>
                       <div className="flex items-center gap-3 mb-3">
-                        <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center">
-                          <Wallet className="w-5 h-5 text-emerald-400" />
+                        <div className="w-10 h-10 rounded-xl bg-orange-500/20 flex items-center justify-center">
+                          <Wallet className="w-5 h-5 text-orange-400" />
                         </div>
                         <span className="text-white/50 text-sm">Total Volume</span>
                       </div>
@@ -452,8 +452,8 @@ export default function Admin() {
 
                     <GlassCard className="p-6" hover={false}>
                       <div className="flex items-center gap-3 mb-3">
-                        <div className="w-10 h-10 rounded-xl bg-green-500/20 flex items-center justify-center">
-                          <Check className="w-5 h-5 text-green-400" />
+                        <div className="w-10 h-10 rounded-xl bg-orange-500/20 flex items-center justify-center">
+                          <Check className="w-5 h-5 text-orange-400" />
                         </div>
                         <span className="text-white/50 text-sm">Completed</span>
                       </div>
@@ -657,7 +657,7 @@ export default function Admin() {
                             className="flex items-center justify-between p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-colors"
                           >
                             <div className="flex items-center gap-4">
-                              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-emerald-500/30 to-teal-500/30 flex items-center justify-center overflow-hidden">
+                              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-orange-500/30 to-purple-500/30 flex items-center justify-center overflow-hidden">
                                 {c.icon ? (
                                   <img src={c.icon} alt={c.name} loading="eager" decoding="sync" className="w-full h-full object-cover" />
                                 ) : (
@@ -673,7 +673,7 @@ export default function Admin() {
                             <div className="flex items-center gap-3">
                               <div className={cn(
                                 "px-2 py-1 rounded-full text-xs",
-                                c.isActive ? "bg-emerald-500/20 text-emerald-300" : "bg-white/10 text-white/50"
+                                c.isActive ? "bg-orange-500/20 text-orange-300" : "bg-white/10 text-white/50"
                               )}>
                                 {c.isActive ? "Active" : "Inactive"}
                               </div>
@@ -873,14 +873,14 @@ export default function Admin() {
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2">
                                 <span className="font-semibold text-white">{sw.cryptoName}</span>
-                                <span className="text-emerald-400 text-xs font-medium">({sw.cryptoSymbol})</span>
+                                <span className="text-orange-400 text-xs font-medium">({sw.cryptoSymbol})</span>
                               </div>
                               <p className="text-white/40 text-sm truncate mt-1 font-mono">{sw.walletAddress}</p>
                             </div>
                             <div className="flex items-center gap-2">
                               <div className={cn(
                                 "px-2 py-1 rounded-full text-xs",
-                                sw.isActive ? "bg-emerald-500/20 text-emerald-300" : "bg-white/10 text-white/50"
+                                sw.isActive ? "bg-orange-500/20 text-orange-300" : "bg-white/10 text-white/50"
                               )}>
                                 {sw.isActive ? "Active" : "Inactive"}
                               </div>
@@ -933,7 +933,7 @@ export default function Admin() {
                 >
                   <GlassCard className="p-6" hover={false}>
                     <h3 className="text-lg font-semibold text-white mb-6">General Settings</h3>
-                    
+
                     <div className="space-y-6">
                       <div>
                         <label className="block text-xs font-medium text-white/60 uppercase tracking-wider mb-2">
@@ -941,8 +941,8 @@ export default function Admin() {
                         </label>
                         <GlassInput
                           type="text"
-                          placeholder="ZengoSwap"
-                          defaultValue={getSetting("siteName", "ZengoSwap")}
+                          placeholder="Sorexo"
+                          defaultValue={getSetting("siteName", "Sorexo")}
                           onBlur={(e) => updateSetting.mutate({ key: "siteName", value: e.target.value })}
                           data-testid="input-site-name"
                         />
@@ -991,7 +991,7 @@ export default function Admin() {
 
                   <GlassCard className="p-6" hover={false}>
                     <h3 className="text-lg font-semibold text-white mb-6">PayPal Settings</h3>
-                    
+
                     <div className="space-y-6">
                       <div>
                         <label className="block text-xs font-medium text-white/60 uppercase tracking-wider mb-2">
@@ -1013,7 +1013,7 @@ export default function Admin() {
 
                   <GlassCard className="p-6" hover={false}>
                     <h3 className="text-lg font-semibold text-white mb-6">Payment Processor Settings</h3>
-                    
+
                     <div className="space-y-6">
                       <div>
                         <label className="block text-xs font-medium text-white/60 uppercase tracking-wider mb-3">
@@ -1025,7 +1025,7 @@ export default function Admin() {
                             className={cn(
                               "flex-1 p-4 rounded-xl border transition-all",
                               getSetting("payment_processor", "sumup") === "sumup"
-                                ? "bg-emerald-500/20 border-emerald-500 text-white"
+                                ? "bg-orange-500/20 border-orange-500 text-white"
                                 : "bg-white/5 border-white/10 text-white/60 hover:bg-white/10"
                             )}
                             data-testid="button-processor-sumup"
@@ -1038,7 +1038,7 @@ export default function Admin() {
                             className={cn(
                               "flex-1 p-4 rounded-xl border transition-all",
                               getSetting("payment_processor", "sumup") === "whop"
-                                ? "bg-emerald-500/20 border-emerald-500 text-white"
+                                ? "bg-orange-500/20 border-orange-500 text-white"
                                 : "bg-white/5 border-white/10 text-white/60 hover:bg-white/10"
                             )}
                             data-testid="button-processor-whop"
@@ -1108,7 +1108,7 @@ export default function Admin() {
 
                   <GlassCard className="p-6" hover={false}>
                     <h3 className="text-lg font-semibold text-white mb-6">Animation Settings</h3>
-                    
+
                     <div>
                       <label className="block text-xs font-medium text-white/60 uppercase tracking-wider mb-3">
                         Background Animation Intensity
@@ -1150,7 +1150,7 @@ export default function Admin() {
                     className={cn(
                       "p-3 rounded-lg border transition-all",
                       editingTransaction.status === s.value
-                        ? "bg-emerald-500/20 border-emerald-500/50 text-white"
+                        ? "bg-orange-500/20 border-orange-500/50 text-white"
                         : "bg-white/5 border-white/10 text-white/60 hover:bg-white/10"
                     )}
                     data-testid={`button-status-${s.value}`}
@@ -1167,7 +1167,7 @@ export default function Admin() {
                 id="featured"
                 checked={editingTransaction.isFeatured || false}
                 onChange={(e) => setEditingTransaction({ ...editingTransaction, isFeatured: e.target.checked })}
-                className="w-4 h-4 rounded border-white/20 bg-white/5 text-emerald-500 focus:ring-emerald-500"
+                className="w-4 h-4 rounded border-white/20 bg-white/5 text-orange-500 focus:ring-orange-500"
               />
               <label htmlFor="featured" className="text-white/70 flex items-center gap-2">
                 <Star className="w-4 h-4 text-amber-400" />
@@ -1282,7 +1282,7 @@ export default function Admin() {
               disabled={(editingCrypto ? updateCrypto.isPending : createCrypto.isPending) || !newCrypto.name || !newCrypto.symbol}
               data-testid="button-save-crypto"
             >
-              {editingCrypto 
+              {editingCrypto
                 ? (updateCrypto.isPending ? "Saving..." : "Save Changes")
                 : (createCrypto.isPending ? "Adding..." : "Add Crypto")
               }
@@ -1395,7 +1395,7 @@ export default function Admin() {
               disabled={(editingPayment ? updatePaymentMethod.isPending : createPaymentMethod.isPending) || !newPayment.name || !newPayment.key}
               data-testid="button-save-payment"
             >
-              {editingPayment 
+              {editingPayment
                 ? (updatePaymentMethod.isPending ? "Saving..." : "Save Changes")
                 : (createPaymentMethod.isPending ? "Adding..." : "Add Payment")
               }
@@ -1508,7 +1508,7 @@ export default function Admin() {
               disabled={(editingSwapWallet ? updateSwapWallet.isPending : createSwapWallet.isPending) || !newSwapWallet.cryptoName || !newSwapWallet.cryptoSymbol || !newSwapWallet.walletAddress}
               data-testid="button-save-swap-wallet"
             >
-              {editingSwapWallet 
+              {editingSwapWallet
                 ? (updateSwapWallet.isPending ? "Saving..." : "Save Changes")
                 : (createSwapWallet.isPending ? "Adding..." : "Add Wallet")
               }

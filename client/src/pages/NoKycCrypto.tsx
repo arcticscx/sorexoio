@@ -54,7 +54,7 @@ const privacyFeatures = [
 
 export default function NoKycCrypto() {
   useEffect(() => {
-    document.title = "No KYC Crypto Exchange | Buy Crypto Anonymously – ZengoSwap";
+    document.title = "No KYC Crypto Exchange | Buy Crypto Anonymously – Sorexo";
   }, []);
 
   return (
@@ -72,13 +72,13 @@ export default function NoKycCrypto() {
               transition={{ duration: 0.6 }}
             >
               <div className="inline-flex items-center gap-2 px-4 py-2 glass-pill mb-6">
-                <Lock className="w-4 h-4 text-emerald-400" />
+                <Lock className="w-4 h-4 text-orange-400" />
                 <span className="text-sm text-white/80">Privacy First</span>
               </div>
 
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-6 text-balance">
                 No KYC{" "}
-                <span className="zengo-text">Crypto Exchange</span>
+                <span className="sorexo-text">Crypto Exchange</span>
               </h1>
 
               <p className="text-lg sm:text-xl text-white/60 max-w-3xl mx-auto mb-10 text-balance">
@@ -129,8 +129,8 @@ export default function NoKycCrypto() {
                     transition={{ duration: 0.4, delay: index * 0.1 }}
                   >
                     <GlassCard className="p-6 h-full" data-testid={`benefit-card-${index}`}>
-                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20 flex items-center justify-center mb-4">
-                        <benefit.icon className="w-6 h-6 text-emerald-400" />
+                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500/20 to-purple-500/20 flex items-center justify-center mb-4">
+                        <benefit.icon className="w-6 h-6 text-orange-400" />
                       </div>
                       <h3 className="text-lg font-semibold text-white mb-2">
                         {benefit.title}
@@ -158,7 +158,7 @@ export default function NoKycCrypto() {
                     KYC vs No-KYC Comparison
                   </h2>
                   <p className="text-white/50 max-w-2xl mx-auto">
-                    See how ZengoSwap's no-KYC approach compares to traditional exchanges that require identity verification.
+                    See how Sorexo's no-KYC approach compares to traditional exchanges that require identity verification.
                   </p>
                 </div>
 
@@ -168,7 +168,7 @@ export default function NoKycCrypto() {
                       <tr className="border-b border-white/10">
                         <th className="text-left py-4 px-4 text-white font-semibold">Feature</th>
                         <th className="text-center py-4 px-4 text-white/60 font-medium">KYC Exchanges</th>
-                        <th className="text-center py-4 px-4 text-emerald-400 font-medium">ZengoSwap (No KYC)</th>
+                        <th className="text-center py-4 px-4 text-orange-400 font-medium">Sorexo (No KYC)</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -176,7 +176,7 @@ export default function NoKycCrypto() {
                         <tr key={point.feature} className="border-b border-white/5">
                           <td className="py-4 px-4 text-white">{point.feature}</td>
                           <td className="py-4 px-4 text-center text-white/50">{point.kyc}</td>
-                          <td className="py-4 px-4 text-center text-emerald-400">{point.noKyc}</td>
+                          <td className="py-4 px-4 text-center text-orange-400">{point.noKyc}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -198,7 +198,7 @@ export default function NoKycCrypto() {
                   Your Privacy Matters
                 </h2>
                 <p className="text-white/50 max-w-2xl mx-auto">
-                  We've built ZengoSwap with privacy as a core principle, not an afterthought.
+                  We've built Sorexo with privacy as a core principle, not an afterthought.
                 </p>
               </div>
 
@@ -212,7 +212,7 @@ export default function NoKycCrypto() {
                     transition={{ duration: 0.4, delay: index * 0.1 }}
                   >
                     <GlassCard className="p-6 h-full" data-testid={`privacy-card-${index}`}>
-                      <Shield className="w-8 h-8 text-emerald-400 mb-4" />
+                      <Shield className="w-8 h-8 text-orange-400 mb-4" />
                       <h3 className="text-lg font-semibold text-white mb-2">{feature.title}</h3>
                       <p className="text-white/50 text-sm">{feature.description}</p>
                     </GlassCard>
@@ -274,21 +274,21 @@ export default function NoKycCrypto() {
                   </h2>
                   <div className="space-y-4">
                     <div className="flex items-center gap-3 p-3 rounded-lg bg-white/5">
-                      <CheckCircle className="w-6 h-6 text-emerald-400" />
+                      <CheckCircle className="w-6 h-6 text-orange-400" />
                       <div>
                         <span className="text-white">Email Address</span>
                         <p className="text-white/50 text-sm">For transaction notifications only</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3 p-3 rounded-lg bg-white/5">
-                      <CheckCircle className="w-6 h-6 text-emerald-400" />
+                      <CheckCircle className="w-6 h-6 text-orange-400" />
                       <div>
                         <span className="text-white">Wallet Address</span>
                         <p className="text-white/50 text-sm">Where you want to receive your crypto</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3 p-3 rounded-lg bg-white/5">
-                      <CheckCircle className="w-6 h-6 text-emerald-400" />
+                      <CheckCircle className="w-6 h-6 text-orange-400" />
                       <div>
                         <span className="text-white">Payment Method</span>
                         <p className="text-white/50 text-sm">Card or PayPal for your purchase</p>
@@ -352,11 +352,11 @@ export default function NoKycCrypto() {
       <footer className="border-t border-white/10 py-8 px-4">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-emerald-400" />
-            <span className="font-semibold zengo-text">ZengoSwap</span>
+            <Sparkles className="w-5 h-5 text-orange-400" />
+            <span className="font-semibold sorexo-text">Sorexo</span>
           </div>
           <p className="text-white/40 text-sm">
-            © {new Date().getFullYear()} ZengoSwap Exchange. All rights reserved.
+            © {new Date().getFullYear()} Sorexo Exchange. All rights reserved.
           </p>
         </div>
       </footer>

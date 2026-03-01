@@ -27,7 +27,7 @@ const feeStructure = [
 ];
 
 const comparison = [
-  { exchange: "ZengoSwap", cardFee: "5%", swapFee: "0.2%", kyc: "No", speed: "Instant" },
+  { exchange: "Sorexo", cardFee: "5%", swapFee: "0.2%", kyc: "No", speed: "Instant" },
   { exchange: "Competitor A", cardFee: "6-8%", swapFee: "0.5%", kyc: "Yes", speed: "1-3 days" },
   { exchange: "Competitor B", cardFee: "5.5%", swapFee: "0.3%", kyc: "Yes", speed: "Hours" },
   { exchange: "Competitor C", cardFee: "7%", swapFee: "0.4%", kyc: "Yes", speed: "1-7 days" },
@@ -58,7 +58,7 @@ const benefits = [
 
 export default function Fees() {
   useEffect(() => {
-    document.title = "Exchange Fees | Low-Cost Crypto Trading – ZengoSwap";
+    document.title = "Exchange Fees | Low-Cost Crypto Trading – Sorexo";
   }, []);
 
   return (
@@ -76,13 +76,13 @@ export default function Fees() {
               transition={{ duration: 0.6 }}
             >
               <div className="inline-flex items-center gap-2 px-4 py-2 glass-pill mb-6">
-                <Percent className="w-4 h-4 text-emerald-400" />
+                <Percent className="w-4 h-4 text-orange-400" />
                 <span className="text-sm text-white/80">Transparent Pricing</span>
               </div>
 
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-6 text-balance">
                 Our{" "}
-                <span className="zengo-text">Fees</span>
+                <span className="sorexo-text">Fees</span>
               </h1>
 
               <p className="text-lg sm:text-xl text-white/60 max-w-3xl mx-auto mb-10 text-balance">
@@ -133,14 +133,14 @@ export default function Fees() {
                   >
                     <GlassCard className="p-6 h-full" variant="elevated" data-testid={`fee-card-${index}`}>
                       <div className="text-center mb-6">
-                        <div className="text-4xl font-bold zengo-text mb-2">{item.fee}</div>
+                        <div className="text-4xl font-bold sorexo-text mb-2">{item.fee}</div>
                         <h3 className="text-xl font-semibold text-white">{item.service}</h3>
                         <p className="text-white/50 text-sm mt-2">{item.description}</p>
                       </div>
                       <div className="space-y-3">
                         {item.includes.map((inc) => (
                           <div key={inc} className="flex items-center gap-2">
-                            <CheckCircle className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                            <CheckCircle className="w-4 h-4 text-orange-400 flex-shrink-0" />
                             <span className="text-white/70 text-sm">{inc}</span>
                           </div>
                         ))}
@@ -178,8 +178,8 @@ export default function Fees() {
                     transition={{ duration: 0.4, delay: index * 0.1 }}
                   >
                     <GlassCard className="p-6 h-full" data-testid={`benefit-card-${index}`}>
-                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20 flex items-center justify-center mb-4">
-                        <benefit.icon className="w-6 h-6 text-emerald-400" />
+                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500/20 to-purple-500/20 flex items-center justify-center mb-4">
+                        <benefit.icon className="w-6 h-6 text-orange-400" />
                       </div>
                       <h3 className="text-lg font-semibold text-white mb-2">
                         {benefit.title}
@@ -207,7 +207,7 @@ export default function Fees() {
                     How We Compare
                   </h2>
                   <p className="text-white/50 max-w-2xl mx-auto">
-                    See how ZengoSwap stacks up against other cryptocurrency exchanges.
+                    See how Sorexo stacks up against other cryptocurrency exchanges.
                   </p>
                 </div>
 
@@ -226,17 +226,17 @@ export default function Fees() {
                       {comparison.map((row, index) => (
                         <tr
                           key={row.exchange}
-                          className={`border-b border-white/5 ${index === 0 ? 'bg-emerald-500/10' : ''}`}
+                          className={`border-b border-white/5 ${index === 0 ? 'bg-orange-500/10' : ''}`}
                         >
                           <td className="py-4 px-4">
-                            <span className={index === 0 ? 'text-emerald-400 font-semibold' : 'text-white'}>
+                            <span className={index === 0 ? 'text-orange-400 font-semibold' : 'text-white'}>
                               {row.exchange}
                             </span>
                           </td>
                           <td className="py-4 px-4 text-center text-white/70">{row.cardFee}</td>
                           <td className="py-4 px-4 text-center text-white/70">{row.swapFee}</td>
                           <td className="py-4 px-4 text-center">
-                            <span className={row.kyc === 'No' ? 'text-emerald-400' : 'text-white/50'}>
+                            <span className={row.kyc === 'No' ? 'text-orange-400' : 'text-white/50'}>
                               {row.kyc}
                             </span>
                           </td>
@@ -269,19 +269,19 @@ export default function Fees() {
                     </p>
                     <ul className="space-y-2 text-white/60">
                       <li className="flex items-center gap-2">
-                        <CheckCircle className="w-4 h-4 text-emerald-400" />
+                        <CheckCircle className="w-4 h-4 text-orange-400" />
                         Payment processor fees (typically 2-3%)
                       </li>
                       <li className="flex items-center gap-2">
-                        <CheckCircle className="w-4 h-4 text-emerald-400" />
+                        <CheckCircle className="w-4 h-4 text-orange-400" />
                         Blockchain network transaction fees
                       </li>
                       <li className="flex items-center gap-2">
-                        <CheckCircle className="w-4 h-4 text-emerald-400" />
+                        <CheckCircle className="w-4 h-4 text-orange-400" />
                         Currency conversion costs
                       </li>
                       <li className="flex items-center gap-2">
-                        <CheckCircle className="w-4 h-4 text-emerald-400" />
+                        <CheckCircle className="w-4 h-4 text-orange-400" />
                         Platform service fee
                       </li>
                     </ul>
@@ -293,19 +293,19 @@ export default function Fees() {
                     </p>
                     <ul className="space-y-2 text-white/60">
                       <li className="flex items-center gap-2">
-                        <CheckCircle className="w-4 h-4 text-emerald-400" />
+                        <CheckCircle className="w-4 h-4 text-orange-400" />
                         No payment processor involved
                       </li>
                       <li className="flex items-center gap-2">
-                        <CheckCircle className="w-4 h-4 text-emerald-400" />
+                        <CheckCircle className="w-4 h-4 text-orange-400" />
                         Direct blockchain transactions
                       </li>
                       <li className="flex items-center gap-2">
-                        <CheckCircle className="w-4 h-4 text-emerald-400" />
+                        <CheckCircle className="w-4 h-4 text-orange-400" />
                         Network fees included in rate
                       </li>
                       <li className="flex items-center gap-2">
-                        <CheckCircle className="w-4 h-4 text-emerald-400" />
+                        <CheckCircle className="w-4 h-4 text-orange-400" />
                         Optimized liquidity sourcing
                       </li>
                     </ul>
@@ -364,11 +364,11 @@ export default function Fees() {
       <footer className="border-t border-white/10 py-8 px-4">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-emerald-400" />
-            <span className="font-semibold zengo-text">ZengoSwap</span>
+            <Sparkles className="w-5 h-5 text-orange-400" />
+            <span className="font-semibold sorexo-text">Sorexo</span>
           </div>
           <p className="text-white/40 text-sm">
-            © {new Date().getFullYear()} ZengoSwap Exchange. All rights reserved.
+            © {new Date().getFullYear()} Sorexo Exchange. All rights reserved.
           </p>
         </div>
       </footer>

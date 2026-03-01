@@ -44,7 +44,7 @@ const steps = [
 
 export default function CardToCrypto() {
   useEffect(() => {
-    document.title = "Card to Crypto | Buy Bitcoin with Debit or Credit Card – ZengoSwap";
+    document.title = "Card to Crypto | Buy Bitcoin with Debit or Credit Card – Sorexo";
   }, []);
 
   return (
@@ -62,13 +62,13 @@ export default function CardToCrypto() {
               transition={{ duration: 0.6 }}
             >
               <div className="inline-flex items-center gap-2 px-4 py-2 glass-pill mb-6">
-                <CreditCard className="w-4 h-4 text-emerald-400" />
+                <CreditCard className="w-4 h-4 text-orange-400" />
                 <span className="text-sm text-white/80">Visa & Mastercard Accepted</span>
               </div>
 
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-6 text-balance">
                 Buy Crypto with{" "}
-                <span className="zengo-text">Card</span>
+                <span className="sorexo-text">Card</span>
               </h1>
 
               <p className="text-lg sm:text-xl text-white/60 max-w-3xl mx-auto mb-10 text-balance">
@@ -119,8 +119,8 @@ export default function CardToCrypto() {
                     transition={{ duration: 0.4, delay: index * 0.1 }}
                   >
                     <GlassCard className="p-6 h-full" data-testid={`benefit-card-${index}`}>
-                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20 flex items-center justify-center mb-4">
-                        <benefit.icon className="w-6 h-6 text-emerald-400" />
+                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500/20 to-purple-500/20 flex items-center justify-center mb-4">
+                        <benefit.icon className="w-6 h-6 text-orange-400" />
                       </div>
                       <h3 className="text-lg font-semibold text-white mb-2">
                         {benefit.title}
@@ -163,7 +163,7 @@ export default function CardToCrypto() {
                       transition={{ duration: 0.4, delay: index * 0.1 }}
                       className="text-center"
                     >
-                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center mx-auto mb-4">
+                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-orange-500 to-purple-500 flex items-center justify-center mx-auto mb-4">
                         <span className="text-white font-bold text-lg">{item.step}</span>
                       </div>
                       <h3 className="text-lg font-semibold text-white mb-2">{item.title}</h3>
@@ -194,7 +194,7 @@ export default function CardToCrypto() {
                   <div className="grid grid-cols-2 gap-4">
                     {supportedCards.map((card) => (
                       <div key={card.name} className="flex items-center gap-3 p-4 rounded-lg bg-white/5">
-                        <CheckCircle className="w-5 h-5 text-emerald-400" />
+                        <CheckCircle className="w-5 h-5 text-orange-400" />
                         <div>
                           <div className="text-white font-medium">{card.name}</div>
                           <div className="text-white/50 text-sm">{card.description}</div>
@@ -210,28 +210,28 @@ export default function CardToCrypto() {
                   </h2>
                   <div className="space-y-4">
                     <div className="flex items-start gap-4">
-                      <Clock className="w-5 h-5 text-emerald-400 mt-1" />
+                      <Clock className="w-5 h-5 text-orange-400 mt-1" />
                       <div>
                         <h3 className="text-white font-medium">2-Minute Processing</h3>
                         <p className="text-white/50 text-sm">Most card transactions complete within 2 minutes</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-4">
-                      <Shield className="w-5 h-5 text-emerald-400 mt-1" />
+                      <Shield className="w-5 h-5 text-orange-400 mt-1" />
                       <div>
                         <h3 className="text-white font-medium">3D Secure Protection</h3>
                         <p className="text-white/50 text-sm">Enhanced security with bank verification</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-4">
-                      <Globe className="w-5 h-5 text-emerald-400 mt-1" />
+                      <Globe className="w-5 h-5 text-orange-400 mt-1" />
                       <div>
                         <h3 className="text-white font-medium">$30 - $50,000 Limits</h3>
                         <p className="text-white/50 text-sm">Flexible purchase limits for all needs</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-4">
-                      <Lock className="w-5 h-5 text-emerald-400 mt-1" />
+                      <Lock className="w-5 h-5 text-orange-400 mt-1" />
                       <div>
                         <h3 className="text-white font-medium">No KYC Required</h3>
                         <p className="text-white/50 text-sm">Purchase without identity verification</p>
@@ -330,11 +330,11 @@ export default function CardToCrypto() {
       <footer className="border-t border-white/10 py-8 px-4">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-emerald-400" />
-            <span className="font-semibold zengo-text">ZengoSwap</span>
+            <Sparkles className="w-5 h-5 text-orange-400" />
+            <span className="font-semibold sorexo-text">Sorexo</span>
           </div>
           <p className="text-white/40 text-sm">
-            © {new Date().getFullYear()} ZengoSwap Exchange. All rights reserved.
+            © {new Date().getFullYear()} Sorexo Exchange. All rights reserved.
           </p>
         </div>
       </footer>

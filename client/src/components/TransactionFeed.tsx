@@ -100,13 +100,13 @@ export function TransactionFeed({ transactions: initialTransactions, isLoading =
     >
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20 flex items-center justify-center flex-shrink-0">
-            <Activity className="w-5 h-5 text-emerald-400" />
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500/20 to-purple-500/20 flex items-center justify-center flex-shrink-0">
+            <Activity className="w-5 h-5 text-orange-400" />
           </div>
           <div>
             <div className="flex items-center gap-2 flex-wrap">
               <h3 className="text-base sm:text-lg font-semibold text-white">Live Transactions</h3>
-              <div className="flex items-center gap-1 px-2 py-0.5 rounded-full text-xs bg-emerald-500/20 text-emerald-300">
+              <div className="flex items-center gap-1 px-2 py-0.5 rounded-full text-xs bg-orange-500/20 text-orange-300">
                 <Wifi className="w-3 h-3" />
                 <span>Live</span>
               </div>
@@ -126,7 +126,7 @@ export function TransactionFeed({ transactions: initialTransactions, isLoading =
               animate={{ rotate: 360 }}
               transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
             >
-              <RefreshCw className="w-4 h-4 text-emerald-400" />
+              <RefreshCw className="w-4 h-4 text-orange-400" />
             </motion.div>
           )}
         </div>

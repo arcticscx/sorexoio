@@ -3,7 +3,7 @@ import { Link, useLocation } from "wouter";
 import { motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import logoPngPath from "@assets/Untitled_design_(52)_1769791591136.png";
+import logoPngPath from "@/assets/sorexo-logo.png";
 
 interface NavLink {
   href: string;
@@ -39,10 +39,10 @@ export function GlassNavbar() {
         className="fixed top-4 left-1/2 z-50"
         initial={{ opacity: 0, y: -20, x: "-50%" }}
         animate={{ opacity: 1, y: 0, x: "-50%" }}
-        transition={{ 
-          duration: 0.6, 
+        transition={{
+          duration: 0.6,
           ease: [0.23, 1, 0.32, 1],
-          delay: 0.1 
+          delay: 0.1
         }}
         data-testid="navbar"
       >
@@ -53,9 +53,9 @@ export function GlassNavbar() {
               className="flex items-center gap-2 pr-4"
               data-testid="link-logo"
             >
-              <img src={logoPngPath} alt="ZengoSwap Logo" className="w-8 h-8 rounded-lg shadow-glow object-cover" />
-              <span className="text-base font-semibold zengo-text hidden sm:block">
-                ZengoSwap
+              <img src={logoPngPath} alt="Sorexo Logo" className="w-8 h-8 rounded-lg shadow-glow object-cover" />
+              <span className="text-base font-semibold sorexo-text hidden sm:block">
+                Sorexo
               </span>
             </Link>
 
@@ -101,11 +101,11 @@ export function GlassNavbar() {
         }}
         transition={{ duration: 0.2 }}
       >
-        <div 
+        <div
           className="absolute inset-0 bg-black/60 backdrop-blur-sm"
           onClick={() => setIsMobileMenuOpen(false)}
         />
-        
+
         <motion.div
           className="absolute top-20 left-4 right-4 apple-glass-hotbar"
           initial={false}

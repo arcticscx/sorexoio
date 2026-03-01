@@ -407,7 +407,7 @@ export default function Sell() {
                       <div
                         className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all duration-300 ${
                           i <= currentStepIndex
-                            ? "bg-gradient-to-br from-emerald-500 to-teal-500 text-white shadow-glow"
+                            ? "bg-gradient-to-br from-orange-500 to-purple-500 text-white shadow-glow"
                             : "bg-white/10 text-white/40"
                         }`}
                         data-testid={`step-indicator-${s.id}`}
@@ -421,7 +421,7 @@ export default function Sell() {
                       {i < steps.length - 1 && (
                         <div
                           className={`w-16 sm:w-24 h-0.5 mx-2 transition-all duration-300 ${
-                            i < currentStepIndex ? "bg-emerald-500" : "bg-white/10"
+                            i < currentStepIndex ? "bg-orange-500" : "bg-white/10"
                           }`}
                         />
                       )}
@@ -469,7 +469,7 @@ export default function Sell() {
                               }
                               className={`p-2 sm:p-2.5 rounded-xl border transition-all duration-200 flex items-center justify-center gap-1 sm:gap-1.5 ${
                                 formData.cryptoType === crypto.symbol
-                                  ? "bg-emerald-500/20 border-emerald-500/50 text-white"
+                                  ? "bg-orange-500/20 border-orange-500/50 text-white"
                                   : "bg-white/5 border-white/10 text-white/60 hover:bg-white/10"
                               }`}
                               data-testid={`button-crypto-${crypto.symbol}`}
@@ -491,7 +491,7 @@ export default function Sell() {
                             onClick={() => setInputMode("crypto")}
                             className={`flex-1 py-3 px-4 rounded-xl border transition-all ${
                               inputMode === "crypto"
-                                ? "bg-emerald-500/20 border-emerald-500 text-white"
+                                ? "bg-orange-500/20 border-orange-500 text-white"
                                 : "bg-white/5 border-white/10 text-white/60 hover:bg-white/10"
                             }`}
                             data-testid="button-input-mode-crypto"
@@ -503,7 +503,7 @@ export default function Sell() {
                             onClick={() => setInputMode("usd")}
                             className={`flex-1 py-3 px-4 rounded-xl border transition-all ${
                               inputMode === "usd"
-                                ? "bg-emerald-500/20 border-emerald-500 text-white"
+                                ? "bg-orange-500/20 border-orange-500 text-white"
                                 : "bg-white/5 border-white/10 text-white/60 hover:bg-white/10"
                             }`}
                             data-testid="button-input-mode-usd"
@@ -571,7 +571,7 @@ export default function Sell() {
                       )}
 
                       {formData.cryptoAmount && cryptoAmount > 0 && (
-                        <GlassCard className="p-4 bg-emerald-500/10" hover={false}>
+                        <GlassCard className="p-4 bg-orange-500/10" hover={false}>
                           <div className="space-y-2">
                             <div className="flex items-center justify-between">
                               <span className="text-white/60">Value (USD)</span>
@@ -588,7 +588,7 @@ export default function Sell() {
                             <div className="border-t border-white/10 pt-2">
                               <div className="flex items-center justify-between">
                                 <span className="text-white font-medium">You Receive</span>
-                                <span className="text-lg font-semibold text-emerald-400" data-testid="text-user-receives">
+                                <span className="text-lg font-semibold text-orange-400" data-testid="text-user-receives">
                                   ${userReceives.toFixed(2)}
                                 </span>
                               </div>
@@ -627,7 +627,7 @@ export default function Sell() {
                         >
                           <div className={`relative w-full aspect-[16/10] overflow-hidden rounded-xl border-2 transition-all duration-200 ${
                             formData.payoutMethod === method.id
-                              ? "border-emerald-500 ring-2 ring-emerald-500/30 scale-105"
+                              ? "border-orange-500 ring-2 ring-orange-500/30 scale-105"
                               : "border-white/10 group-hover:border-white/30"
                           }`}>
                             {method.icon ? (
@@ -639,12 +639,12 @@ export default function Sell() {
                                 className="w-full h-full object-cover brightness-110 bg-white/5"
                               />
                             ) : (
-                              <div className="w-full h-full bg-gradient-to-br from-emerald-500/30 to-teal-500/30 flex items-center justify-center">
-                                <Gift className="w-10 h-10 text-emerald-400" />
+                              <div className="w-full h-full bg-gradient-to-br from-orange-500/30 to-purple-500/30 flex items-center justify-center">
+                                <Gift className="w-10 h-10 text-orange-400" />
                               </div>
                             )}
                             {formData.payoutMethod === method.id && (
-                              <div className="absolute top-2 right-2 w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center">
+                              <div className="absolute top-2 right-2 w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center">
                                 <Check className="w-4 h-4 text-white" />
                               </div>
                             )}
@@ -749,7 +749,7 @@ export default function Sell() {
                                 >
                                   <div className={`relative w-full aspect-[16/10] overflow-hidden rounded-xl border-2 transition-all duration-200 ${
                                     formData.giftCardType === card.id
-                                      ? "border-emerald-500 ring-2 ring-emerald-500/30 scale-105"
+                                      ? "border-orange-500 ring-2 ring-orange-500/30 scale-105"
                                       : "border-white/10 group-hover:border-white/30"
                                   }`}>
                                     <img 
@@ -760,7 +760,7 @@ export default function Sell() {
                                       className="w-full h-full object-cover brightness-110 bg-white/5"
                                     />
                                     {formData.giftCardType === card.id && (
-                                      <div className="absolute top-2 right-2 w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center">
+                                      <div className="absolute top-2 right-2 w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center">
                                         <Check className="w-4 h-4 text-white" />
                                       </div>
                                     )}
@@ -829,7 +829,7 @@ export default function Sell() {
                                 onClick={() => setFormData({ ...formData, bankType: "us" })}
                                 className={`flex-1 py-3 px-4 rounded-xl border transition-all ${
                                   formData.bankType === "us"
-                                    ? "bg-emerald-500/20 border-emerald-500 text-white"
+                                    ? "bg-orange-500/20 border-orange-500 text-white"
                                     : "bg-white/5 border-white/10 text-white/60 hover:bg-white/10"
                                 }`}
                                 data-testid="button-bank-type-us"
@@ -841,7 +841,7 @@ export default function Sell() {
                                 onClick={() => setFormData({ ...formData, bankType: "iban" })}
                                 className={`flex-1 py-3 px-4 rounded-xl border transition-all ${
                                   formData.bankType === "iban"
-                                    ? "bg-emerald-500/20 border-emerald-500 text-white"
+                                    ? "bg-orange-500/20 border-orange-500 text-white"
                                     : "bg-white/5 border-white/10 text-white/60 hover:bg-white/10"
                                 }`}
                                 data-testid="button-bank-type-iban"
@@ -936,7 +936,7 @@ export default function Sell() {
                       <motion.div
                         animate={{ rotate: 360 }}
                         transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                        className="w-6 h-6 border-2 border-emerald-400 border-t-transparent rounded-full"
+                        className="w-6 h-6 border-2 border-orange-400 border-t-transparent rounded-full"
                       />
                       <h3 className="text-lg font-semibold text-white">
                         Awaiting Payment
@@ -949,7 +949,7 @@ export default function Sell() {
                       className="text-center mb-6"
                     >
                       <p className="text-white/70 text-sm">
-                        Send exactly <span className="text-emerald-400 font-semibold">{formData.cryptoAmount} {formData.cryptoType}</span> to the address below
+                        Send exactly <span className="text-orange-400 font-semibold">{formData.cryptoAmount} {formData.cryptoType}</span> to the address below
                       </p>
                     </motion.div>
                     
@@ -973,7 +973,7 @@ export default function Sell() {
                       )}
 
                       <motion.div 
-                        className="rounded-xl bg-white/5 p-4 border border-emerald-500/30"
+                        className="rounded-xl bg-white/5 p-4 border border-orange-500/30"
                         animate={{ borderColor: ["rgba(16, 185, 129, 0.3)", "rgba(16, 185, 129, 0.6)", "rgba(16, 185, 129, 0.3)"] }}
                         transition={{ duration: 2, repeat: Infinity }}
                       >
@@ -991,7 +991,7 @@ export default function Sell() {
                             data-testid="button-copy-address"
                           >
                             {copied ? (
-                              <Check className="w-4 h-4 text-emerald-400" />
+                              <Check className="w-4 h-4 text-orange-400" />
                             ) : (
                               <Copy className="w-4 h-4" />
                             )}
@@ -1006,7 +1006,7 @@ export default function Sell() {
                         </div>
                         <div className="flex justify-between text-sm mb-2">
                           <span className="text-white/50">You'll receive</span>
-                          <span className="text-emerald-400 font-semibold">${userReceives.toFixed(2)}</span>
+                          <span className="text-orange-400 font-semibold">${userReceives.toFixed(2)}</span>
                         </div>
                         <div className="flex justify-between text-sm mb-2">
                           <span className="text-white/50">Fee</span>
@@ -1020,7 +1020,7 @@ export default function Sell() {
 
                       <div className="rounded-xl bg-white/5 p-4">
                         <p className="text-white/50 text-xs mb-1">Payout details:</p>
-                        <code className="text-emerald-400 font-mono text-sm break-all">{getPayoutDetailsDisplay()}</code>
+                        <code className="text-orange-400 font-mono text-sm break-all">{getPayoutDetailsDisplay()}</code>
                       </div>
 
                       <div className="rounded-xl bg-white/5 p-4">

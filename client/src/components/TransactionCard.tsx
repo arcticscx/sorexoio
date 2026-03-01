@@ -33,9 +33,9 @@ function PaymentIcon({ type }: { type: string }) {
     return <img src={paypalIcon} alt="PayPal" className="w-5 h-5 object-contain rounded" />;
   }
   if (key === "bank") {
-    return <Wallet className="w-5 h-5 text-emerald-400" />;
+    return <Wallet className="w-5 h-5 text-orange-400" />;
   }
-  return <DollarSign className="w-5 h-5 text-emerald-400" />;
+  return <DollarSign className="w-5 h-5 text-orange-400" />;
 }
 
 const statusStyles: Record<string, string> = {

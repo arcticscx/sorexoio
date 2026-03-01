@@ -29,9 +29,9 @@ function PaymentMethodIcon({ type }: { type: string }) {
     return <img src={cardIcon} alt="SumUp" loading="eager" decoding="sync" className="w-7 h-7 object-contain" />;
   }
   if (key === "bank") {
-    return <Wallet className="w-7 h-7 text-emerald-400" />;
+    return <Wallet className="w-7 h-7 text-orange-400" />;
   }
-  return <DollarSign className="w-7 h-7 text-emerald-400" />;
+  return <DollarSign className="w-7 h-7 text-orange-400" />;
 }
 
 const fallbackPaymentMethods = [
@@ -196,7 +196,7 @@ export default function Exchange() {
         body: JSON.stringify({ 
           amount: formData.amount, 
           currency: formData.currency,
-          description: `ZengoSwap - ${formData.cryptoType} Purchase`,
+          description: `Sorexo - ${formData.cryptoType} Purchase`,
           referenceId: referenceCode
         }),
       })
@@ -226,7 +226,7 @@ export default function Exchange() {
         body: JSON.stringify({ 
           amount: parseFloat(formData.amount), 
           currency: formData.currency.toLowerCase(),
-          description: `ZengoSwap - ${formData.cryptoType} Purchase`,
+          description: `Sorexo - ${formData.cryptoType} Purchase`,
           referenceId: referenceCode,
           metadata: {
             crypto_type: formData.cryptoType,
@@ -630,7 +630,7 @@ export default function Exchange() {
                       <div
                         className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all duration-300 ${
                           i <= currentStepIndex
-                            ? "bg-gradient-to-br from-emerald-500 to-teal-500 text-white shadow-glow"
+                            ? "bg-gradient-to-br from-orange-500 to-purple-500 text-white shadow-glow"
                             : "bg-white/10 text-white/40"
                         }`}
                         data-testid={`step-indicator-${s.id}`}
@@ -644,7 +644,7 @@ export default function Exchange() {
                       {i < steps.length - 1 && (
                         <div
                           className={`w-16 sm:w-24 h-0.5 mx-2 transition-all duration-300 ${
-                            i < currentStepIndex ? "bg-emerald-500" : "bg-white/10"
+                            i < currentStepIndex ? "bg-orange-500" : "bg-white/10"
                           }`}
                         />
                       )}
@@ -709,7 +709,7 @@ export default function Exchange() {
                               }
                               className={`p-2 sm:p-2.5 rounded-xl border transition-all duration-200 flex items-center justify-center gap-1 sm:gap-1.5 ${
                                 formData.cryptoType === crypto.symbol
-                                  ? "bg-emerald-500/20 border-emerald-500/50 text-white"
+                                  ? "bg-orange-500/20 border-orange-500/50 text-white"
                                   : "bg-white/5 border-white/10 text-white/60 hover:bg-white/10"
                               }`}
                               data-testid={`button-crypto-${crypto.symbol}`}
@@ -722,7 +722,7 @@ export default function Exchange() {
                       </div>
 
                       {formData.amount && (
-                        <GlassCard className="p-4 bg-emerald-500/10" hover={false}>
+                        <GlassCard className="p-4 bg-orange-500/10" hover={false}>
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2 text-white/60">
                               <ArrowDownUp className="w-4 h-4" />
@@ -791,7 +791,7 @@ export default function Exchange() {
                             }
                             className={`w-full p-5 rounded-xl border flex items-center gap-4 transition-all duration-200 ${
                               formData.paymentMethod === method.id
-                                ? "bg-emerald-500/20 border-emerald-500/50"
+                                ? "bg-orange-500/20 border-orange-500/50"
                                 : "bg-white/5 border-white/10 hover:bg-white/10"
                             }`}
                             data-testid={`button-payment-${method.id}`}
@@ -819,7 +819,7 @@ export default function Exchange() {
                             </div>
                             {formData.paymentMethod === method.id && (
                               <div className="ml-auto">
-                                <Check className="w-5 h-5 text-emerald-400" />
+                                <Check className="w-5 h-5 text-orange-400" />
                               </div>
                             )}
                           </button>
@@ -908,12 +908,12 @@ export default function Exchange() {
                         </div>
                       </div>
 
-                      <div className="p-5 rounded-xl bg-emerald-500/10 border border-emerald-500/30">
-                        <div className="text-emerald-400 text-sm mb-2 font-medium">Add this note when sending:</div>
+                      <div className="p-5 rounded-xl bg-orange-500/10 border border-orange-500/30">
+                        <div className="text-orange-400 text-sm mb-2 font-medium">Add this note when sending:</div>
                         <div className="text-lg font-mono font-semibold text-white bg-black/30 p-3 rounded-lg select-all">
                           {referenceCode}
                         </div>
-                        <p className="text-emerald-300/70 text-xs mt-2">
+                        <p className="text-orange-300/70 text-xs mt-2">
                           Copy and paste this code into the PayPal payment note
                         </p>
                       </div>
@@ -1004,7 +1004,7 @@ export default function Exchange() {
 
                       <div className="p-4 rounded-xl bg-white/5 border border-white/10">
                         <div className="text-white/50 text-sm mb-2">You Will Receive:</div>
-                        <div className="text-xl font-semibold text-emerald-400">
+                        <div className="text-xl font-semibold text-orange-400">
                           {estimatedCrypto} {formData.cryptoType}
                         </div>
                       </div>
@@ -1105,9 +1105,9 @@ export default function Exchange() {
                         </div>
                       </div>
 
-                      <div className="flex items-start gap-3 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
-                        <Mail className="w-5 h-5 text-emerald-400 mt-0.5" />
-                        <p className="text-sm text-emerald-200/80">
+                      <div className="flex items-start gap-3 p-4 rounded-xl bg-orange-500/10 border border-orange-500/20">
+                        <Mail className="w-5 h-5 text-orange-400 mt-0.5" />
+                        <p className="text-sm text-orange-200/80">
                           You will receive confirmation and payment instructions via email.
                         </p>
                       </div>
@@ -1124,7 +1124,7 @@ export default function Exchange() {
                     className="text-center py-8"
                   >
                     <motion.div
-                      className="w-20 h-20 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center mx-auto mb-6 shadow-glow-lg"
+                      className="w-20 h-20 rounded-full bg-gradient-to-br from-orange-500 to-purple-500 flex items-center justify-center mx-auto mb-6 shadow-glow-lg"
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       transition={{ delay: 0.2, type: "spring", stiffness: 200 }}

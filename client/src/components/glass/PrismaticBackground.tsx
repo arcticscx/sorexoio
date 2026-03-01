@@ -13,7 +13,7 @@ function useDeviceCapabilities() {
   useEffect(() => {
     const mobileQuery = window.matchMedia("(max-width: 768px), (pointer: coarse)");
     const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    
+
     setIsMobile(mobileQuery.matches);
     setPrefersReducedMotion(motionQuery.matches);
 
@@ -32,9 +32,9 @@ function useDeviceCapabilities() {
   return { isMobile, prefersReducedMotion };
 }
 
-export function PrismaticBackground({ 
-  enableParallax = true, 
-  intensity = "medium" 
+export function PrismaticBackground({
+  enableParallax = true,
+  intensity = "medium"
 }: PrismaticBackgroundProps) {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
@@ -56,11 +56,11 @@ export function PrismaticBackground({
 
   const allParticles = useMemo(() => {
     const colors = [
-      "hsl(0 0% 60%)",
-      "hsl(0 0% 70%)",
-      "hsl(0 0% 80%)",
-      "hsl(0 0% 50%)",
-      "hsl(0 0% 65%)",
+      "#FF6B1A", // Brand Orange
+      "#FF8C42", // Light Orange
+      "#C43C8A", // Pink/Magenta mid-gradient
+      "#8B2FC9", // Brand Purple
+      "#A349E5", // Light Purple
     ];
     return Array.from({ length: 50 }, (_, i) => ({
       id: i,
@@ -96,19 +96,19 @@ export function PrismaticBackground({
   const effectiveParallax = enableParallax && !shouldUseSimpleMode;
 
   return (
-    <div 
+    <div
       ref={containerRef}
       className="fixed inset-0 overflow-hidden pointer-events-none"
       style={{ zIndex: -1, background: "hsl(0 0% 2%)" }}
       data-testid="prismatic-background"
     >
-      <div 
-        className="absolute inset-0" 
-        style={{ 
-          background: "radial-gradient(ellipse at 50% 0%, hsl(0 0% 8%) 0%, hsl(0 0% 2%) 60%, hsl(0 0% 0%) 100%)" 
-        }} 
+      <div
+        className="absolute inset-0"
+        style={{
+          background: "radial-gradient(ellipse at 50% 0%, hsl(0 0% 8%) 0%, hsl(0 0% 2%) 60%, hsl(0 0% 0%) 100%)"
+        }}
       />
-      
+
       <motion.div
         className="absolute rounded-full"
         style={{
@@ -142,7 +142,7 @@ export function PrismaticBackground({
           height: shouldUseSimpleMode ? "50vw" : "70vw",
           maxWidth: shouldUseSimpleMode ? "500px" : "1000px",
           maxHeight: shouldUseSimpleMode ? "500px" : "1000px",
-          background: "radial-gradient(circle, hsl(0 0% 18%), transparent 55%)",
+          background: "radial-gradient(circle, rgba(255, 107, 26, 0.15), transparent 55%)",
           top: "30%",
           left: "25%",
           opacity: 0.1,
@@ -168,7 +168,7 @@ export function PrismaticBackground({
           height: shouldUseSimpleMode ? "40vw" : "60vw",
           maxWidth: shouldUseSimpleMode ? "400px" : "900px",
           maxHeight: shouldUseSimpleMode ? "400px" : "900px",
-          background: "radial-gradient(circle, hsl(0 0% 12%), transparent 55%)",
+          background: "radial-gradient(circle, rgba(139, 47, 201, 0.15), transparent 55%)",
           bottom: "-10%",
           right: "-10%",
           opacity: 0.08,
@@ -194,7 +194,7 @@ export function PrismaticBackground({
           height: shouldUseSimpleMode ? "50vw" : "60vw",
           maxWidth: shouldUseSimpleMode ? "400px" : "800px",
           maxHeight: shouldUseSimpleMode ? "400px" : "800px",
-          background: "radial-gradient(circle, hsl(0 0% 20% / 0.5), transparent 70%)",
+          background: "radial-gradient(circle, rgba(255, 107, 26, 0.3), transparent 70%)",
           top: "10%",
           left: "5%",
           opacity: blobOpacity * 0.6,
@@ -212,7 +212,7 @@ export function PrismaticBackground({
           height: shouldUseSimpleMode ? "40vw" : "50vw",
           maxWidth: shouldUseSimpleMode ? "350px" : "700px",
           maxHeight: shouldUseSimpleMode ? "350px" : "700px",
-          background: "radial-gradient(circle, hsl(0 0% 22% / 0.4), transparent 70%)",
+          background: "radial-gradient(circle, rgba(196, 60, 138, 0.25), transparent 70%)",
           top: "40%",
           right: "10%",
           opacity: blobOpacity * 0.5,
@@ -230,7 +230,7 @@ export function PrismaticBackground({
           height: shouldUseSimpleMode ? "35vw" : "45vw",
           maxWidth: shouldUseSimpleMode ? "300px" : "600px",
           maxHeight: shouldUseSimpleMode ? "300px" : "600px",
-          background: "radial-gradient(circle, hsl(0 0% 25% / 0.35), transparent 70%)",
+          background: "radial-gradient(circle, rgba(139, 47, 201, 0.25), transparent 70%)",
           bottom: "5%",
           left: "25%",
           opacity: blobOpacity * 0.5,
@@ -248,7 +248,7 @@ export function PrismaticBackground({
           height: shouldUseSimpleMode ? "20vw" : "30vw",
           maxWidth: shouldUseSimpleMode ? "200px" : "400px",
           maxHeight: shouldUseSimpleMode ? "200px" : "400px",
-          background: "radial-gradient(circle, hsl(0 0% 30% / 0.3), transparent 70%)",
+          background: "radial-gradient(circle, rgba(255, 107, 26, 0.15), transparent 70%)",
           top: "60%",
           left: "60%",
           opacity: blobOpacity * 0.4,
@@ -301,7 +301,7 @@ export function PrismaticBackground({
             style={{
               width: "100px",
               height: "100px",
-              background: "radial-gradient(circle, hsl(0 0% 40% / 0.15), transparent 70%)",
+              background: "radial-gradient(circle, rgba(139, 47, 201, 0.2), transparent 70%)",
               top: "15%",
               right: "20%",
               filter: "blur(20px)",
@@ -323,7 +323,7 @@ export function PrismaticBackground({
             style={{
               width: "80px",
               height: "80px",
-              background: "radial-gradient(circle, hsl(0 0% 45% / 0.12), transparent 70%)",
+              background: "radial-gradient(circle, rgba(255, 107, 26, 0.15), transparent 70%)",
               bottom: "25%",
               left: "15%",
               filter: "blur(15px)",

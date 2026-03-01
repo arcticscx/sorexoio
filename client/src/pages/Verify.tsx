@@ -40,7 +40,7 @@ export default function Verify() {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case "completed":
-        return <CheckCircle className="w-6 h-6 text-emerald-400" />;
+        return <CheckCircle className="w-6 h-6 text-orange-400" />;
       case "pending":
         return <Clock className="w-6 h-6 text-amber-400" />;
       case "failed":
@@ -53,7 +53,7 @@ export default function Verify() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "completed":
-        return "text-emerald-400 bg-emerald-500/20 border-emerald-500/30";
+        return "text-orange-400 bg-orange-500/20 border-orange-500/30";
       case "pending":
         return "text-amber-400 bg-amber-500/20 border-amber-500/30";
       case "failed":
@@ -87,8 +87,8 @@ export default function Verify() {
             transition={{ duration: 0.5 }}
           >
             <div className="text-center mb-8">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-emerald-500/20 border border-emerald-500/30 mb-4">
-                <Shield className="w-8 h-8 text-emerald-400" />
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-orange-500/20 border border-orange-500/30 mb-4">
+                <Shield className="w-8 h-8 text-orange-400" />
               </div>
               <h1 className="text-3xl font-bold text-white mb-2">
                 Verify Transaction
@@ -167,13 +167,13 @@ export default function Verify() {
                       </div>
                     ) : (
                       <div className="space-y-4">
-                        <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center gap-3">
-                          <CheckCircle className="w-6 h-6 text-emerald-400 flex-shrink-0" />
+                        <div className="p-4 rounded-xl bg-orange-500/10 border border-orange-500/30 flex items-center gap-3">
+                          <CheckCircle className="w-6 h-6 text-orange-400 flex-shrink-0" />
                           <div>
-                            <h3 className="text-emerald-400 font-semibold">
+                            <h3 className="text-orange-400 font-semibold">
                               Verified Transaction
                             </h3>
-                            <p className="text-emerald-300/70 text-sm">
+                            <p className="text-orange-300/70 text-sm">
                               This transaction exists in our system
                             </p>
                           </div>

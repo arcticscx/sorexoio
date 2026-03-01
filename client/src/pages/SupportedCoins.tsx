@@ -71,7 +71,7 @@ const coins = [
 
 export default function SupportedCoins() {
   useEffect(() => {
-    document.title = "Supported Cryptocurrencies | BTC, ETH, SOL & More – ZengoSwap";
+    document.title = "Supported Cryptocurrencies | BTC, ETH, SOL & More – Sorexo";
   }, []);
 
   return (
@@ -89,13 +89,13 @@ export default function SupportedCoins() {
               transition={{ duration: 0.6 }}
             >
               <div className="inline-flex items-center gap-2 px-4 py-2 glass-pill mb-6">
-                <TrendingUp className="w-4 h-4 text-emerald-400" />
+                <TrendingUp className="w-4 h-4 text-orange-400" />
                 <span className="text-sm text-white/80">10 Cryptocurrencies</span>
               </div>
 
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-6 text-balance">
                 Supported{" "}
-                <span className="zengo-text">Cryptocurrencies</span>
+                <span className="sorexo-text">Cryptocurrencies</span>
               </h1>
 
               <p className="text-lg sm:text-xl text-white/60 max-w-3xl mx-auto mb-10 text-balance">
@@ -125,19 +125,19 @@ export default function SupportedCoins() {
               transition={{ duration: 0.6, delay: 0.2 }}
             >
               <GlassCard className="p-4 text-center" hover={false}>
-                <Zap className="w-6 h-6 text-emerald-400 mx-auto mb-2" />
+                <Zap className="w-6 h-6 text-orange-400 mx-auto mb-2" />
                 <div className="text-sm text-white/50">Instant Delivery</div>
               </GlassCard>
               <GlassCard className="p-4 text-center" hover={false}>
-                <Shield className="w-6 h-6 text-emerald-400 mx-auto mb-2" />
+                <Shield className="w-6 h-6 text-orange-400 mx-auto mb-2" />
                 <div className="text-sm text-white/50">No KYC Required</div>
               </GlassCard>
               <GlassCard className="p-4 text-center" hover={false}>
-                <Clock className="w-6 h-6 text-emerald-400 mx-auto mb-2" />
+                <Clock className="w-6 h-6 text-orange-400 mx-auto mb-2" />
                 <div className="text-sm text-white/50">24/7 Trading</div>
               </GlassCard>
               <GlassCard className="p-4 text-center" hover={false}>
-                <TrendingUp className="w-6 h-6 text-emerald-400 mx-auto mb-2" />
+                <TrendingUp className="w-6 h-6 text-orange-400 mx-auto mb-2" />
                 <div className="text-sm text-white/50">Best Rates</div>
               </GlassCard>
             </motion.div>
@@ -162,12 +162,12 @@ export default function SupportedCoins() {
                     <GlassCard className="p-6" data-testid={`coin-card-${coin.symbol.toLowerCase()}`}>
                       <div className="flex flex-col md:flex-row md:items-start gap-6">
                         <div className="flex items-center gap-4 md:w-48 flex-shrink-0">
-                          <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20 flex items-center justify-center overflow-hidden">
+                          <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-orange-500/20 to-purple-500/20 flex items-center justify-center overflow-hidden">
                             <CryptoIcon symbol={coin.symbol} size="lg" />
                           </div>
                           <div>
                             <h3 className="text-xl font-bold text-white">{coin.name}</h3>
-                            <p className="text-emerald-400 font-medium">{coin.symbol}</p>
+                            <p className="text-orange-400 font-medium">{coin.symbol}</p>
                           </div>
                         </div>
                         
@@ -299,11 +299,11 @@ export default function SupportedCoins() {
       <footer className="border-t border-white/10 py-8 px-4">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-emerald-400" />
-            <span className="font-semibold zengo-text">ZengoSwap</span>
+            <Sparkles className="w-5 h-5 text-orange-400" />
+            <span className="font-semibold sorexo-text">Sorexo</span>
           </div>
           <p className="text-white/40 text-sm">
-            © {new Date().getFullYear()} ZengoSwap Exchange. All rights reserved.
+            © {new Date().getFullYear()} Sorexo Exchange. All rights reserved.
           </p>
         </div>
       </footer>

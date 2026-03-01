@@ -13,7 +13,7 @@ const app = express();
 async function fixCorruptedData() {
   console.log('[DATA FIX] Starting database fix...');
   console.log('[DATA FIX] Environment:', process.env.NODE_ENV || 'unknown');
-  
+
   // Correct data for all tables
   const correctCryptos = [
     { name: 'Bitcoin', symbol: 'BTC', icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Bitcoin.svg/1024px-Bitcoin.svg.png', isActive: true, sortOrder: 1 },
@@ -27,12 +27,12 @@ async function fixCorruptedData() {
     { name: 'USD Coin', symbol: 'USDC', icon: null, isActive: true, sortOrder: 9 },
     { name: 'TRON', symbol: 'TRX', icon: null, isActive: true, sortOrder: 10 }
   ];
-  
+
   const correctPaymentMethods = [
     { name: 'SumUp', key: 'sumup', icon: null, description: 'Pay with Card', isActive: true, sortOrder: 1 },
     { name: 'PayPal', key: 'paypal', icon: null, description: 'Unavailable - Discord ticket required', isActive: true, sortOrder: 2 }
   ];
-  
+
   const correctCurrencies = [
     { name: 'US Dollar', symbol: 'USD', icon: null, isActive: true, sortOrder: 1 },
     { name: 'Euro', symbol: 'EUR', icon: null, isActive: true, sortOrder: 2 },
@@ -59,7 +59,7 @@ async function fixCorruptedData() {
       await db.insert(cryptos).values(crypto);
     }
     console.log('[DATA FIX] Cryptos table reset with', correctCryptos.length, 'entries');
-    
+
     // Fix payment_methods table
     console.log('[DATA FIX] Fixing payment_methods table...');
     await db.delete(paymentMethods);
@@ -67,7 +67,7 @@ async function fixCorruptedData() {
       await db.insert(paymentMethods).values(method);
     }
     console.log('[DATA FIX] Payment methods table reset with', correctPaymentMethods.length, 'entries');
-    
+
     // Fix currencies table
     console.log('[DATA FIX] Fixing currencies table...');
     await db.delete(currencies);
@@ -75,7 +75,7 @@ async function fixCorruptedData() {
       await db.insert(currencies).values(currency);
     }
     console.log('[DATA FIX] Currencies table reset with', correctCurrencies.length, 'entries');
-    
+
     // Fix swap_wallets table with correct wallet addresses
     console.log('[DATA FIX] Fixing swap_wallets table...');
     await db.delete(swapWallets);
@@ -83,7 +83,7 @@ async function fixCorruptedData() {
       await db.insert(swapWallets).values(wallet);
     }
     console.log('[DATA FIX] Swap wallets table reset with', correctSwapWallets.length, 'entries');
-    
+
     console.log('[DATA FIX] All database tables fixed successfully!');
   } catch (error) {
     console.error('[DATA FIX] Error resetting database:', error);
@@ -99,17 +99,17 @@ function startDiscordBot() {
     botProcess.kill();
     botProcess = null;
   }
-  
+
   const botPath = path.join(process.cwd(), 'discord-bot', 'index.js');
   botProcess = spawn('node', [botPath], {
     stdio: 'inherit',
     env: process.env
   });
-  
+
   botProcess.on('error', (err) => {
     console.log(`Discord bot error: ${err.message}`);
   });
-  
+
   botProcess.on('exit', (code) => {
     if (code !== 0 && !botRestarting) {
       console.log(`Discord bot exited with code ${code}, restarting in 5s...`);
@@ -194,7 +194,7 @@ app.use((req, res, next) => {
 (async () => {
   // Fix ALL corrupted database tables before starting server
   await fixCorruptedData();
-  
+
   await registerRoutes(httpServer, app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
@@ -219,12 +219,11 @@ app.use((req, res, next) => {
   // Other ports are firewalled. Default to 5000 if not specified.
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
-  const port = parseInt(process.env.PORT || "5000", 10);
+  const port = parseInt(process.env.PORT || "3000", 10);
   httpServer.listen(
     {
       port,
-      host: "0.0.0.0",
-      reusePort: true,
+      host: "localhost",
     },
     () => {
       log(`serving on port ${port}`);

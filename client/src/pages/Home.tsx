@@ -85,7 +85,7 @@ export default function Home() {
 
               <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 text-balance">
                 Purchase Crypto {" "}
-                <span className="zengo-text">Instantly!</span>
+                <span className="sorexo-text">Instantly!</span>
               </h1>
 
               <p className="text-lg sm:text-xl text-white/60 max-w-2xl mx-auto mb-10 text-balance">
@@ -114,19 +114,19 @@ export default function Home() {
               transition={{ duration: 0.6, delay: 0.2 }}
             >
               <GlassCard className="p-4 sm:p-6 text-center" hover={false}>
-                <div className="text-2xl sm:text-3xl font-bold zengo-text">
+                <div className="text-2xl sm:text-3xl font-bold sorexo-text">
                   ${(stats.totalVolume / 1000000).toFixed(1)}M
                 </div>
                 <div className="text-xs sm:text-sm text-white/50 mt-1">Volume (24h)</div>
               </GlassCard>
               <GlassCard className="p-4 sm:p-6 text-center" hover={false}>
-                <div className="text-2xl sm:text-3xl font-bold zengo-text">
+                <div className="text-2xl sm:text-3xl font-bold sorexo-text">
                   {stats.totalTransactions.toLocaleString()}
                 </div>
                 <div className="text-xs sm:text-sm text-white/50 mt-1">Transactions</div>
               </GlassCard>
               <GlassCard className="p-4 sm:p-6 text-center" hover={false}>
-                <div className="text-2xl sm:text-3xl font-bold zengo-text">
+                <div className="text-2xl sm:text-3xl font-bold sorexo-text">
                   {stats.activeUsers.toLocaleString()}
                 </div>
                 <div className="text-xs sm:text-sm text-white/50 mt-1">Active Users</div>
@@ -170,7 +170,7 @@ export default function Home() {
             >
               <div className="text-center mb-12">
                 <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">
-                  Why Choose ZengoSwap?
+                  Why Choose Sorexo?
                 </h2>
                 <p className="text-white/50 max-w-xl mx-auto">
                   Built with cutting-edge technology for the best trading experience
@@ -187,8 +187,8 @@ export default function Home() {
                     transition={{ duration: 0.4, delay: index * 0.1 }}
                   >
                     <GlassCard className="p-6 h-full" data-testid={`feature-card-${index}`}>
-                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20 flex items-center justify-center mb-4">
-                        <feature.icon className="w-6 h-6 text-emerald-400" />
+                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500/20 to-purple-500/20 flex items-center justify-center mb-4">
+                        <feature.icon className="w-6 h-6 text-orange-400" />
                       </div>
                       <h3 className="text-lg font-semibold text-white mb-2">
                         {feature.title}
@@ -215,7 +215,7 @@ export default function Home() {
                   Ready to Start Trading?
                 </h2>
                 <p className="text-white/60 max-w-xl mx-auto mb-8">
-                  Join thousands of traders who trust ZengoSwap for their cryptocurrency exchanges.
+                  Join thousands of traders who trust Sorexo for their cryptocurrency exchanges.
                 </p>
                 <Link href="/exchange">
                   <GlassButton variant="primary" size="lg" shimmer data-testid="button-cta-exchange">

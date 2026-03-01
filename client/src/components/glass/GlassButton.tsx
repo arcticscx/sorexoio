@@ -11,10 +11,10 @@ interface GlassButtonProps extends Omit<HTMLMotionProps<"button">, keyof ButtonH
 export const GlassButton = forwardRef<HTMLButtonElement, GlassButtonProps>(
   ({ className, variant = "default", size = "md", shimmer = false, children, disabled, ...props }, ref) => {
     const baseStyles = "relative inline-flex items-center justify-center font-medium transition-all duration-200 rounded-lg overflow-hidden";
-    
+
     const variants = {
       default: "glass-button text-white",
-      primary: "liquid-glass-cta text-black font-bold",
+      primary: "liquid-glass-cta text-white font-bold",
       ghost: "bg-transparent hover:bg-white/10 text-white",
       outline: "bg-transparent border border-white/20 text-white hover:bg-white/10",
     };
@@ -42,7 +42,7 @@ export const GlassButton = forwardRef<HTMLButtonElement, GlassButtonProps>(
         {...(props as any)}
       >
         {shimmer && (
-          <div 
+          <div
             className="absolute inset-0 shimmer-effect pointer-events-none"
             style={{ opacity: 0.5 }}
           />

@@ -50,7 +50,7 @@ export default function Sitemap() {
       <main className="relative z-10 container mx-auto px-4 py-24">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-sm mb-6">
               <Map className="w-4 h-4" />
               <span>Site Navigation</span>
             </div>
@@ -58,7 +58,7 @@ export default function Sitemap() {
               Sitemap
             </h1>
             <p className="text-white/60 text-lg max-w-2xl mx-auto">
-              Navigate to all pages on ZengoSwap. Find information about buying crypto, payment methods, and more.
+              Navigate to all pages on Sorexo. Find information about buying crypto, payment methods, and more.
             </p>
           </div>
 
@@ -72,18 +72,18 @@ export default function Sitemap() {
                   {section.links.map((link) => (
                     <Link key={link.href} href={link.href}>
                       <div className="flex items-center gap-4 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors group cursor-pointer">
-                        <div className="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
-                          <link.icon className="w-5 h-5 text-emerald-400" />
+                        <div className="w-10 h-10 rounded-lg bg-orange-500/20 flex items-center justify-center flex-shrink-0">
+                          <link.icon className="w-5 h-5 text-orange-400" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h3 className="text-white font-medium group-hover:text-emerald-400 transition-colors">
+                          <h3 className="text-white font-medium group-hover:text-orange-400 transition-colors">
                             {link.label}
                           </h3>
                           <p className="text-white/50 text-sm truncate">
                             {link.description}
                           </p>
                         </div>
-                        <ArrowRight className="w-5 h-5 text-white/30 group-hover:text-emerald-400 transition-colors" />
+                        <ArrowRight className="w-5 h-5 text-white/30 group-hover:text-orange-400 transition-colors" />
                       </div>
                     </Link>
                   ))}
@@ -94,7 +94,7 @@ export default function Sitemap() {
 
           <div className="mt-12 text-center">
             <p className="text-white/40 text-sm">
-              ZengoSwap - Buy Crypto with PayPal & Card | No KYC Required
+              Sorexo - Buy Crypto with PayPal & Card | No KYC Required
             </p>
           </div>
         </div>

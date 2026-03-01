@@ -46,7 +46,7 @@ const steps = [
 
 export default function BuyCryptoWithPaypal() {
   useEffect(() => {
-    document.title = "Buy Crypto with PayPal Instantly | No KYC – ZengoSwap";
+    document.title = "Buy Crypto with PayPal Instantly | No KYC – Sorexo";
   }, []);
 
   return (
@@ -64,13 +64,13 @@ export default function BuyCryptoWithPaypal() {
               transition={{ duration: 0.6 }}
             >
               <div className="inline-flex items-center gap-2 px-4 py-2 glass-pill mb-6">
-                <CreditCard className="w-4 h-4 text-emerald-400" />
+                <CreditCard className="w-4 h-4 text-orange-400" />
                 <span className="text-sm text-white/80">Fast & Secure Payment</span>
               </div>
 
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-6 text-balance">
                 Buy Crypto with{" "}
-                <span className="zengo-text">PayPal</span>
+                <span className="sorexo-text">PayPal</span>
               </h1>
 
               <p className="text-lg sm:text-xl text-white/60 max-w-3xl mx-auto mb-10 text-balance">
@@ -121,8 +121,8 @@ export default function BuyCryptoWithPaypal() {
                     transition={{ duration: 0.4, delay: index * 0.1 }}
                   >
                     <GlassCard className="p-6 h-full" data-testid={`benefit-card-${index}`}>
-                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20 flex items-center justify-center mb-4">
-                        <benefit.icon className="w-6 h-6 text-emerald-400" />
+                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500/20 to-purple-500/20 flex items-center justify-center mb-4">
+                        <benefit.icon className="w-6 h-6 text-orange-400" />
                       </div>
                       <h3 className="text-lg font-semibold text-white mb-2">
                         {benefit.title}
@@ -150,7 +150,7 @@ export default function BuyCryptoWithPaypal() {
                     How PayPal to Crypto Works
                   </h2>
                   <p className="text-white/50 max-w-2xl mx-auto">
-                    Purchasing cryptocurrency with PayPal at ZengoSwap is straightforward and takes just minutes. 
+                    Purchasing cryptocurrency with PayPal at Sorexo is straightforward and takes just minutes. 
                     Our streamlined process ensures you get your crypto quickly and securely.
                   </p>
                 </div>
@@ -165,7 +165,7 @@ export default function BuyCryptoWithPaypal() {
                       transition={{ duration: 0.4, delay: index * 0.1 }}
                       className="text-center"
                     >
-                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center mx-auto mb-4">
+                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-orange-500 to-purple-500 flex items-center justify-center mx-auto mb-4">
                         <span className="text-white font-bold text-lg">{item.step}</span>
                       </div>
                       <h3 className="text-lg font-semibold text-white mb-2">{item.title}</h3>
@@ -196,7 +196,7 @@ export default function BuyCryptoWithPaypal() {
                   <div className="grid grid-cols-2 gap-4">
                     {supportedCoins.map((coin) => (
                       <div key={coin.symbol} className="flex items-center gap-3 p-3 rounded-lg bg-white/5">
-                        <CheckCircle className="w-5 h-5 text-emerald-400" />
+                        <CheckCircle className="w-5 h-5 text-orange-400" />
                         <div>
                           <div className="text-white font-medium">{coin.name}</div>
                           <div className="text-white/50 text-sm">{coin.symbol}</div>
@@ -218,28 +218,28 @@ export default function BuyCryptoWithPaypal() {
                   </h2>
                   <div className="space-y-4">
                     <div className="flex items-start gap-4">
-                      <Clock className="w-5 h-5 text-emerald-400 mt-1" />
+                      <Clock className="w-5 h-5 text-orange-400 mt-1" />
                       <div>
                         <h3 className="text-white font-medium">5-Minute Processing</h3>
                         <p className="text-white/50 text-sm">Most PayPal transactions complete within 5 minutes</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-4">
-                      <Shield className="w-5 h-5 text-emerald-400 mt-1" />
+                      <Shield className="w-5 h-5 text-orange-400 mt-1" />
                       <div>
                         <h3 className="text-white font-medium">Buyer Protection</h3>
                         <p className="text-white/50 text-sm">PayPal's security measures protect every transaction</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-4">
-                      <Globe className="w-5 h-5 text-emerald-400 mt-1" />
+                      <Globe className="w-5 h-5 text-orange-400 mt-1" />
                       <div>
                         <h3 className="text-white font-medium">No Additional Fees</h3>
                         <p className="text-white/50 text-sm">Standard exchange fees apply, no extra PayPal charges</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-4">
-                      <Lock className="w-5 h-5 text-emerald-400 mt-1" />
+                      <Lock className="w-5 h-5 text-orange-400 mt-1" />
                       <div>
                         <h3 className="text-white font-medium">Privacy First</h3>
                         <p className="text-white/50 text-sm">No KYC verification required for purchases</p>
@@ -307,7 +307,7 @@ export default function BuyCryptoWithPaypal() {
                   Ready to Buy Crypto with PayPal?
                 </h2>
                 <p className="text-white/60 max-w-xl mx-auto mb-8">
-                  Join thousands of users who trust ZengoSwap for fast, secure cryptocurrency purchases via PayPal.
+                  Join thousands of users who trust Sorexo for fast, secure cryptocurrency purchases via PayPal.
                 </p>
                 <Link href="/exchange">
                   <GlassButton variant="primary" size="lg" shimmer data-testid="button-cta-exchange">
@@ -344,11 +344,11 @@ export default function BuyCryptoWithPaypal() {
       <footer className="border-t border-white/10 py-8 px-4">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-emerald-400" />
-            <span className="font-semibold zengo-text">ZengoSwap</span>
+            <Sparkles className="w-5 h-5 text-orange-400" />
+            <span className="font-semibold sorexo-text">Sorexo</span>
           </div>
           <p className="text-white/40 text-sm">
-            © {new Date().getFullYear()} ZengoSwap Exchange. All rights reserved.
+            © {new Date().getFullYear()} Sorexo Exchange. All rights reserved.
           </p>
         </div>
       </footer>

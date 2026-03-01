@@ -102,7 +102,7 @@ export default function Swap() {
       >
         {selected ? (
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400/20 to-cyan-400/20 flex items-center justify-center overflow-hidden">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400/20 to-cyan-400/20 flex items-center justify-center overflow-hidden">
               <CryptoIcon symbol={selected.cryptoSymbol} size="md" />
             </div>
             <div className="text-left">
@@ -138,7 +138,7 @@ export default function Swap() {
                     className="w-full flex items-center gap-3 p-4 hover:bg-white/10 transition-all"
                     data-testid={`${testIdPrefix}-option-${wallet.cryptoSymbol.toLowerCase()}`}
                   >
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400/20 to-cyan-400/20 flex items-center justify-center overflow-hidden">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400/20 to-cyan-400/20 flex items-center justify-center overflow-hidden">
                       <CryptoIcon symbol={wallet.cryptoSymbol} size="md" />
                     </div>
                     <div className="text-left flex-1">
@@ -297,7 +297,7 @@ export default function Swap() {
                           </div>
                           <div className="flex justify-between text-sm font-semibold border-t border-white/10 pt-2 mt-2">
                             <span className="text-white/70">You'll receive</span>
-                            <span className="text-emerald-400">
+                            <span className="text-orange-400">
                               ≈ {toAmount.toFixed(8)} {toCrypto?.cryptoSymbol}
                             </span>
                           </div>
@@ -335,12 +335,12 @@ export default function Swap() {
                     
                     <div className="space-y-6">
                       <div className="flex items-center gap-3 p-4 rounded-xl bg-white/5">
-                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-emerald-400/20 to-cyan-400/20 flex items-center justify-center overflow-hidden">
+                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-orange-400/20 to-cyan-400/20 flex items-center justify-center overflow-hidden">
                           <CryptoIcon symbol={toCrypto.cryptoSymbol} size="md" />
                         </div>
                         <div>
                           <p className="text-white font-semibold">{toCrypto.cryptoName}</p>
-                          <p className="text-emerald-400 text-sm">≈ {toAmount.toFixed(8)} {toCrypto.cryptoSymbol}</p>
+                          <p className="text-orange-400 text-sm">≈ {toAmount.toFixed(8)} {toCrypto.cryptoSymbol}</p>
                         </div>
                       </div>
 
@@ -411,12 +411,12 @@ export default function Swap() {
                         </div>
                         
                         <div className="flex justify-center py-2">
-                          <ArrowDownUp className="w-6 h-6 text-emerald-400" />
+                          <ArrowDownUp className="w-6 h-6 text-orange-400" />
                         </div>
                         
                         <div className="text-center">
                           <p className="text-white/50 text-sm">You'll receive</p>
-                          <p className="text-2xl font-bold text-emerald-400 mt-1">
+                          <p className="text-2xl font-bold text-orange-400 mt-1">
                             ≈ {toAmount.toFixed(8)} {toCrypto?.cryptoSymbol}
                           </p>
                           <p className="text-white/40 text-sm">
@@ -428,7 +428,7 @@ export default function Swap() {
                       <div className="rounded-xl bg-white/5 p-4">
                         <div className="text-sm">
                           <p className="text-white/50 mb-1">Your {toCrypto?.cryptoSymbol} will be sent to:</p>
-                          <code className="text-emerald-400 font-mono text-xs break-all">{receiveAddress}</code>
+                          <code className="text-orange-400 font-mono text-xs break-all">{receiveAddress}</code>
                         </div>
                       </div>
 
@@ -480,7 +480,7 @@ export default function Swap() {
                       <motion.div
                         animate={{ rotate: 360 }}
                         transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                        className="w-6 h-6 border-2 border-emerald-400 border-t-transparent rounded-full"
+                        className="w-6 h-6 border-2 border-orange-400 border-t-transparent rounded-full"
                       />
                       <h3 className="text-lg font-semibold text-white">
                         Awaiting Payment
@@ -493,7 +493,7 @@ export default function Swap() {
                       className="text-center mb-6"
                     >
                       <p className="text-white/70 text-sm">
-                        Send exactly <span className="text-emerald-400 font-semibold">{fromAmountNum} {fromCrypto.cryptoSymbol}</span> to the address below
+                        Send exactly <span className="text-orange-400 font-semibold">{fromAmountNum} {fromCrypto.cryptoSymbol}</span> to the address below
                       </p>
                     </motion.div>
                     
@@ -517,7 +517,7 @@ export default function Swap() {
                       )}
 
                       <motion.div 
-                        className="rounded-xl bg-white/5 p-4 border border-emerald-500/30"
+                        className="rounded-xl bg-white/5 p-4 border border-orange-500/30"
                         animate={{ borderColor: ["rgba(16, 185, 129, 0.3)", "rgba(16, 185, 129, 0.6)", "rgba(16, 185, 129, 0.3)"] }}
                         transition={{ duration: 2, repeat: Infinity }}
                       >
@@ -535,7 +535,7 @@ export default function Swap() {
                             data-testid="button-copy-address"
                           >
                             {copied ? (
-                              <Check className="w-4 h-4 text-emerald-400" />
+                              <Check className="w-4 h-4 text-orange-400" />
                             ) : (
                               <Copy className="w-4 h-4" />
                             )}
@@ -550,7 +550,7 @@ export default function Swap() {
                         </div>
                         <div className="flex justify-between text-sm mb-2">
                           <span className="text-white/50">You'll receive</span>
-                          <span className="text-emerald-400 font-semibold">≈ {toAmount.toFixed(8)} {toCrypto?.cryptoSymbol}</span>
+                          <span className="text-orange-400 font-semibold">≈ {toAmount.toFixed(8)} {toCrypto?.cryptoSymbol}</span>
                         </div>
                         <div className="flex justify-between text-sm">
                           <span className="text-white/50">Fee</span>
@@ -560,7 +560,7 @@ export default function Swap() {
 
                       <div className="rounded-xl bg-white/5 p-4">
                         <p className="text-white/50 text-xs mb-1">Your {toCrypto?.cryptoSymbol} will be sent to:</p>
-                        <code className="text-emerald-400 font-mono text-sm break-all">{receiveAddress}</code>
+                        <code className="text-orange-400 font-mono text-sm break-all">{receiveAddress}</code>
                       </div>
 
                       <div className="rounded-xl bg-blue-500/10 border border-blue-500/30 p-4">
