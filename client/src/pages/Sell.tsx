@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { ArrowRight, ArrowLeft, Check, Sparkles, Gift, Wallet, Copy } from "lucide-react";
+import { ArrowRight, ArrowLeft, Check, Sparkles, Gift, Wallet, Copy, Smartphone, Landmark, Building2, ShoppingBag, Gamepad2, Music, Joystick } from "lucide-react";
 import { GlassCard, GlassButton, GlassInput, PrismaticBackground, GlassNavbar } from "@/components/glass";
 import { CryptoIcon } from "@/components/CryptoIcon";
 import { queryClient, apiRequest } from "@/lib/queryClient";
@@ -14,25 +14,8 @@ const SELL_FEE = 0.005; // 0.5% fee
 const MIN_SELL_USD = 30;
 const MAX_SELL_USD = 50000;
 
-import paypalIcon from "@assets/ARCTIC_1768071353413.png";
-import amazonIcon from "@assets/image_1770062250834.png";
-import spotifyIcon from "@assets/image_1770062259498.png";
-import fortniteIcon from "@assets/image_1770062268743.png";
-import xboxIcon from "@assets/image_1770062274785.png";
-import steamIcon from "@assets/image_1770062278808.png";
-import playstationIcon from "@assets/image_1770062282872.png";
-import twitchIcon from "@assets/image_1770062294308.png";
-import appleIcon from "@assets/image_1770062297316.png";
-import googlePlayIcon from "@assets/image_1770062300792.png";
-import nintendoIcon from "@assets/image_1770062314419.png";
-import paypalCardIcon from "@assets/image_1770062331582.png";
-import venmoIcon from "@assets/image_1770062335458.png";
-import bankIcon from "@assets/image_1770062340634.png";
-import revolutIcon from "@assets/image_1770062343869.png";
-import wiseIcon from "@assets/image_1770062347194.png";
-import giftcardIcon from "@assets/image_1770063338671.png";
-import cashappIcon from "@assets/Untitled_design_(55)_1770063708007.png";
-import applepayIcon from "@assets/Untitled_design_(54)_1770063604072.png";
+
+
 
 type Step = "crypto" | "payout" | "details" | "send";
 
@@ -49,27 +32,27 @@ const supportedCryptos = [
 ];
 
 const payoutMethods = [
-  { id: "paypal", name: "PayPal", icon: paypalCardIcon, description: "Receive funds via PayPal" },
-  { id: "venmo", name: "Venmo", icon: venmoIcon, description: "Receive to Venmo" },
-  { id: "cashapp", name: "Cash App", icon: cashappIcon, description: "Receive to Cash App" },
-  { id: "applepay", name: "Apple Pay", icon: applepayIcon, description: "Receive to Apple Pay" },
-  { id: "giftcards", name: "Gift Cards", icon: giftcardIcon, description: "Get popular gift cards" },
-  { id: "bank", name: "Bank Transfer", icon: bankIcon, description: "SEPA / SWIFT / ACH" },
-  { id: "revolut", name: "Revolut", icon: revolutIcon, description: "Receive to Revolut" },
-  { id: "wise", name: "Wise", icon: wiseIcon, description: "Receive to Wise" },
+  { id: "paypal", name: "PayPal", icon: Wallet, description: "Receive funds via PayPal" },
+  { id: "venmo", name: "Venmo", icon: Smartphone, description: "Receive to Venmo" },
+  { id: "cashapp", name: "Cash App", icon: Smartphone, description: "Receive to Cash App" },
+  { id: "applepay", name: "Apple Pay", icon: Smartphone, description: "Receive to Apple Pay" },
+  { id: "giftcards", name: "Gift Cards", icon: Gift, description: "Get popular gift cards" },
+  { id: "bank", name: "Bank Transfer", icon: Landmark, description: "SEPA / SWIFT / ACH" },
+  { id: "revolut", name: "Revolut", icon: Building2, description: "Receive to Revolut" },
+  { id: "wise", name: "Wise", icon: Building2, description: "Receive to Wise" },
 ];
 
 const giftCardTypes = [
-  { id: "amazon", name: "Amazon", icon: amazonIcon },
-  { id: "steam", name: "Steam", icon: steamIcon },
-  { id: "apple", name: "Apple", icon: appleIcon },
-  { id: "googleplay", name: "Google Play", icon: googlePlayIcon },
-  { id: "xbox", name: "Xbox", icon: xboxIcon },
-  { id: "playstation", name: "PlayStation", icon: playstationIcon },
-  { id: "spotify", name: "Spotify", icon: spotifyIcon },
-  { id: "fortnite", name: "Fortnite", icon: fortniteIcon },
-  { id: "twitch", name: "Twitch", icon: twitchIcon },
-  { id: "nintendo", name: "Nintendo", icon: nintendoIcon },
+  { id: "amazon", name: "Amazon", icon: ShoppingBag },
+  { id: "steam", name: "Steam", icon: Gamepad2 },
+  { id: "apple", name: "Apple", icon: Smartphone },
+  { id: "googleplay", name: "Google Play", icon: Gamepad2 },
+  { id: "xbox", name: "Xbox", icon: Joystick },
+  { id: "playstation", name: "PlayStation", icon: Gamepad2 },
+  { id: "spotify", name: "Spotify", icon: Music },
+  { id: "fortnite", name: "Fortnite", icon: Gamepad2 },
+  { id: "twitch", name: "Twitch", icon: Gamepad2 },
+  { id: "nintendo", name: "Nintendo", icon: Gamepad2 },
 ];
 
 
@@ -122,8 +105,8 @@ export default function Sell() {
     if (prices && prices[symbol]) {
       return prices[symbol];
     }
-    const fallbacks: Record<string, number> = { 
-      BTC: 97000, ETH: 3300, SOL: 180, USDT: 1, LTC: 100, 
+    const fallbacks: Record<string, number> = {
+      BTC: 97000, ETH: 3300, SOL: 180, USDT: 1, LTC: 100,
       BNB: 600, USDC: 1, TRX: 0.25, POL: 0.5
     };
     return fallbacks[symbol] || 1;
@@ -219,31 +202,31 @@ export default function Sell() {
 
     if (currentStep === "details") {
       const method = formData.payoutMethod;
-      
+
       if (method === "paypal") {
         if (!formData.paypalEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.paypalEmail)) {
           newErrors.paypalEmail = "Please enter a valid email address";
         }
       }
-      
+
       if (method === "venmo") {
         if (!formData.venmoUsername || formData.venmoUsername.length < 1) {
           newErrors.venmoUsername = "Please enter your Venmo username";
         }
       }
-      
+
       if (method === "cashapp") {
         if (!formData.cashTag || !formData.cashTag.startsWith("$")) {
           newErrors.cashTag = "Please enter a valid $cashtag (must start with $)";
         }
       }
-      
+
       if (method === "applepay") {
         if (!formData.applePayPhone || formData.applePayPhone.length < 10) {
           newErrors.applePayPhone = "Please enter a valid phone number";
         }
       }
-      
+
       if (method === "giftcards") {
         if (!formData.giftCardType) {
           newErrors.giftCardType = "Please select a gift card type";
@@ -252,24 +235,24 @@ export default function Sell() {
           newErrors.giftCardEmail = "Please enter a valid email for delivery";
         }
       }
-      
+
       if (method === "revolut") {
         if (!formData.revolutTag || formData.revolutTag.length < 1) {
           newErrors.revolutTag = "Please enter your Revolut @tag";
         }
       }
-      
+
       if (method === "wise") {
         if (!formData.wiseEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.wiseEmail)) {
           newErrors.wiseEmail = "Please enter a valid email address";
         }
       }
-      
+
       if (method === "bank") {
         if (!formData.accountHolder || formData.accountHolder.length < 2) {
           newErrors.accountHolder = "Please enter account holder name";
         }
-        
+
         if (formData.bankType === "iban") {
           // IBAN validation (2 letters + 2 digits + up to 30 alphanumeric)
           if (!formData.iban || !/^[A-Z]{2}[0-9]{2}[A-Z0-9]{11,30}$/.test(formData.iban.toUpperCase().replace(/\s/g, ''))) {
@@ -299,7 +282,7 @@ export default function Sell() {
 
     const stepOrder: Step[] = ["crypto", "payout", "details"];
     const currentIndex = stepOrder.indexOf(step);
-    
+
     if (currentIndex < stepOrder.length - 1) {
       setStep(stepOrder[currentIndex + 1]);
     } else if (step === "details") {
@@ -405,11 +388,10 @@ export default function Sell() {
                   {steps.map((s, i) => (
                     <div key={s.id} className="flex items-center">
                       <div
-                        className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all duration-300 ${
-                          i <= currentStepIndex
-                            ? "bg-gradient-to-br from-orange-500 to-purple-500 text-white shadow-glow"
-                            : "bg-white/10 text-white/40"
-                        }`}
+                        className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all duration-300 ${i <= currentStepIndex
+                          ? "bg-gradient-to-br from-orange-500 to-purple-500 text-white shadow-glow"
+                          : "bg-white/10 text-white/40"
+                          }`}
                         data-testid={`step-indicator-${s.id}`}
                       >
                         {i < currentStepIndex ? (
@@ -420,9 +402,8 @@ export default function Sell() {
                       </div>
                       {i < steps.length - 1 && (
                         <div
-                          className={`w-16 sm:w-24 h-0.5 mx-2 transition-all duration-300 ${
-                            i < currentStepIndex ? "bg-orange-500" : "bg-white/10"
-                          }`}
+                          className={`w-16 sm:w-24 h-0.5 mx-2 transition-all duration-300 ${i < currentStepIndex ? "bg-orange-500" : "bg-white/10"
+                            }`}
                         />
                       )}
                     </div>
@@ -467,11 +448,10 @@ export default function Sell() {
                               onClick={() =>
                                 setFormData({ ...formData, cryptoType: crypto.symbol })
                               }
-                              className={`p-2 sm:p-2.5 rounded-xl border transition-all duration-200 flex items-center justify-center gap-1 sm:gap-1.5 ${
-                                formData.cryptoType === crypto.symbol
-                                  ? "bg-orange-500/20 border-orange-500/50 text-white"
-                                  : "bg-white/5 border-white/10 text-white/60 hover:bg-white/10"
-                              }`}
+                              className={`p-2 sm:p-2.5 rounded-xl border transition-all duration-200 flex items-center justify-center gap-1 sm:gap-1.5 ${formData.cryptoType === crypto.symbol
+                                ? "bg-orange-500/20 border-orange-500/50 text-white"
+                                : "bg-white/5 border-white/10 text-white/60 hover:bg-white/10"
+                                }`}
                               data-testid={`button-crypto-${crypto.symbol}`}
                             >
                               <CryptoIcon symbol={crypto.symbol} size="sm" />
@@ -489,11 +469,10 @@ export default function Sell() {
                           <button
                             type="button"
                             onClick={() => setInputMode("crypto")}
-                            className={`flex-1 py-3 px-4 rounded-xl border transition-all ${
-                              inputMode === "crypto"
-                                ? "bg-orange-500/20 border-orange-500 text-white"
-                                : "bg-white/5 border-white/10 text-white/60 hover:bg-white/10"
-                            }`}
+                            className={`flex-1 py-3 px-4 rounded-xl border transition-all ${inputMode === "crypto"
+                              ? "bg-orange-500/20 border-orange-500 text-white"
+                              : "bg-white/5 border-white/10 text-white/60 hover:bg-white/10"
+                              }`}
                             data-testid="button-input-mode-crypto"
                           >
                             {formData.cryptoType}
@@ -501,11 +480,10 @@ export default function Sell() {
                           <button
                             type="button"
                             onClick={() => setInputMode("usd")}
-                            className={`flex-1 py-3 px-4 rounded-xl border transition-all ${
-                              inputMode === "usd"
-                                ? "bg-orange-500/20 border-orange-500 text-white"
-                                : "bg-white/5 border-white/10 text-white/60 hover:bg-white/10"
-                            }`}
+                            className={`flex-1 py-3 px-4 rounded-xl border transition-all ${inputMode === "usd"
+                              ? "bg-orange-500/20 border-orange-500 text-white"
+                              : "bg-white/5 border-white/10 text-white/60 hover:bg-white/10"
+                              }`}
                             data-testid="button-input-mode-usd"
                           >
                             USD
@@ -625,19 +603,14 @@ export default function Sell() {
                           className="flex flex-col items-center gap-2 group"
                           data-testid={`button-payout-${method.id}`}
                         >
-                          <div className={`relative w-full aspect-[16/10] overflow-hidden rounded-xl border-2 transition-all duration-200 ${
-                            formData.payoutMethod === method.id
-                              ? "border-orange-500 ring-2 ring-orange-500/30 scale-105"
-                              : "border-white/10 group-hover:border-white/30"
-                          }`}>
+                          <div className={`relative w-full aspect-[16/10] overflow-hidden rounded-xl border-2 transition-all duration-200 ${formData.payoutMethod === method.id
+                            ? "border-orange-500 ring-2 ring-orange-500/30 scale-105"
+                            : "border-white/10 group-hover:border-white/30"
+                            }`}>
                             {method.icon ? (
-                              <img 
-                                src={method.icon} 
-                                alt={method.name} 
-                                loading="eager"
-                                decoding="sync"
-                                className="w-full h-full object-cover brightness-110 bg-white/5"
-                              />
+                              <div className="w-full h-full bg-white/5 flex items-center justify-center">
+                                <method.icon className="w-10 h-10 text-orange-400" />
+                              </div>
                             ) : (
                               <div className="w-full h-full bg-gradient-to-br from-orange-500/30 to-purple-500/30 flex items-center justify-center">
                                 <Gift className="w-10 h-10 text-orange-400" />
@@ -649,9 +622,8 @@ export default function Sell() {
                               </div>
                             )}
                           </div>
-                          <span className={`text-sm font-medium transition-colors ${
-                            formData.payoutMethod === method.id ? "text-white" : "text-white/60 group-hover:text-white"
-                          }`}>{method.name}</span>
+                          <span className={`text-sm font-medium transition-colors ${formData.payoutMethod === method.id ? "text-white" : "text-white/60 group-hover:text-white"
+                            }`}>{method.name}</span>
                         </button>
                       ))}
                     </div>
@@ -747,27 +719,21 @@ export default function Sell() {
                                   className="flex flex-col items-center gap-2 group"
                                   data-testid={`select-giftcard-${card.id}`}
                                 >
-                                  <div className={`relative w-full aspect-[16/10] overflow-hidden rounded-xl border-2 transition-all duration-200 ${
-                                    formData.giftCardType === card.id
-                                      ? "border-orange-500 ring-2 ring-orange-500/30 scale-105"
-                                      : "border-white/10 group-hover:border-white/30"
-                                  }`}>
-                                    <img 
-                                      src={card.icon} 
-                                      alt={card.name} 
-                                      loading="eager"
-                                      decoding="sync"
-                                      className="w-full h-full object-cover brightness-110 bg-white/5"
-                                    />
+                                  <div className={`relative w-full aspect-[16/10] overflow-hidden rounded-xl border-2 transition-all duration-200 ${formData.giftCardType === card.id
+                                    ? "border-orange-500 ring-2 ring-orange-500/30 scale-105"
+                                    : "border-white/10 group-hover:border-white/30"
+                                    }`}>
+                                    <div className="w-full h-full bg-white/5 flex items-center justify-center">
+                                      {card.icon && <card.icon className="w-10 h-10 text-orange-400" />}
+                                    </div>
                                     {formData.giftCardType === card.id && (
                                       <div className="absolute top-2 right-2 w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center">
                                         <Check className="w-4 h-4 text-white" />
                                       </div>
                                     )}
                                   </div>
-                                  <span className={`text-sm font-medium transition-colors ${
-                                    formData.giftCardType === card.id ? "text-white" : "text-white/60 group-hover:text-white"
-                                  }`}>{card.name}</span>
+                                  <span className={`text-sm font-medium transition-colors ${formData.giftCardType === card.id ? "text-white" : "text-white/60 group-hover:text-white"
+                                    }`}>{card.name}</span>
                                 </button>
                               ))}
                             </div>
@@ -827,11 +793,10 @@ export default function Sell() {
                               <button
                                 type="button"
                                 onClick={() => setFormData({ ...formData, bankType: "us" })}
-                                className={`flex-1 py-3 px-4 rounded-xl border transition-all ${
-                                  formData.bankType === "us"
-                                    ? "bg-orange-500/20 border-orange-500 text-white"
-                                    : "bg-white/5 border-white/10 text-white/60 hover:bg-white/10"
-                                }`}
+                                className={`flex-1 py-3 px-4 rounded-xl border transition-all ${formData.bankType === "us"
+                                  ? "bg-orange-500/20 border-orange-500 text-white"
+                                  : "bg-white/5 border-white/10 text-white/60 hover:bg-white/10"
+                                  }`}
                                 data-testid="button-bank-type-us"
                               >
                                 US Bank (ACH)
@@ -839,11 +804,10 @@ export default function Sell() {
                               <button
                                 type="button"
                                 onClick={() => setFormData({ ...formData, bankType: "iban" })}
-                                className={`flex-1 py-3 px-4 rounded-xl border transition-all ${
-                                  formData.bankType === "iban"
-                                    ? "bg-orange-500/20 border-orange-500 text-white"
-                                    : "bg-white/5 border-white/10 text-white/60 hover:bg-white/10"
-                                }`}
+                                className={`flex-1 py-3 px-4 rounded-xl border transition-all ${formData.bankType === "iban"
+                                  ? "bg-orange-500/20 border-orange-500 text-white"
+                                  : "bg-white/5 border-white/10 text-white/60 hover:bg-white/10"
+                                  }`}
                                 data-testid="button-bank-type-iban"
                               >
                                 IBAN (International)
@@ -942,7 +906,7 @@ export default function Sell() {
                         Awaiting Payment
                       </h3>
                     </div>
-                    
+
                     <motion.div
                       animate={{ opacity: [0.5, 1, 0.5] }}
                       transition={{ duration: 2, repeat: Infinity }}
@@ -952,17 +916,17 @@ export default function Sell() {
                         Send exactly <span className="text-orange-400 font-semibold">{formData.cryptoAmount} {formData.cryptoType}</span> to the address below
                       </p>
                     </motion.div>
-                    
+
                     <div className="space-y-6">
                       {selectedWallet?.qrCodeImage && (
                         <div className="flex justify-center">
-                          <motion.div 
+                          <motion.div
                             className="bg-white p-4 rounded-xl relative"
                             animate={{ boxShadow: ["0 0 0 0 rgba(16, 185, 129, 0)", "0 0 0 8px rgba(16, 185, 129, 0.2)", "0 0 0 0 rgba(16, 185, 129, 0)"] }}
                             transition={{ duration: 2, repeat: Infinity }}
                           >
-                            <img 
-                              src={selectedWallet.qrCodeImage} 
+                            <img
+                              src={selectedWallet.qrCodeImage}
                               alt={`${formData.cryptoType} QR Code`}
                               loading="eager"
                               decoding="sync"
@@ -972,7 +936,7 @@ export default function Sell() {
                         </div>
                       )}
 
-                      <motion.div 
+                      <motion.div
                         className="rounded-xl bg-white/5 p-4 border border-orange-500/30"
                         animate={{ borderColor: ["rgba(16, 185, 129, 0.3)", "rgba(16, 185, 129, 0.6)", "rgba(16, 185, 129, 0.3)"] }}
                         transition={{ duration: 2, repeat: Infinity }}
@@ -1030,7 +994,7 @@ export default function Sell() {
 
                       <div className="rounded-xl bg-blue-500/10 border border-blue-500/30 p-4">
                         <p className="text-sm text-blue-300">
-                          After sending, please allow up to 30 minutes for confirmation. 
+                          After sending, please allow up to 30 minutes for confirmation.
                           Your payout will be processed once the transaction is verified on the blockchain.
                         </p>
                       </div>

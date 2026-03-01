@@ -11,24 +11,18 @@ import { Seo } from "@/components/Seo";
 import { WhopCheckoutEmbed } from "@whop/checkout/react";
 import type { Crypto, PaymentMethod, Setting } from "@shared/schema";
 
-import cardIcon from "@assets/ARCTIC_1768071339190.png";
-import paypalIcon from "@assets/ARCTIC_1768071353413.png";
+
+
 
 type Step = "amount" | "payment" | "details" | "paypal_payment" | "sumup_payment" | "whop_payment" | "confirm" | "success";
 
 function PaymentMethodIcon({ type }: { type: string }) {
   const key = type.toLowerCase();
-  
-  if (key === "card") {
-    return <img src={cardIcon} alt="Card" loading="eager" decoding="sync" className="w-7 h-7 object-contain" />;
+
+  if (key === "card" || key === "sumup") {
+    return <CreditCard className="w-7 h-7 text-orange-400" />;
   }
-  if (key === "paypal") {
-    return <img src={paypalIcon} alt="PayPal" loading="eager" decoding="sync" className="w-7 h-7 object-contain" />;
-  }
-  if (key === "sumup") {
-    return <img src={cardIcon} alt="SumUp" loading="eager" decoding="sync" className="w-7 h-7 object-contain" />;
-  }
-  if (key === "bank") {
+  if (key === "paypal" || key === "bank") {
     return <Wallet className="w-7 h-7 text-orange-400" />;
   }
   return <DollarSign className="w-7 h-7 text-orange-400" />;
@@ -76,14 +70,14 @@ export default function Exchange() {
     const urlParams = new URLSearchParams(window.location.search);
     const whopStatus = urlParams.get('whop_status');
     const refId = urlParams.get('ref');
-    
+
     if (whopStatus === 'success' && refId && !isVerifyingWhopPayment) {
       setIsVerifyingWhopPayment(true);
-      
+
       // Retrieve stored form data from sessionStorage
       const storedData = sessionStorage.getItem(`whop_tx_${refId}`);
       const txData = storedData ? JSON.parse(storedData) : null;
-      
+
       // Verify the Whop payment
       fetch("/api/whop/verify", {
         method: "POST",
@@ -105,15 +99,15 @@ export default function Exchange() {
                 walletAddress: txData.walletAddress,
                 status: "pending",
               });
-              
+
               queryClient.invalidateQueries({ queryKey: ["/api/transactions"] });
-              
+
               toast({
                 title: "Payment Successful!",
                 description: "Your transaction has been created. We'll process your order shortly.",
               });
               setStep("success");
-              
+
               // Clear stored data
               sessionStorage.removeItem(`whop_tx_${refId}`);
             } catch {
@@ -193,8 +187,8 @@ export default function Exchange() {
       fetch("/api/sumup/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-          amount: formData.amount, 
+        body: JSON.stringify({
+          amount: formData.amount,
           currency: formData.currency,
           description: `Sorexo - ${formData.cryptoType} Purchase`,
           referenceId: referenceCode
@@ -223,8 +217,8 @@ export default function Exchange() {
       fetch("/api/whop/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-          amount: parseFloat(formData.amount), 
+        body: JSON.stringify({
+          amount: parseFloat(formData.amount),
           currency: formData.currency.toLowerCase(),
           description: `Sorexo - ${formData.cryptoType} Purchase`,
           referenceId: referenceCode,
@@ -269,9 +263,9 @@ export default function Exchange() {
       return prices[symbol];
     }
     // Fallback prices if API fails
-    const fallbacks: Record<string, number> = { 
-      BTC: 97000, ETH: 3300, SOL: 180, USDT: 1, LTC: 100, XRP: 2.5, 
-      BNB: 600, BCH: 400, USDC: 1, TRX: 0.25 
+    const fallbacks: Record<string, number> = {
+      BTC: 97000, ETH: 3300, SOL: 180, USDT: 1, LTC: 100, XRP: 2.5,
+      BNB: 600, BCH: 400, USDC: 1, TRX: 0.25
     };
     return fallbacks[symbol] || 1;
   };
@@ -279,11 +273,11 @@ export default function Exchange() {
   // Handle Whop checkout completion callback
   const handleWhopComplete = useCallback(async (planId: string, receiptId?: string) => {
     console.log('Whop checkout complete:', planId, receiptId);
-    
+
     // Create the transaction
     const rate = getCryptoRate(formData.cryptoType);
     const cryptoAmount = (parseFloat(formData.amount) * 0.95) / rate;
-    
+
     try {
       await apiRequest("POST", "/api/transactions", {
         amount: parseFloat(formData.amount),
@@ -296,9 +290,9 @@ export default function Exchange() {
         status: "pending",
         referenceId: referenceCode,
       });
-      
+
       queryClient.invalidateQueries({ queryKey: ["/api/transactions"] });
-      
+
       toast({
         title: "Payment Successful!",
         description: "Your transaction has been created. We'll process your order shortly.",
@@ -326,14 +320,14 @@ export default function Exchange() {
           body: JSON.stringify({ referenceId: referenceCode }),
         });
         const data = await res.json();
-        
+
         if (data.verified) {
           clearInterval(pollInterval);
-          
+
           // Create the transaction
           const rate = getCryptoRate(formData.cryptoType);
           const cryptoAmount = (parseFloat(formData.amount) * 0.95) / rate;
-          
+
           await apiRequest("POST", "/api/transactions", {
             amount: parseFloat(formData.amount),
             currency: formData.currency,
@@ -344,9 +338,9 @@ export default function Exchange() {
             walletAddress: formData.walletAddress,
             status: "pending",
           });
-          
+
           queryClient.invalidateQueries({ queryKey: ["/api/transactions"] });
-          
+
           toast({
             title: "Payment Successful!",
             description: "Your transaction has been created. We'll process your order shortly.",
@@ -361,14 +355,14 @@ export default function Exchange() {
     return () => clearInterval(pollInterval);
   }, [step, referenceCode, formData, toast]);
 
-  const paymentMethods = (dbPaymentMethods && dbPaymentMethods.length > 0) 
+  const paymentMethods = (dbPaymentMethods && dbPaymentMethods.length > 0)
     ? dbPaymentMethods.filter(pm => pm.isActive).map(pm => ({
-        id: pm.key,
-        name: pm.name,
-        key: pm.key,
-        icon: pm.icon,
-        description: pm.description || ""
-      }))
+      id: pm.key,
+      name: pm.name,
+      key: pm.key,
+      icon: pm.icon,
+      description: pm.description || ""
+    }))
     : fallbackPaymentMethods;
 
   // Transform payment methods based on active processor
@@ -388,7 +382,7 @@ export default function Exchange() {
       // Use live crypto rate with 5% fee
       const rate = getCryptoRate(formData.cryptoType);
       const cryptoAmount = (parseFloat(formData.amount) * 0.95) / rate;
-      
+
       const res = await apiRequest("POST", "/api/transactions", {
         amount: parseFloat(formData.amount),
         currency: formData.currency,
@@ -439,7 +433,7 @@ export default function Exchange() {
           if (container) {
             container.innerHTML = '';
           }
-          
+
           win.SumUpCard.mount({
             id: 'sumup-card',
             checkoutId: sumupCheckoutId,
@@ -520,7 +514,7 @@ export default function Exchange() {
     // Dynamic step flow - insert payment step based on selected method and processor
     const paymentMethod = formData.paymentMethod.toLowerCase();
     const isCardPayment = paymentMethod === "sumup";
-    
+
     let steps: Step[];
     if (isCardPayment) {
       // Use Whop or SumUp based on active processor setting
@@ -529,7 +523,7 @@ export default function Exchange() {
     } else {
       steps = ["amount", "payment", "details", "confirm"];
     }
-    
+
     const currentIndex = steps.indexOf(step);
     if (currentIndex < steps.length - 1) {
       setStep(steps[currentIndex + 1]);
@@ -541,7 +535,7 @@ export default function Exchange() {
   const handleBack = () => {
     const paymentMethod = formData.paymentMethod.toLowerCase();
     const isCardPayment = paymentMethod === "sumup";
-    
+
     let steps: Step[];
     if (isCardPayment) {
       const paymentStep: Step = activeProcessor === "whop" ? "whop_payment" : "sumup_payment";
@@ -549,7 +543,7 @@ export default function Exchange() {
     } else {
       steps = ["amount", "payment", "details", "confirm"];
     }
-    
+
     const currentIndex = steps.indexOf(step);
     if (currentIndex > 0) {
       setStep(steps[currentIndex - 1]);
@@ -574,7 +568,7 @@ export default function Exchange() {
   // Dynamic step indicators based on payment method and processor
   const selectedPaymentMethod = formData.paymentMethod.toLowerCase();
   const isCardPaymentSelected = selectedPaymentMethod === "sumup";
-  
+
   let steps;
   if (isCardPaymentSelected) {
     const paymentStepId = activeProcessor === "whop" ? "whop_payment" : "sumup_payment";
@@ -628,11 +622,10 @@ export default function Exchange() {
                   {steps.map((s, i) => (
                     <div key={s.id} className="flex items-center">
                       <div
-                        className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all duration-300 ${
-                          i <= currentStepIndex
+                        className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all duration-300 ${i <= currentStepIndex
                             ? "bg-gradient-to-br from-orange-500 to-purple-500 text-white shadow-glow"
                             : "bg-white/10 text-white/40"
-                        }`}
+                          }`}
                         data-testid={`step-indicator-${s.id}`}
                       >
                         {i < currentStepIndex ? (
@@ -643,9 +636,8 @@ export default function Exchange() {
                       </div>
                       {i < steps.length - 1 && (
                         <div
-                          className={`w-16 sm:w-24 h-0.5 mx-2 transition-all duration-300 ${
-                            i < currentStepIndex ? "bg-orange-500" : "bg-white/10"
-                          }`}
+                          className={`w-16 sm:w-24 h-0.5 mx-2 transition-all duration-300 ${i < currentStepIndex ? "bg-orange-500" : "bg-white/10"
+                            }`}
                         />
                       )}
                     </div>
@@ -707,11 +699,10 @@ export default function Exchange() {
                               onClick={() =>
                                 setFormData({ ...formData, cryptoType: crypto.symbol })
                               }
-                              className={`p-2 sm:p-2.5 rounded-xl border transition-all duration-200 flex items-center justify-center gap-1 sm:gap-1.5 ${
-                                formData.cryptoType === crypto.symbol
+                              className={`p-2 sm:p-2.5 rounded-xl border transition-all duration-200 flex items-center justify-center gap-1 sm:gap-1.5 ${formData.cryptoType === crypto.symbol
                                   ? "bg-orange-500/20 border-orange-500/50 text-white"
                                   : "bg-white/5 border-white/10 text-white/60 hover:bg-white/10"
-                              }`}
+                                }`}
                               data-testid={`button-crypto-${crypto.symbol}`}
                             >
                               <CryptoIcon symbol={crypto.symbol} size="sm" />
@@ -758,7 +749,7 @@ export default function Exchange() {
                     <div className="space-y-3">
                       {displayPaymentMethods.map((method) => {
                         const isPayPal = method.key.toLowerCase() === "paypal";
-                        
+
                         if (isPayPal) {
                           return (
                             <a
@@ -782,18 +773,17 @@ export default function Exchange() {
                             </a>
                           );
                         }
-                        
+
                         return (
                           <button
                             key={method.id}
                             onClick={() =>
                               setFormData({ ...formData, paymentMethod: method.id })
                             }
-                            className={`w-full p-5 rounded-xl border flex items-center gap-4 transition-all duration-200 ${
-                              formData.paymentMethod === method.id
+                            className={`w-full p-5 rounded-xl border flex items-center gap-4 transition-all duration-200 ${formData.paymentMethod === method.id
                                 ? "bg-orange-500/20 border-orange-500/50"
                                 : "bg-white/5 border-white/10 hover:bg-white/10"
-                            }`}
+                              }`}
                             data-testid={`button-payment-${method.id}`}
                           >
                             <div className="w-14 h-14 rounded-xl bg-white/10 flex items-center justify-center overflow-hidden">
@@ -929,7 +919,7 @@ export default function Exchange() {
                             Important: Send as "Friends and Family"
                           </p>
                           <p className="text-sm text-amber-200/70">
-                            You must select "Sending to a friend" or "Friends and Family" option when making the payment. 
+                            You must select "Sending to a friend" or "Friends and Family" option when making the payment.
                             Payments sent as "Goods and Services" will be refunded and your order cancelled.
                           </p>
                         </div>
@@ -1140,19 +1130,19 @@ export default function Exchange() {
                     </p>
 
                     <div className="space-y-3">
-                      <GlassButton 
-                        variant="primary" 
-                        size="lg" 
-                        className="w-full" 
+                      <GlassButton
+                        variant="primary"
+                        size="lg"
+                        className="w-full"
                         onClick={() => setLocation("/")}
                         data-testid="button-back-home"
                       >
                         Back to Home
                       </GlassButton>
-                      <GlassButton 
-                        variant="outline" 
-                        size="lg" 
-                        className="w-full" 
+                      <GlassButton
+                        variant="outline"
+                        size="lg"
+                        className="w-full"
                         onClick={handleReset}
                         data-testid="button-new-exchange"
                       >

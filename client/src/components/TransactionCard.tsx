@@ -1,12 +1,9 @@
 import { forwardRef } from "react";
 import { motion } from "framer-motion";
-import { Wallet, DollarSign, Clock } from "lucide-react";
+import { Wallet, DollarSign, Clock, CreditCard } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CryptoIcon } from "./CryptoIcon";
 import type { Transaction, PaymentMethod } from "@shared/schema";
-
-import cardIcon from "@assets/ARCTIC_1768071339190.png";
-import paypalIcon from "@assets/ARCTIC_1768071353413.png";
 
 type CryptoPrices = Record<string, number>;
 
@@ -25,14 +22,11 @@ const paymentLabels: Record<string, string> = {
 
 function PaymentIcon({ type }: { type: string }) {
   const key = type.toLowerCase();
-  
-  if (key === "card") {
-    return <img src={cardIcon} alt="Card" className="w-5 h-5 object-contain rounded" />;
+
+  if (key === "card" || key === "sumup") {
+    return <CreditCard className="w-5 h-5 text-orange-400" />;
   }
-  if (key === "paypal") {
-    return <img src={paypalIcon} alt="PayPal" className="w-5 h-5 object-contain rounded" />;
-  }
-  if (key === "bank") {
+  if (key === "paypal" || key === "bank") {
     return <Wallet className="w-5 h-5 text-orange-400" />;
   }
   return <DollarSign className="w-5 h-5 text-orange-400" />;
@@ -74,10 +68,10 @@ export const TransactionCard = forwardRef<HTMLDivElement, TransactionCardProps>(
   function TransactionCard({ transaction, index = 0, paymentMethods = [], prices = {} }, ref) {
     const paymentKey = transaction.paymentMethod.toLowerCase();
     const customPaymentMethod = paymentMethods.find(pm => pm.key === paymentKey);
-    
+
     const livePrice = transaction.cryptoType ? prices[transaction.cryptoType] : null;
     const liveCryptoAmount = livePrice && transaction.amount ? transaction.amount / livePrice : null;
-    
+
     const icon = customPaymentMethod?.icon ? (
       <img src={customPaymentMethod.icon} alt={customPaymentMethod.name} className="w-5 h-5 object-cover rounded" />
     ) : (
@@ -91,16 +85,16 @@ export const TransactionCard = forwardRef<HTMLDivElement, TransactionCardProps>(
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -10 }}
-        transition={{ 
-          duration: 0.4, 
+        transition={{
+          duration: 0.4,
           delay: index * 0.05,
           type: "spring",
           stiffness: 300,
           damping: 25
         }}
-        whileHover={{ 
-          y: -2, 
-          boxShadow: "0 8px 24px rgba(0, 0, 0, 0.12)" 
+        whileHover={{
+          y: -2,
+          boxShadow: "0 8px 24px rgba(0, 0, 0, 0.12)"
         }}
         layout
         data-testid={`transaction-card-${transaction.id}`}
